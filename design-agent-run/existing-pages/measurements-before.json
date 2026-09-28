@@ -1,0 +1,596 @@
+{
+  "shell/login": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 69,
+      "under44Samples": [
+        "A 18px «+ Add game»",
+        "BUTTON 32px «Release candidate»",
+        "BUTTON 32px «Checkpoint 1»",
+        "BUTTON 38px «Continue»",
+        "BUTTON 18px «Manage builds (2)»",
+        "A 22px «Atari Missile Command»"
+      ],
+      "url": "/games"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 0,
+      "under44Samples": [],
+      "url": "/login"
+    },
+    "320-text200": {
+      "pageOverflow": 54,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 5,
+      "under44Samples": [
+        "A 36px «+ Add game»",
+        "A 40px «PopopoP»",
+        "A 40px «Qomp2»",
+        "A 40px «Warlords»",
+        "BUTTON 36px «Archived games»"
+      ],
+      "url": "/games"
+    }
+  },
+  "capture/game-slug": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 0,
+      "under44Samples": [],
+      "url": "/game/atari-asteroids"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 0,
+      "under44Samples": [],
+      "url": "/game/atari-asteroids"
+    },
+    "320-text200": {
+      "pageOverflow": 54,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 0,
+      "under44Samples": [],
+      "url": "/game/atari-asteroids"
+    }
+  },
+  "capture/brief": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 3,
+      "under44Samples": [
+        "INPUT 1px «Attach screenshots»",
+        "BUTTON 31px «Attach screenshots»",
+        "BUTTON 38px «Continue without video»"
+      ],
+      "url": "/upload?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 3,
+      "under44Samples": [
+        "INPUT 1px «Attach screenshots»",
+        "BUTTON 31px «Attach screenshots»",
+        "BUTTON 38px «Continue without video»"
+      ],
+      "url": "/upload?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    },
+    "320-text200": {
+      "pageOverflow": 121,
+      "looseOverflow": 2,
+      "overflowSamples": [
+        "BUTTON «Attach screenshots»",
+        "BUTTON «Continue without video»"
+      ],
+      "under44": 1,
+      "under44Samples": [
+        "INPUT 1px «Attach screenshots»"
+      ],
+      "url": "/upload?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    }
+  },
+  "capture/upload": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 3,
+      "under44Samples": [
+        "INPUT 1px «Attach screenshots»",
+        "BUTTON 31px «Attach screenshots»",
+        "BUTTON 38px «Continue without video»"
+      ],
+      "url": "/upload?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 3,
+      "under44Samples": [
+        "INPUT 1px «Attach screenshots»",
+        "BUTTON 31px «Attach screenshots»",
+        "BUTTON 38px «Continue without video»"
+      ],
+      "url": "/upload?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    },
+    "320-text200": {
+      "pageOverflow": 121,
+      "looseOverflow": 2,
+      "overflowSamples": [
+        "BUTTON «Attach screenshots»",
+        "BUTTON «Continue without video»"
+      ],
+      "under44": 1,
+      "under44Samples": [
+        "INPUT 1px «Attach screenshots»"
+      ],
+      "url": "/upload?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    }
+  },
+  "capture/feedback": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 36,
+      "under44Samples": [
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»"
+      ],
+      "url": "/feedback?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 36,
+      "under44Samples": [
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»"
+      ],
+      "url": "/feedback?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    },
+    "320-text200": {
+      "pageOverflow": 54,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 36,
+      "under44Samples": [
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»",
+        "INPUT 1px «»"
+      ],
+      "url": "/feedback?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    }
+  },
+  "capture/thankyou": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 2,
+      "under44Samples": [
+        "BUTTON 38px «Submit for another game»",
+        "BUTTON 38px «Done»"
+      ],
+      "url": "/thankyou?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 2,
+      "under44Samples": [
+        "BUTTON 38px «Submit for another game»",
+        "BUTTON 38px «Done»"
+      ],
+      "url": "/thankyou?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    },
+    "320-text200": {
+      "pageOverflow": 54,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 0,
+      "under44Samples": [],
+      "url": "/thankyou?session=3caa966d-bb23-4442-85e7-b993dcecd98f"
+    }
+  },
+  "review/session-detail": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 1,
+      "under44Samples": [
+        "A 31px «← Sessions»"
+      ],
+      "url": "/sessions/3caa966d-bb23-4442-85e7-b993dcecd98f"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 1,
+      "under44Samples": [
+        "A 31px «← Sessions»"
+      ],
+      "url": "/sessions/3caa966d-bb23-4442-85e7-b993dcecd98f"
+    },
+    "320-text200": {
+      "pageOverflow": 54,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 0,
+      "under44Samples": [],
+      "url": "/sessions/3caa966d-bb23-4442-85e7-b993dcecd98f"
+    }
+  },
+  "dashboard/dashboard": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 13,
+      "under44Samples": [
+        "BUTTON 31px «Analyze feedback»",
+        "BUTTON 31px «Analyze videos»",
+        "BUTTON 38px «Download feedback (CSV)»",
+        "SELECT 40px «All buildsCheckpoint 1HT»",
+        "SELECT 40px «All testers»",
+        "INPUT 42px «Filter from date»"
+      ],
+      "url": "/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/dashboard"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 13,
+      "under44Samples": [
+        "BUTTON 31px «Analyze feedback»",
+        "BUTTON 31px «Analyze videos»",
+        "BUTTON 38px «Download feedback (CSV)»",
+        "SELECT 40px «All buildsCheckpoint 1HT»",
+        "SELECT 40px «All testers»",
+        "INPUT 42px «Filter from date»"
+      ],
+      "url": "/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/dashboard"
+    },
+    "320-text200": {
+      "pageOverflow": 54,
+      "looseOverflow": 1,
+      "overflowSamples": [
+        "BUTTON «Analyze feedback»"
+      ],
+      "under44": 2,
+      "under44Samples": [
+        "SELECT 40px «All buildsCheckpoint 1HT»",
+        "SELECT 40px «All testers»"
+      ],
+      "url": "/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/dashboard"
+    }
+  },
+  "catalog-admin/games-new": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 12,
+      "under44Samples": [
+        "INPUT 1px «Choose a build zip»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»"
+      ],
+      "url": "/games/new"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 12,
+      "under44Samples": [
+        "INPUT 1px «Choose a build zip»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»"
+      ],
+      "url": "/games/new"
+    },
+    "320-text200": {
+      "pageOverflow": 248,
+      "looseOverflow": 1,
+      "overflowSamples": [
+        "BUTTON «Create game & upload»"
+      ],
+      "under44": 2,
+      "under44Samples": [
+        "INPUT 1px «Choose a build zip»",
+        "INPUT 40px «»"
+      ],
+      "url": "/games/new"
+    }
+  },
+  "catalog-admin/game-edit": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 10,
+      "under44Samples": [
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»"
+      ],
+      "url": "/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/edit"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 10,
+      "under44Samples": [
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»",
+        "INPUT 42px «»"
+      ],
+      "url": "/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/edit"
+    },
+    "320-text200": {
+      "pageOverflow": 139,
+      "looseOverflow": 1,
+      "overflowSamples": [
+        "BUTTON «Save changes»"
+      ],
+      "under44": 0,
+      "under44Samples": [],
+      "url": "/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/edit"
+    }
+  },
+  "catalog-admin/builds-new": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 5,
+      "under44Samples": [
+        "SELECT 26px «Select a game…Asteroids »",
+        "INPUT 42px «»",
+        "INPUT 1px «Choose a build zip»",
+        "INPUT 42px «»",
+        "A 18px «← Cancel»"
+      ],
+      "url": "/builds/new"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 5,
+      "under44Samples": [
+        "SELECT 26px «Select a game…Asteroids »",
+        "INPUT 42px «»",
+        "INPUT 1px «Choose a build zip»",
+        "INPUT 42px «»",
+        "A 18px «← Cancel»"
+      ],
+      "url": "/builds/new"
+    },
+    "320-text200": {
+      "pageOverflow": 75,
+      "looseOverflow": 1,
+      "overflowSamples": [
+        "BUTTON «Add build»"
+      ],
+      "under44": 1,
+      "under44Samples": [
+        "INPUT 1px «Choose a build zip»"
+      ],
+      "url": "/builds/new"
+    }
+  },
+  "imports/imports": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 2,
+      "under44Samples": [
+        "INPUT 1px «Choose write-ups to impo»",
+        "A 16px «Add the game»"
+      ],
+      "url": "/imports"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 2,
+      "under44Samples": [
+        "INPUT 1px «Choose write-ups to impo»",
+        "A 16px «Add the game»"
+      ],
+      "url": "/imports"
+    },
+    "320-text200": {
+      "pageOverflow": 54,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 2,
+      "under44Samples": [
+        "INPUT 1px «Choose write-ups to impo»",
+        "A 31px «Add the game»"
+      ],
+      "url": "/imports"
+    }
+  },
+  "imports/game-imports": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 2,
+      "under44Samples": [
+        "A 31px «Import something»",
+        "A 38px «Import something»"
+      ],
+      "url": "/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/imports"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 2,
+      "under44Samples": [
+        "A 31px «Import something»",
+        "A 38px «Import something»"
+      ],
+      "url": "/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/imports"
+    },
+    "320-text200": {
+      "pageOverflow": 54,
+      "looseOverflow": 4,
+      "overflowSamples": [
+        "DIV «Everything imported into Ata»",
+        "H1 «Everything imported into Ata»",
+        "P «Newest first. This list upda»",
+        "A «Import something»"
+      ],
+      "under44": 0,
+      "under44Samples": [],
+      "url": "/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/imports"
+    }
+  },
+  "admin/admin": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 16,
+      "under44Samples": [
+        "A 31px «Manage feedback question»",
+        "INPUT 16px «Expert tester designatio»",
+        "BUTTON 31px «Save»",
+        "BUTTON 31px «Remove»",
+        "INPUT 16px «Expert tester designatio»",
+        "BUTTON 31px «Save»"
+      ],
+      "url": "/admin"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 16,
+      "under44Samples": [
+        "A 31px «Manage feedback question»",
+        "INPUT 16px «Expert tester designatio»",
+        "BUTTON 31px «Save»",
+        "BUTTON 31px «Remove»",
+        "INPUT 16px «Expert tester designatio»",
+        "BUTTON 31px «Save»"
+      ],
+      "url": "/admin"
+    },
+    "320-text200": {
+      "pageOverflow": 125,
+      "looseOverflow": 1,
+      "overflowSamples": [
+        "A «Manage feedback questions →»"
+      ],
+      "under44": 3,
+      "under44Samples": [
+        "INPUT 32px «Expert tester designatio»",
+        "INPUT 32px «Expert tester designatio»",
+        "INPUT 32px «Expert tester designatio»"
+      ],
+      "url": "/admin"
+    }
+  },
+  "admin/admin-questions": {
+    "desktop": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 115,
+      "under44Samples": [
+        "INPUT 42px «»",
+        "SELECT 26px «Free textScale (1-5)Yes »",
+        "INPUT 16px «»",
+        "SELECT 26px «EveryoneTesters onlyExpe»",
+        "INPUT 42px «»",
+        "INPUT 16px «»"
+      ],
+      "url": "/admin/questions"
+    },
+    "phone": {
+      "pageOverflow": 0,
+      "looseOverflow": 0,
+      "overflowSamples": [],
+      "under44": 115,
+      "under44Samples": [
+        "INPUT 42px «»",
+        "SELECT 26px «Free textScale (1-5)Yes »",
+        "INPUT 16px «»",
+        "SELECT 26px «EveryoneTesters onlyExpe»",
+        "INPUT 42px «»",
+        "INPUT 16px «»"
+      ],
+      "url": "/admin/questions"
+    },
+    "320-text200": {
+      "pageOverflow": 186,
+      "looseOverflow": 2,
+      "overflowSamples": [
+        "BUTTON «Create question»",
+        "SELECT «Full catalog (all questions)»"
+      ],
+      "under44": 6,
+      "under44Samples": [
+        "INPUT 32px «»",
+        "INPUT 32px «»",
+        "INPUT 13px «»",
+        "INPUT 13px «»",
+        "INPUT 13px «»",
+        "INPUT 13px «»"
+      ],
+      "url": "/admin/questions"
+    }
+  }
+}
