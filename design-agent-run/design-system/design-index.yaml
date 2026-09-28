@@ -14,7 +14,7 @@ projects:
     artifacts: []
   - id: "GFE-SORT"
     title: "Browse, filter and sort games and sessions"
-    status: "in-audit"  # latest audit: blocker (audit-report-round1.md)
+    status: "in-audit"  # latest audit: blocker (audit-report-round2.md)
     scopeSummary: "Platform and studio filters, card/list view and a 'Most active' sort on /games; a platform filter on /sessions."
     scopeTerms: ["game catalogue", "platform filter", "studio filter", "sort order", "list view", "session sort"]
     surfaces: ["games", "games/filters", "sessions", "sessions/filters", "catalog-sidebar"]
