@@ -37,3 +37,5 @@ humanDecision:
   decision: "Put the sidebar beside every game dashboard."
   by: "the brief's author"
   source: "Andreas Beijer's reference design, supplied by the author in round 2 ('shown beside both the games list and a game's dashboard'). It is recorded in page-brief.md."
+# Note (after scope-2): the pre-harness pages were later split out of GFE-SHELL
+# into area projects. The dashboard overlap above now belongs to GFE-DASHBOARD.

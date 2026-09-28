@@ -1,18 +1,179 @@
-# Design index for the Game Feedback Engine (Fuji). First project registered by
-# the Design System Agent: GFE-SORT. GFE-SHELL stands in for every page that
-# shipped before the harness (backfill when it next changes).
+# Design index for the Game Feedback Engine (Fuji). GFE-SORT went through the
+# full loop. Every page that shipped before the harness is registered by area
+# as a backfill project (backfill: true), each with a standalone audit.
 projects:
-  - id: "GFE-SHELL"
-    title: "Existing GFE pages (pre-harness backfill)"
-    status: "shipped"
-    scopeSummary: "Every page that shipped before the design harness: nav, per-game pages, session detail, dashboards, admin."
-    scopeTerms: ["nav", "game page", "session detail", "dashboard"]
-    surfaces: ["nav", "game", "sessions/detail", "games/dashboard", "admin"]
+  - id: GFE-SHELL
+    title: Site header, sign-in and root redirect
+    status: shipped
+    backfill: true
+    scopeSummary: The header nav on every page, /login, and / (redirects to /games).
+    scopeTerms:
+    - nav
+    - header
+    - sign in
+    surfaces:
+    - nav
+    - login
     priorities: []
     componentsUsed: []
-    codePaths: ["frontend/components/NavClient.tsx", "frontend/app/game/**", "frontend/app/games/[gameId]/dashboard/**", "frontend/app/sessions/[id]/**"]
-    flags: ["GFE-SORT wraps games/dashboard in the catalogue sidebar (scope-2)", "Header nav overflows at 200% text size at 320px: ATARI and ADMIN overlap, and the menu button is clipped (GFE-SORT audit round 3)", "Dashboard: 'Re-analyze feedback' overflows at 200% text at 320px", "Dashboard header says 'Sentiment: Mixed' for a game at 55% negative, which the GFE-SORT critical flag marks overly negative. The label and the flag should agree."]
-    artifacts: []
+    codePaths:
+    - frontend/components/NavClient.tsx
+    - frontend/app/layout.tsx
+    - frontend/app/login/**
+    - frontend/app/page.tsx
+    artifacts:
+    - id: audit-report-GFE-SHELL-standalone-1
+      type: audit-report
+      path: existing-pages/gfe-shell/audit-report-standalone-1.md
+      version: 1
+      reviewStatus: current
+  - id: GFE-CAPTURE
+    title: Tester capture flow
+    status: shipped
+    backfill: true
+    scopeSummary: A tester opens /game/<slug>, reads the brief, plays, uploads a recording, answers the feedback questions, and sees the thank-you page.
+    scopeTerms:
+    - capture
+    - tester
+    - upload
+    - feedback questions
+    - how to play
+    surfaces:
+    - game
+    - brief
+    - upload
+    - feedback
+    - thankyou
+    priorities: []
+    componentsUsed: []
+    codePaths:
+    - frontend/app/game/**
+    - frontend/app/brief/**
+    - frontend/app/upload/**
+    - frontend/app/feedback/**
+    - frontend/app/thankyou/**
+    artifacts:
+    - id: audit-report-GFE-CAPTURE-standalone-1
+      type: audit-report
+      path: existing-pages/gfe-capture/audit-report-standalone-1.md
+      version: 1
+      reviewStatus: current
+  - id: GFE-REVIEW
+    title: Reviewer session detail
+    status: shipped
+    backfill: true
+    scopeSummary: '/sessions/[id]: the video reviewer with an annotated timeline, and the session''s feedback entries.'
+    scopeTerms:
+    - session detail
+    - video review
+    - timeline
+    surfaces:
+    - sessions/detail
+    priorities: []
+    componentsUsed: []
+    codePaths:
+    - frontend/app/sessions/[id]/**
+    artifacts:
+    - id: audit-report-GFE-REVIEW-standalone-1
+      type: audit-report
+      path: existing-pages/gfe-review/audit-report-standalone-1.md
+      version: 1
+      reviewStatus: current
+  - id: GFE-DASHBOARD
+    title: Game feedback dashboard
+    status: shipped
+    backfill: true
+    scopeSummary: '/games/[gameId]/dashboard: five tabs of sentiment, KPIs and themes per game.'
+    scopeTerms:
+    - dashboard
+    - sentiment
+    - kpi
+    surfaces:
+    - games/dashboard
+    priorities: []
+    componentsUsed: []
+    codePaths:
+    - frontend/app/games/[gameId]/dashboard/**
+    - frontend/components/dashboard/**
+    artifacts:
+    - id: audit-report-GFE-DASHBOARD-standalone-1
+      type: audit-report
+      path: existing-pages/gfe-dashboard/audit-report-standalone-1.md
+      version: 1
+      reviewStatus: current
+    flags:
+    - GFE-SORT wraps this page in the catalogue sidebar (GFE-SORT scope-2, IC3)
+    - 'The header says "Sentiment: Mixed" for a game at 55% negative, which GFE-SORT''s critical flag calls overly negative. The label and the flag should agree.'
+  - id: GFE-CATALOG-ADMIN
+    title: Add and edit games and builds
+    status: shipped
+    backfill: true
+    scopeSummary: '/games/new, /games/[gameId]/edit and /builds/new: the admin forms.'
+    scopeTerms:
+    - add game
+    - edit game
+    - add build
+    surfaces:
+    - games/new
+    - games/edit
+    - builds/new
+    priorities: []
+    componentsUsed: []
+    codePaths:
+    - frontend/app/games/new/**
+    - frontend/app/games/[gameId]/edit/**
+    - frontend/app/builds/**
+    artifacts:
+    - id: audit-report-GFE-CATALOG-ADMIN-standalone-1
+      type: audit-report
+      path: existing-pages/gfe-catalog-admin/audit-report-standalone-1.md
+      version: 1
+      reviewStatus: current
+  - id: GFE-IMPORTS
+    title: Import write-ups
+    status: shipped
+    backfill: true
+    scopeSummary: '/imports and /games/[gameId]/imports: producers upload written feedback documents and see earlier imports.'
+    scopeTerms:
+    - import
+    - write-up
+    - document upload
+    surfaces:
+    - imports
+    - games/imports
+    priorities: []
+    componentsUsed: []
+    codePaths:
+    - frontend/app/imports/**
+    - frontend/app/games/[gameId]/imports/**
+    artifacts:
+    - id: audit-report-GFE-IMPORTS-standalone-1
+      type: audit-report
+      path: existing-pages/gfe-imports/audit-report-standalone-1.md
+      version: 1
+      reviewStatus: current
+  - id: GFE-ADMIN
+    title: Admin console
+    status: shipped
+    backfill: true
+    scopeSummary: /admin (users and roles) and /admin/questions (authoring questions and suppressions).
+    scopeTerms:
+    - admin
+    - users
+    - questions
+    surfaces:
+    - admin
+    - admin/questions
+    priorities: []
+    componentsUsed: []
+    codePaths:
+    - frontend/app/admin/**
+    artifacts:
+    - id: audit-report-GFE-ADMIN-standalone-1
+      type: audit-report
+      path: existing-pages/gfe-admin/audit-report-standalone-1.md
+      version: 1
+      reviewStatus: current
   - id: "GFE-SORT"
     title: "Browse, filter and sort games and sessions"
     status: "in-audit"  # round 3 in audit (audit-report-round3.md)

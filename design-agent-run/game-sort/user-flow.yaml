@@ -13,9 +13,9 @@ screens:
   - { id: "S0", name: "Header nav", kind: "existing", surface: "nav", owningProject: "GFE-SHELL", route: "(every page)" }
   - { id: "S1", name: "Games catalogue with filters (revised)", kind: "new", surface: "games", route: "/games?platform={p}&studio={id}&sort={s}&view={card|list}&q={term}" }
   - { id: "S2", name: "Sessions list with platform filter (revised)", kind: "new", surface: "sessions", route: "/sessions?platform={p}&game={id}&…" }
-  - { id: "S3", name: "Game how-to-play page", kind: "existing", surface: "game", owningProject: "GFE-SHELL", route: "/game/{slug}" }
-  - { id: "S4", name: "Session detail", kind: "existing", surface: "sessions/detail", owningProject: "GFE-SHELL", route: "/sessions/{id}" }
-  - { id: "S5", name: "Game dashboard", kind: "existing", surface: "games/dashboard", owningProject: "GFE-SHELL", route: "/games/{id}/dashboard?sort={s}" }
+  - { id: "S3", name: "Game how-to-play page", kind: "existing", surface: "game", owningProject: "GFE-CAPTURE", route: "/game/{slug}" }
+  - { id: "S4", name: "Session detail", kind: "existing", surface: "sessions/detail", owningProject: "GFE-REVIEW", route: "/sessions/{id}" }
+  - { id: "S5", name: "Game dashboard", kind: "existing", surface: "games/dashboard", owningProject: "GFE-DASHBOARD", route: "/games/{id}/dashboard?sort={s}" }
   - { id: "S6", name: "Catalogue sidebar on the dashboard (new)", kind: "new", surface: "catalog-sidebar", route: "(beside /games/{id}/dashboard)" }
   - { id: "X1", name: "Shared /games link (chat, ticket)", kind: "external" }
 
@@ -100,5 +100,5 @@ exits:
 
 integrationChanges:
   - { id: "IC1", screen: "S0", change: "None needed: the 'Games' and 'Sessions' header links already exist (live) and carry no state.", owner: "GFE-SHELL", kind: "changed-entry-point", status: "done" }
-  - { id: "IC3", screen: "S5", change: "Wrap the game dashboard in the catalogue sidebar (Andreas Beijer's design), requested by the brief author.", owner: "GFE-SHELL", kind: "new-entry-point", status: "accepted" }
+  - { id: "IC3", screen: "S5", change: "Wrap the game dashboard in the catalogue sidebar (Andreas Beijer's design), requested by the brief author.", owner: "GFE-DASHBOARD", kind: "new-entry-point", status: "accepted" }
   - { id: "IC2", screen: "X1", change: "Filtered /games URLs become shareable (platform, studio, sort, view in the query string). Nothing to change outside the product.", owner: "GFE-SORT", kind: "deep-link", status: "accepted" }
