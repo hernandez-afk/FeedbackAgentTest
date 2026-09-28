@@ -1,0 +1,122 @@
+# Optimized brief for page-brief.md (Game Sort), after brief optimization and the
+# edge-case sweep. Every line traces to the author's brief; anything the agent
+# added is source: inferred and listed in brief-optimization-report.yaml.
+# Check: python3 tools/edge_case_check.py ticket-brief.yaml --index ../design-system/design-index.yaml --manifest ../design-system/design-system-manifest.yaml
+ticketKey: "GFE-SORT"
+title: "Browse, filter and sort games and sessions"
+sourceType: "page-brief"
+sourceRef: "design-agent-run/game-sort/page-brief.md"
+
+scopeTerms: ["game catalogue", "platform filter", "studio filter", "sort order", "list view", "session sort"]
+nonEntityTerms: ["sort order", "list view", "session sort", "platform filter", "studio filter"]
+surfaces: ["games", "games/filters", "sessions", "sessions/filters"]
+
+connections:
+  arrivesFrom: ["the header nav 'Games' link", "the header nav 'Sessions' link (reviewers)", "a shared /games?platform=… link"]
+  goesNext: ["a game's how-to-play page (/game/<slug>)", "a game's dashboard", "a session's detail page"]
+  mustLinkHere: []
+
+priorities:
+  - { id: "P1", statement: "Anyone can narrow a long list of games or sessions to the platform, studio or game they're looking for.", source: "explicit" }
+  - { id: "P2", statement: "Filtering keeps working as the catalogue grows past one screenful (server-side, paginated, new facet values appear without code changes).", source: "explicit" }
+  - { id: "P3", statement: "A first-time user can use it with no instructions (3-3-3).", source: "rewritten" }
+
+coreTasks:
+  - { id: "T1", statement: "Find a game on a specific platform (e.g. MSN).", linkedPriority: "P1", entryPoint: "/games" }
+  - { id: "T2", statement: "Switch the games between a card view and a compact list view.", linkedPriority: "P1", entryPoint: "/games" }
+  - { id: "T3", statement: "Narrow the sessions list to one platform, then see the most recently active games first.", linkedPriority: "P1", entryPoint: "/sessions" }
+
+requiredElements:
+  - { description: "Filter by platform, with a count per platform", targetCategory: "input", linkedPriority: "P1", estimatedVolume: "about 3–15 platforms, growing", states: ["loading", "empty", "error"] }
+  - { description: "Filter by studio, with a count per studio (only when the viewer can see more than one studio)", targetCategory: "input", linkedPriority: "P1", estimatedVolume: "1–10 studios", states: ["loading", "empty"] }
+  - { description: "The filter panel: beside the list on wide screens, collapsed behind one control on phones", targetCategory: "navigation", linkedPriority: "P3", states: ["empty"] }
+  - { description: "Active filters, visible and removable one at a time, plus clear all", targetCategory: "feedback", linkedPriority: "P3" }
+  - { description: "Sort: newest, A to Z, most active recently (sessions in the last 30 days)", targetCategory: "input", linkedPriority: "P1" }
+  - { description: "Card view and list view of the games", targetCategory: "display", linkedPriority: "P1", estimatedVolume: "up to 50 per page (GAMES_PAGE_SIZE), 200+ catalogue", states: ["loading", "empty", "error"] }
+  - { description: "Game header: title, platform, date added, builds, and the Edit / Import documents / View dashboard actions (role-gated)", targetCategory: "display", linkedPriority: "P1" }
+  - { description: "Platform filter on /sessions", targetCategory: "input", linkedPriority: "P1", states: ["loading", "error"] }
+
+acceptanceCriteria:
+  - { id: "AC1", statement: "From /games, a user can show only one platform's games in 2 taps or fewer at 320px (phone: open filters, pick platform), and the result count updates.", linkedTask: "T1", source: "rewritten" }
+  - { id: "AC2", statement: "A user can switch /games between card view and list view in 1 tap; the choice is in the URL (?view=list) and survives refresh and back-navigation.", linkedTask: "T2", source: "rewritten" }
+  - { id: "AC3", statement: "Filters are applied by the server before pagination: a platform whose games are all on page 3 of the unfiltered list shows them on page 1.", linkedPriority: "P2", source: "inferred" }
+  - { id: "AC4", statement: "Each filter option shows how many games it holds; a new platform typed into a game appears as an option with no code change.", linkedPriority: "P2", source: "inferred" }
+  - { id: "AC5", statement: "Every active filter is shown as a removable chip, with one 'Clear all', so the user never has to remember what's applied.", linkedPriority: "P3", source: "inferred" }
+  - { id: "AC6", statement: "/games can be sorted by 'Most active', ordering games by sessions submitted in the last 30 days (most first).", linkedTask: "T3", source: "rewritten" }
+  - { id: "AC7", statement: "/sessions can be filtered by platform, and the filter composes with the existing game/build/status/severity filters.", linkedTask: "T3", source: "rewritten" }
+  - { id: "AC8", statement: "At 320px nothing scrolls sideways, every filter control is at least 44px tall, and the filter panel is collapsed by default.", linkedPriority: "P3", source: "inferred" }
+  - { id: "AC9", statement: "When filters match nothing, the page says which filters matched nothing and offers one action to clear them.", linkedPriority: "P3", source: "inferred" }
+  - { id: "AC10", statement: "If the filter options fail to load, the games list still loads, and the panel says options are unavailable.", linkedPriority: "P2", source: "inferred" }
+
+entities:
+  - name: "game"
+    operations:
+      create:  { handledBy: "this-project", note: "Out of this design: /games/new (admin). Listed for the sweep; no change." }
+      source:  { handledBy: "this-project", note: "Typed in by an admin on /games/new; platform is free text on the game row." }
+      update:  { handledBy: "this-project", note: "/games/{id}/edit (admin). Changing platform moves the game between filter options on next load." }
+      delete:  { handledBy: "this-project", note: "Archive (admin) / delete (super-admin) already on the card; archived games leave the facets." }
+  - name: "platform"
+    description: "Free-text column on game (e.g. 'Atari Recharged'). No platform table."
+    operations:
+      create:  { handledBy: "this-project", note: "Implicit: a platform exists once a game carries it. Facet values are DISTINCT game.platform." }
+      source:  { handledBy: "question", ref: "Platform is free text, so 'MSN' and 'msn' are two options. Normalise to a managed list (new brief), or accept case-insensitive grouping?" }
+  - name: "studio"
+    operations:
+      create:  { handledBy: "this-project", note: "Exists: POST /api/studios (admin). Unchanged." }
+      source:  { handledBy: "this-project", note: "game.studio_id. The facet shows studio.name." }
+  - name: "developer"
+    description: "Named in the brief ('sort by people such as Game developer'). Not in the data model."
+    operations:
+      create:  { handledBy: "new-brief", ref: "Catalogue metadata: developer, project, product and product version" }
+      source:  { handledBy: "question", ref: "Is 'game developer' the studio (already a filter), an individual person, or an external developer company?" }
+  - name: "project"
+    description: "Named in the brief ('by project'). Not in the data model."
+    operations:
+      create:  { handledBy: "new-brief", ref: "Catalogue metadata: developer, project, product and product version" }
+      source:  { handledBy: "question", ref: "What is a 'project' — a franchise (Asteroids), a release programme (Atari Recharged), or an internal code name?" }
+  - name: "product"
+    description: "title → product → product version (e.g. Asteroids → Asteroids Arezion → MSN). No product level exists; a game has builds directly."
+    operations:
+      create:  { handledBy: "new-brief", ref: "Catalogue metadata: developer, project, product and product version" }
+      source:  { handledBy: "new-brief", ref: "Catalogue metadata: developer, project, product and product version" }
+  - name: "build"
+    description: "Closest existing thing to a 'product version'. Label is free text (e.g. 'Checkpoint 1')."
+    operations:
+      create:  { handledBy: "this-project", note: "Exists: Manage builds panel / build upload. Unchanged." }
+      source:  { handledBy: "this-project", note: "Shown as the build count and build pills on the card; list view shows the count." }
+  - name: "session"
+    operations:
+      create:  { handledBy: "this-project", note: "Created by testers through the capture flow. Unchanged; sessions feed the 'Most active' sort." }
+      source:  { handledBy: "this-project", note: "session.created_at within 30 days, excluding soft-deleted sessions." }
+
+edgeCases:
+  - { id: "EC1", lens: "ecosystem", case: "Developer, project and the product / product-version hierarchy have no data behind them.", disposition: "new-brief", action: "Catalogue metadata: developer, project, product and product version" }
+  - { id: "EC2", lens: "roles", case: "A viewer (tester) sees only their studio's games; a studio facet with one option is noise.", disposition: "in-scope", action: "element: studio filter only renders with 2+ studios" }
+  - { id: "EC3", lens: "roles", case: "Only reviewers can open /sessions; the 'Most active' sort on /games must not reveal who submitted.", disposition: "in-scope", action: "AC6 (counts only, no PII)" }
+  - { id: "EC4", lens: "setup", case: "No games have a platform yet (most seeded games have none).", disposition: "in-scope", action: "state: platform facet shows 'No platform' as its own option; hidden if it is the only one" }
+  - { id: "EC5", lens: "time", case: "'Most active' window: activity older than 30 days drops out, so the order changes over time.", disposition: "in-scope", action: "AC6; the sort pill's label names the window" }
+  - { id: "EC6", lens: "concurrency", case: "An admin changes a game's platform while someone has that platform filtered.", disposition: "in-scope", action: "state: next load reflects it; a filter value with zero games still shows as an active chip so it can be removed" }
+  - { id: "EC7", lens: "integrity", case: "Free-text platforms: 'MSN', 'msn ' and 'Msn' split one platform into three.", disposition: "question", action: "Case-insensitive, trimmed grouping, or a managed platform list?" }
+  - { id: "EC8", lens: "scale", case: "30+ platforms make a long panel on a phone.", disposition: "in-scope", action: "element: filter panel shows 8 options then 'Show all N'" }
+  - { id: "EC9", lens: "scale", case: "A very long platform or studio name.", disposition: "in-scope", action: "state: option label wraps (never truncated without title), count stays right-aligned" }
+  - { id: "EC10", lens: "failure", case: "The facet read fails.", disposition: "in-scope", action: "AC10" }
+  - { id: "EC11", lens: "failure", case: "A shared link carries a platform that no longer exists.", disposition: "in-scope", action: "AC9" }
+  - { id: "EC12", lens: "ending", case: "Archived games.", disposition: "in-scope", action: "state: excluded from facet counts and results, same as the catalogue today" }
+  - { id: "EC13", lens: "communication", case: "Telling users the new filters exist.", disposition: "out-of-scope", action: "No announcement; the panel is visible on /games." }
+  - { id: "EC14", lens: "privacy", case: "Studio names of other studios.", disposition: "in-scope", action: "element: facets computed from the caller's scoped_query only, so no out-of-scope studio name appears" }
+  - { id: "EC15", lens: "access", case: "Filtering on a phone one-handed in a playtest room.", disposition: "in-scope", action: "AC8" }
+  - { id: "EC16", lens: "studio-scope", case: "Facet counts computed over all studios would leak catalogue sizes.", disposition: "in-scope", action: "element: facet counts use the same scoped_query as the list" }
+
+constraints:
+  - "Stay as close as possible to the current design system (Fuji): reuse GamesCatalogBrowser's pill pattern, GameCard, EmptyState, Collapsible, SessionsFilters' select pattern."
+  - "Server-side filtering only (the page never filters an already-loaded array; lib/game-search.ts)."
+
+outOfScope:
+  - "AI-assisted search or recommendations (author: 'It does not use any AI to locate features')."
+  - "Developer, project, product and product-version filters: they need new catalogue data first (new brief)."
+  - "Announcing the feature: no announcement; the filters are visible on the page."
+
+openQuestions:
+  - "Platform is free text, so 'MSN' and 'msn' are two options. Normalise to a managed list (new brief), or accept case-insensitive grouping?"
+  - "Is 'game developer' the studio (already a filter), an individual person, or an external developer company?"
+  - "What is a 'project' — a franchise (Asteroids), a release programme (Atari Recharged), or an internal code name?"

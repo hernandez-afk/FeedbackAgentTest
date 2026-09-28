@@ -1,0 +1,3405 @@
+From 2942459ab515213d3ca8fd8a2b7df5240ff599fd Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 28 Sep 2026 08:17:38 +0000
+Subject: [PATCH] feat(games): platform/studio filters, list view and Most
+ active sort (GFE-SORT)
+
+Designed through the Design System Agent harness (brief -> scope -> flow ->
+design -> audit); records live in hernandez-afk/FeedbackAgentTest.
+
+Backend (additive):
+- GET /api/games: repeatable platform/studio filters (before pagination),
+  sort=activity (sessions in the last 30 days), studio_name + created_at.
+- GET /api/games/facets: scoped platform/studio options with counts.
+- GET /api/sessions: repeatable platform filter.
+
+Frontend:
+- /games filter panel (left column from lg:, collapsible on phones),
+  removable filter chips, Cards/List view switch, Most active sort.
+- Shared meta line (platform, studio, date added) on card and list row.
+- /sessions Platform dropdown; Clear link uses --color-accent-text.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ backend/games.py                              | 227 ++++++++++-
+ backend/sessions.py                           |  30 +-
+ frontend/__tests__/game-filter-panel.test.tsx | 243 ++++++++++++
+ frontend/__tests__/game-list-row.test.tsx     |  63 +++
+ frontend/__tests__/game-sort-helpers.test.ts  | 145 +++++++
+ .../__tests__/games-page-filters.test.tsx     | 168 ++++++++
+ .../sessions-filters-platform.test.tsx        |  84 ++++
+ frontend/__tests__/sessions-filters.test.tsx  |   3 +
+ frontend/app/games/page.tsx                   | 136 ++++++-
+ frontend/app/sessions/page.tsx                |  21 +-
+ frontend/components/GameCard.tsx              |  21 +-
+ .../components/GameFilterPanel.stories.tsx    |  62 +++
+ frontend/components/GameFilterPanel.tsx       | 272 +++++++++++++
+ frontend/components/GameListRow.stories.tsx   |  42 ++
+ frontend/components/GameListRow.tsx           | 142 +++++++
+ frontend/components/GamesCatalogBrowser.tsx   | 357 +++++++++++++----
+ frontend/components/SessionsFilters.tsx       |  70 +++-
+ frontend/lib/catalog-api.ts                   |  13 +
+ frontend/lib/game-meta.ts                     |  39 ++
+ frontend/lib/game-search.ts                   | 137 ++++++-
+ frontend/lib/reviewer-api.ts                  |   3 +
+ frontend/lib/types.ts                         |   7 +
+ tests/test_ch174_games_builds.py              |   4 +
+ tests/test_gfe_sort_catalogue_filters.py      | 365 ++++++++++++++++++
+ 24 files changed, 2541 insertions(+), 113 deletions(-)
+ create mode 100644 frontend/__tests__/game-filter-panel.test.tsx
+ create mode 100644 frontend/__tests__/game-list-row.test.tsx
+ create mode 100644 frontend/__tests__/game-sort-helpers.test.ts
+ create mode 100644 frontend/__tests__/games-page-filters.test.tsx
+ create mode 100644 frontend/__tests__/sessions-filters-platform.test.tsx
+ create mode 100644 frontend/components/GameFilterPanel.stories.tsx
+ create mode 100644 frontend/components/GameFilterPanel.tsx
+ create mode 100644 frontend/components/GameListRow.stories.tsx
+ create mode 100644 frontend/components/GameListRow.tsx
+ create mode 100644 frontend/lib/game-meta.ts
+ create mode 100644 tests/test_gfe_sort_catalogue_filters.py
+
+diff --git a/backend/games.py b/backend/games.py
+index 735db1a..d85e87c 100644
+--- a/backend/games.py
++++ b/backend/games.py
+@@ -142,12 +142,12 @@ import logging
+ import uuid
+ from urllib.parse import urlparse
+ from collections.abc import Awaitable, Callable
+-from datetime import datetime, timezone
++from datetime import datetime, timedelta, timezone
+ from typing import Annotated, Any
+ 
+ from fastapi import APIRouter, Depends, HTTPException, Query, Request
+ from pydantic import BaseModel, ConfigDict, Field, field_validator
+-from sqlalchemy import func, select
++from sqlalchemy import func, or_, select
+ from sqlalchemy.exc import IntegrityError
+ from sqlalchemy.ext.asyncio import AsyncSession
+ from sqlalchemy.orm.exc import StaleDataError
+@@ -193,6 +193,56 @@ def _like_contains(term: str) -> str:
+     escaped = term.strip().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+     return f"%{escaped}%"
+ 
++
++# GFE-SORT: catalogue facet filters (platform, studio) and the "Most active"
++# ordering. See ``_apply_game_filters`` for the filter semantics.
++#
++# ``platform`` is free text on the game row, so a game with NO platform has to
++# be selectable too (most seeded games have none). It is requested with this
++# sentinel rather than an empty string, which a query string cannot tell apart
++# from "parameter sent with no value".
++GAME_FACET_NO_PLATFORM = "__none__"
++# Max values per repeatable facet parameter. A facet is picked from a short
++# list the page was handed; anything longer is not a real selection.
++GAME_FILTER_MAX_VALUES = 20
++# "Most active" = sessions submitted in this many days, most first.
++GAME_ACTIVITY_WINDOW_DAYS = 30
++
++
++def _apply_game_filters(
++    stmt: Any,
++    *,
++    q: str | None,
++    platform: list[str] | None,
++    studio: list[uuid.UUID] | None,
++) -> Any:
++    """AND the catalogue's search + facet filters onto a Game statement.
++
++    Shared by ``list_games`` and ``list_game_facets`` so a facet count and the
++    list it narrows can never disagree about what a filter means. Every
++    filter NARROWS the caller's already-scoped set (the callers AND it onto a
++    ``scoped_query`` IN-subquery); none of them can widen it.
++
++    * ``platform`` — exact match on ``game.platform``, OR across the values
++      given. ``GAME_FACET_NO_PLATFORM`` selects games with no platform.
++    * ``studio`` — ``game.studio_id`` IN the ids given (OR across values).
++    * Different facets AND together: platform=MSN&studio=A is "MSN games
++      from studio A".
++    """
++    if q is not None and q.strip():
++        stmt = stmt.where(Game.title.ilike(_like_contains(q), escape="\\"))
++    if platform:
++        named = sorted({p for p in platform if p != GAME_FACET_NO_PLATFORM})
++        clauses = []
++        if named:
++            clauses.append(Game.platform.in_(named))
++        if GAME_FACET_NO_PLATFORM in platform:
++            clauses.append(Game.platform.is_(None))
++        stmt = stmt.where(or_(*clauses))
++    if studio:
++        stmt = stmt.where(Game.studio_id.in_(sorted(set(studio))))
++    return stmt
++
+ # Rate limit budget — consistent with admin write limits in server.py and the
+ # feedback/session write limits (30/minute). Declared here as a module-level
+ # string so the factory can attach it to the limiter it receives without
+@@ -275,6 +325,44 @@ class GameOut(BaseModel):
+     # what any client claims. Additive; defaults False so a consumer that
+     # ignores it is byte-for-byte unaffected.
+     can_manage: bool = False
++    # GFE-SORT, additive: the owning studio's name (the /games filter panel
++    # and list view show it) and when the game was added to the catalogue
++    # (the card's "Added" line). Default None so any construction site that
++    # predates them is unaffected.
++    studio_name: str | None = None
++    created_at: datetime | None = None
++
++
++class PlatformFacetOut(BaseModel):
++    """One platform option in GET /api/games/facets (GFE-SORT).
++
++    ``value`` is the exact ``game.platform`` text, or None for games with no
++    platform (filter with ``platform=__none__``).
++    """
++
++    model_config = ConfigDict(extra="forbid")
++
++    value: str | None
++    count: int
++
++
++class StudioFacetOut(BaseModel):
++    """One studio option in GET /api/games/facets (GFE-SORT)."""
++
++    model_config = ConfigDict(extra="forbid")
++
++    id: uuid.UUID
++    name: str
++    count: int
++
++
++class GameFacetsOut(BaseModel):
++    """Response for GET /api/games/facets (GFE-SORT)."""
++
++    model_config = ConfigDict(extra="forbid")
++
++    platforms: list[PlatformFacetOut]
++    studios: list[StudioFacetOut]
+ 
+ 
+ class BuildOut(BaseModel):
+@@ -1004,9 +1092,15 @@ def make_games_router(
+         db: AsyncSession = Depends(get_async_db),
+         page: Annotated[int, Query(ge=1)] = 1,
+         page_size: Annotated[int, Query(ge=1, le=PAGE_SIZE_CAP)] = PAGE_SIZE_DEFAULT,
+-        sort: Annotated[str, Query(pattern="^(title|newest)$")] = "title",
++        sort: Annotated[str, Query(pattern="^(title|newest|activity)$")] = "title",
+         q: Annotated[str | None, Query(max_length=GAME_SEARCH_MAX_CHARS)] = None,
+         include_archived: Annotated[bool, Query()] = False,
++        platform: Annotated[
++            list[str] | None, Query(max_length=GAME_FILTER_MAX_VALUES)
++        ] = None,
++        studio: Annotated[
++            list[uuid.UUID] | None, Query(max_length=GAME_FILTER_MAX_VALUES)
++        ] = None,
+     ) -> list[GameOut]:
+         """List games visible to the caller, with platform + build counts.
+ 
+@@ -1045,6 +1139,20 @@ def make_games_router(
+         in ``scoped_query``, so an archived game's sessions, feedback, video
+         and dashboard all still resolve for reviewers, which is the whole
+         point of archiving rather than deleting.
++
++        GFE-SORT adds three more, all additive (an existing caller that sends
++        none of them is unaffected):
++
++        * ``platform`` (repeatable) and ``studio`` (repeatable) — facet
++          filters, applied as WHEREs before limit/offset exactly like ``q``,
++          through the shared ``_apply_game_filters``. ``platform=__none__``
++          selects games with no platform.
++        * ``sort=activity`` — sessions submitted in the last
++          GAME_ACTIVITY_WINDOW_DAYS days (soft-deleted sessions excluded),
++          most first, ties on title. Only the ORDER is exposed; the count
++          itself is not in the response.
++
++        The response also gains ``studio_name`` and ``created_at``.
+         """
+         # Correlated subquery: count ACTIVE (non-archived) builds for each
+         # game row.
+@@ -1069,11 +1177,18 @@ def make_games_router(
+         # projection cannot widen the visible set.
+         scoped_ids = scoped_query(Game, user=user, db=db).with_only_columns(Game.id)
+ 
+-        stmt = select(
+-            Game,
+-            build_count_sq.label("build_count"),
+-            has_builds_sq.label("has_builds"),
+-        ).where(Game.id.in_(scoped_ids))
++        stmt = (
++            select(
++                Game,
++                build_count_sq.label("build_count"),
++                has_builds_sq.label("has_builds"),
++                Studio.name.label("studio_name"),
++            )
++            # Inner join is safe: game.studio_id is NOT NULL with an FK, so
++            # every visible game has exactly one studio row.
++            .join(Studio, Studio.id == Game.studio_id)
++            .where(Game.id.in_(scoped_ids))
++        )
+ 
+         # CH-516: archived games leave the catalogue by default. Opt back in
+         # with include_archived=true, which is what the admin's archived list
+@@ -1082,13 +1197,26 @@ def make_games_router(
+         if not include_archived:
+             stmt = stmt.where(Game.archived_at.is_(None))
+ 
+-        # CH-605 search. ANDed with the scope filter above, never replacing it.
+-        if q is not None and q.strip():
+-            stmt = stmt.where(Game.title.ilike(_like_contains(q), escape="\\"))
++        # CH-605 search + GFE-SORT facets. ANDed with the scope filter above,
++        # never replacing it.
++        stmt = _apply_game_filters(stmt, q=q, platform=platform, studio=studio)
+ 
+         # CH-605 ordering. "title" reproduces the pre-CH-605 ORDER BY exactly.
+         if sort == "newest":
+             stmt = stmt.order_by(Game.created_at.desc(), Game.title)
++        elif sort == "activity":
++            since = datetime.now(timezone.utc) - timedelta(days=GAME_ACTIVITY_WINDOW_DAYS)
++            recent_sessions_sq = (
++                select(func.count(Session.id))
++                .where(
++                    Session.game_id == Game.id,
++                    Session.deleted_at.is_(None),
++                    Session.created_at >= since,
++                )
++                .correlate(Game)
++                .scalar_subquery()
++            )
++            stmt = stmt.order_by(recent_sessions_sq.desc(), Game.title)
+         else:
+             stmt = stmt.order_by(Game.title)
+ 
+@@ -1117,10 +1245,85 @@ def make_games_router(
+                 # exactly like caller_owns_game_studio on the write
+                 # routes); editor/viewer: always False.
+                 can_manage=user.can_admin_studio(str(game.studio_id)),
++                studio_name=studio_name,
++                created_at=game.created_at,
+             )
+-            for game, count, has_builds in rows
++            for game, count, has_builds, studio_name in rows
+         ]
+ 
++    # -----------------------------------------------------------------------
++    # GET /api/games/facets — filter options + counts for /games (GFE-SORT)
++    #
++    # Declared BEFORE every /games/{game_id}/... route so the literal segment
++    # is matched first and never parsed as a UUID.
++    # -----------------------------------------------------------------------
++
++    @router.get(
++        "/games/facets",
++        response_model=GameFacetsOut,
++    )
++    async def list_game_facets(
++        user: CurrentUser = Depends(require_user),
++        db: AsyncSession = Depends(get_async_db),
++        q: Annotated[str | None, Query(max_length=GAME_SEARCH_MAX_CHARS)] = None,
++        platform: Annotated[
++            list[str] | None, Query(max_length=GAME_FILTER_MAX_VALUES)
++        ] = None,
++        studio: Annotated[
++            list[uuid.UUID] | None, Query(max_length=GAME_FILTER_MAX_VALUES)
++        ] = None,
++    ) -> GameFacetsOut:
++        """Platform and studio options for the /games filter panel, with counts.
++
++        Scoped exactly like ``list_games`` (the same ``scoped_query`` IN-subquery
++        and the same archived-out default), so a count never includes a game
++        the caller cannot see, and no other studio's name or catalogue size
++        can leak through it.
++
++        Counts are "how many games would be listed if you also picked this":
++        each facet's counts apply the search and the OTHER facet's selection,
++        but not its own (standard faceted search), so picking a second
++        platform never shows a misleading 0 next to it.
++        """
++        scoped_ids = scoped_query(Game, user=user, db=db).with_only_columns(Game.id)
++
++        def _base(*cols: Any) -> Any:
++            return (
++                select(*cols)
++                .where(Game.id.in_(scoped_ids))
++                .where(Game.archived_at.is_(None))
++            )
++
++        platform_stmt = _apply_game_filters(
++            _base(Game.platform, func.count(Game.id)),
++            q=q,
++            platform=None,
++            studio=studio,
++        ).group_by(Game.platform)
++        studio_stmt = _apply_game_filters(
++            _base(Studio.id, Studio.name, func.count(Game.id)).join(
++                Studio, Studio.id == Game.studio_id
++            ),
++            q=q,
++            platform=platform,
++            studio=None,
++        ).group_by(Studio.id, Studio.name)
++
++        platform_rows = (await db.execute(platform_stmt)).all()
++        studio_rows = (await db.execute(studio_stmt)).all()
++
++        # Most games first, then name; "no platform" always last so a real
++        # platform is never pushed below the catch-all bucket.
++        platforms = sorted(
++            (PlatformFacetOut(value=value, count=count) for value, count in platform_rows),
++            key=lambda f: (f.value is None, -f.count, (f.value or "").lower()),
++        )
++        studios = sorted(
++            (StudioFacetOut(id=sid, name=name, count=count) for sid, name, count in studio_rows),
++            key=lambda f: (-f.count, f.name.lower()),
++        )
++        return GameFacetsOut(platforms=platforms, studios=studios)
++
+     # -----------------------------------------------------------------------
+     # GET /api/games/{id}/builds — studio-scoped build list (CH-174)
+     # -----------------------------------------------------------------------
+diff --git a/backend/sessions.py b/backend/sessions.py
+index e60a74b..bd01df0 100644
+--- a/backend/sessions.py
++++ b/backend/sessions.py
+@@ -78,12 +78,13 @@ from typing import Annotated, Any
+ 
+ from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+ from pydantic import BaseModel, ConfigDict
+-from sqlalchemy import ScalarSelect, Select, func, select
++from sqlalchemy import ScalarSelect, Select, func, or_, select
+ from sqlalchemy.exc import IntegrityError
+ from sqlalchemy.ext.asyncio import AsyncSession
+ 
+ from backend.authz import CurrentUser
+ from backend.db import get_async_db
++from backend.games import GAME_FACET_NO_PLATFORM, GAME_FILTER_MAX_VALUES
+ from backend.models import (
+     Answer,
+     Build,
+@@ -504,6 +505,7 @@ def _apply_session_filters(
+     build: uuid.UUID | None,
+     status: FeedbackStatus | None,
+     severity: FeedbackSeverity | None,
++    platform: list[str] | None = None,
+ ) -> Select:
+     """Apply the game/build/status/severity query filters identically to the
+     list statement and the count statement (CH-386), so ``total`` always
+@@ -526,6 +528,19 @@ def _apply_session_filters(
+         stmt = stmt.where(FeedbackEntry.status == status)
+     if severity is not None:
+         stmt = stmt.where(FeedbackEntry.severity == severity)
++    # GFE-SORT: narrow to sessions on games with one of these platforms, with
++    # the same semantics as the /games facet (GAME_FACET_NO_PLATFORM selects
++    # games with no platform). An IN-subquery on Game rather than a join, so
++    # the count statement - which never joins Game - filters identically to
++    # the list statement.
++    if platform:
++        named = sorted({p for p in platform if p != GAME_FACET_NO_PLATFORM})
++        clauses = []
++        if named:
++            clauses.append(Game.platform.in_(named))
++        if GAME_FACET_NO_PLATFORM in platform:
++            clauses.append(Game.platform.is_(None))
++        stmt = stmt.where(Session.game_id.in_(select(Game.id).where(or_(*clauses))))
+     return stmt
+ 
+ 
+@@ -672,6 +687,9 @@ def make_sessions_router(
+         build: Annotated[uuid.UUID | None, Query()] = None,
+         status: Annotated[FeedbackStatus | None, Query()] = None,
+         severity: Annotated[FeedbackSeverity | None, Query()] = None,
++        platform: Annotated[
++            list[str] | None, Query(max_length=GAME_FILTER_MAX_VALUES)
++        ] = None,
+         page: Annotated[int, Query(ge=1)] = 1,
+         page_size: Annotated[
+             int, Query(ge=1, le=PAGE_SIZE_CAP)
+@@ -681,7 +699,9 @@ def make_sessions_router(
+ 
+         Filters: ``game`` (game_id), ``build`` (build_id), ``status`` (feedback
+         triage status), ``severity`` (latest feedback severity — lets a
+-        dashboard drill from a severity count straight to those sessions).
++        dashboard drill from a severity count straight to those sessions),
++        ``platform`` (GFE-SORT, repeatable: sessions on games with one of these
++        platforms; ``__none__`` = games with no platform).
+         Paginated (page/page_size, capped at PAGE_SIZE_CAP).
+         Each row carries the game title, build label, the 1:1 video_asset status
+         (null if none), and the latest feedback entry's status + severity (null
+@@ -724,7 +744,8 @@ def make_sessions_router(
+             .where(Session.id.in_(scoped_ids))
+         )
+         stmt = _apply_session_filters(
+-            stmt, game=game, build=build, status=status, severity=severity
++            stmt, game=game, build=build, status=status, severity=severity,
++            platform=platform,
+         )
+         stmt = (
+             stmt.order_by(Session.created_at.desc(), Session.id)
+@@ -747,7 +768,8 @@ def make_sessions_router(
+                 FeedbackEntry, FeedbackEntry.id == _latest_feedback_subquery()
+             )
+         count_stmt = _apply_session_filters(
+-            count_stmt, game=game, build=build, status=status, severity=severity
++            count_stmt, game=game, build=build, status=status, severity=severity,
++            platform=platform,
+         )
+         total = (
+             await db.execute(
+diff --git a/frontend/__tests__/game-filter-panel.test.tsx b/frontend/__tests__/game-filter-panel.test.tsx
+new file mode 100644
+index 0000000..4c59faf
+--- /dev/null
++++ b/frontend/__tests__/game-filter-panel.test.tsx
+@@ -0,0 +1,243 @@
++// @vitest-environment jsdom
++/**
++ * GFE-SORT: GameFilterPanel (the /games Platform + Studio facets) and the
++ * GamesCatalogBrowser wiring around it: picking a facet, removing a chip,
++ * clearing filters, switching view and opening the phone panel all navigate
++ * through the one router.replace, with the full state in the URL.
++ */
++import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
++
++(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
++
++const { replaceMock, pushMock } = vi.hoisted(() => ({
++  replaceMock: vi.fn(),
++  pushMock: vi.fn(),
++}));
++
++vi.mock('next/navigation', () => ({
++  useRouter: () => ({ push: pushMock, replace: replaceMock, prefetch: vi.fn() }),
++}));
++
++import { act } from 'react';
++import { createRoot, type Root } from 'react-dom/client';
++import GameFilterPanel, { FACET_VISIBLE_OPTIONS, type FacetsState } from '@/components/GameFilterPanel';
++import GamesCatalogBrowser from '@/components/GamesCatalogBrowser';
++import type { GameFilters, GamesView } from '@/lib/game-search';
++
++const STUDIO_A = '11111111-1111-4111-8111-111111111111';
++const STUDIO_B = '22222222-2222-4222-8222-222222222222';
++
++const FACETS: FacetsState = {
++  ok: true,
++  facets: {
++    platforms: [
++      { value: 'MSN', count: 3 },
++      { value: 'Switch', count: 1 },
++      { value: null, count: 12 },
++    ],
++    studios: [
++      { id: STUDIO_A, name: 'Alpha Studio', count: 14 },
++      { id: STUDIO_B, name: 'Bravo Studio', count: 2 },
++    ],
++  },
++};
++
++let container: HTMLDivElement;
++let root: Root;
++
++beforeEach(() => {
++  replaceMock.mockReset();
++  pushMock.mockReset();
++  container = document.createElement('div');
++  document.body.appendChild(container);
++  root = createRoot(container);
++});
++
++afterEach(() => {
++  act(() => root.unmount());
++  container.remove();
++});
++
++function buttons(): HTMLButtonElement[] {
++  return Array.from(container.querySelectorAll('button'));
++}
++
++function button(text: string): HTMLButtonElement {
++  const found = buttons().find(
++    (b) => b.getAttribute('aria-label') === text || b.textContent?.trim().startsWith(text),
++  );
++  if (!found) throw new Error(`button not found: ${text}`);
++  return found;
++}
++
++function click(el: HTMLElement): void {
++  act(() => {
++    el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
++  });
++}
++
++describe('GameFilterPanel', () => {
++  function renderPanel(filters: GameFilters, facets: FacetsState = FACETS, onToggle = vi.fn()) {
++    act(() => root.render(<GameFilterPanel facets={facets} filters={filters} onToggle={onToggle} />));
++    return onToggle;
++  }
++
++  it('lists each option with its count, "No platform" last, pressed state from the filters', () => {
++    renderPanel({ platforms: ['MSN'], studios: [] });
++    const msn = button('MSN');
++    expect(msn.getAttribute('aria-pressed')).toBe('true');
++    expect(msn.textContent).toContain('3');
++    expect(button('Switch').getAttribute('aria-pressed')).toBe('false');
++    const platformRows = Array.from(
++      container.querySelectorAll('fieldset')[0]!.querySelectorAll('li button'),
++    ).map((b) => b.textContent);
++    expect(platformRows[platformRows.length - 1]).toContain('No platform');
++  });
++
++  it('calls onToggle with the facet and the backend value', () => {
++    const onToggle = renderPanel({ platforms: [], studios: [] });
++    click(button('No platform'));
++    click(button('Bravo Studio'));
++    expect(onToggle.mock.calls).toEqual([
++      ['platforms', '__none__'],
++      ['studios', STUDIO_B],
++    ]);
++  });
++
++  it('hides the Studio facet when only one studio is visible and none is selected', () => {
++    renderPanel({ platforms: [], studios: [] }, {
++      ok: true,
++      facets: { ...FACETS.ok && FACETS.facets, studios: [{ id: STUDIO_A, name: 'Alpha Studio', count: 14 }] },
++    } as FacetsState);
++    expect(container.textContent).not.toContain('Studio');
++    expect(container.textContent).toContain('Platform');
++  });
++
++  it('keeps a selected value the facets no longer list, so it can be removed', () => {
++    renderPanel({ platforms: ['Dreamcast'], studios: [] });
++    const stale = button('Dreamcast');
++    expect(stale.getAttribute('aria-pressed')).toBe('true');
++    expect(stale.textContent).toContain('0');
++  });
++
++  it('shows the first options then "Show all", and never hides a selected one', () => {
++    const platforms = Array.from({ length: FACET_VISIBLE_OPTIONS + 4 }, (_, i) => ({
++      value: `P${String(i).padStart(2, '0')}`,
++      count: 20 - i,
++    }));
++    const last = platforms[platforms.length - 1]!.value;
++    renderPanel(
++      { platforms: [last], studios: [] },
++      { ok: true, facets: { platforms, studios: [] } },
++    );
++    const rows = () => container.querySelectorAll('fieldset li button').length;
++    expect(rows()).toBe(FACET_VISIBLE_OPTIONS + 1);
++    click(button(`Show all ${platforms.length} platforms`));
++    expect(rows()).toBe(platforms.length);
++  });
++
++  it('says filters are unavailable when the facets read failed', () => {
++    renderPanel({ platforms: [], studios: [] }, { ok: false, message: 'HTTP 503' });
++    expect(container.textContent).toContain('Filters are unavailable');
++    expect(container.textContent).toContain('HTTP 503');
++  });
++
++  it('explains the empty case when no game has a platform yet', () => {
++    renderPanel({ platforms: [], studios: [] }, {
++      ok: true,
++      facets: { platforms: [{ value: null, count: 5 }], studios: [{ id: STUDIO_A, name: 'A', count: 5 }] },
++    });
++    expect(container.textContent).toContain('No platforms have been set');
++  });
++});
++
++describe('GamesCatalogBrowser with filters (GFE-SORT)', () => {
++  function renderBrowser(filters: GameFilters, view: GamesView = 'card', facets: FacetsState = FACETS) {
++    act(() =>
++      root.render(
++        <GamesCatalogBrowser
++          query=""
++          sort="newest"
++          resultCount={3}
++          resultCountCapped={false}
++          totalCount={16}
++          filters={filters}
++          view={view}
++          facets={facets}
++        >
++          <div data-testid="grid">grid</div>
++        </GamesCatalogBrowser>,
++      ),
++    );
++  }
++
++  it('picking a platform navigates with it, keeping the other filters and view', () => {
++    renderBrowser({ platforms: [], studios: [STUDIO_A] }, 'list');
++    click(button('MSN'));
++    expect(replaceMock).toHaveBeenCalledWith(
++      `/games?platform=MSN&studio=${STUDIO_A}&view=list`,
++      { scroll: false },
++    );
++    expect(pushMock).not.toHaveBeenCalled();
++  });
++
++  it('shows a removable chip per active filter, named, never a raw id', () => {
++    renderBrowser({ platforms: ['MSN'], studios: [STUDIO_B] });
++    const chips = container.querySelector('[aria-label="Active filters"]');
++    expect(chips?.textContent).toContain('MSN');
++    expect(chips?.textContent).toContain('Bravo Studio');
++    expect(chips?.textContent).not.toContain(STUDIO_B);
++    click(button('Remove filter: Studio Bravo Studio'));
++    expect(replaceMock).toHaveBeenLastCalledWith('/games?platform=MSN', { scroll: false });
++  });
++
++  it('"Clear filters" drops every filter in one navigation', () => {
++    renderBrowser({ platforms: ['MSN', 'Switch'], studios: [STUDIO_A] });
++    click(button('Clear filters'));
++    expect(replaceMock).toHaveBeenLastCalledWith('/games', { scroll: false });
++  });
++
++  it('switches view in one tap', () => {
++    renderBrowser({ platforms: [], studios: [] });
++    expect(button('Cards').getAttribute('aria-pressed')).toBe('true');
++    click(button('List'));
++    expect(replaceMock).toHaveBeenLastCalledWith('/games?view=list', { scroll: false });
++  });
++
++  it('offers the Most active sort and says what it means next to the count', () => {
++    renderBrowser({ platforms: [], studios: [] });
++    click(button('Most active'));
++    expect(replaceMock).toHaveBeenLastCalledWith('/games?sort=activity', { scroll: false });
++  });
++
++  it('counts a filtered list as narrowed ("3 of 16 games")', () => {
++    renderBrowser({ platforms: ['MSN'], studios: [] });
++    expect(container.querySelector('[data-testid="games-result-count"]')?.textContent).toBe(
++      '3 of 16 games',
++    );
++  });
++
++  it('the phone Filters toggle reports its state and the active count', () => {
++    renderBrowser({ platforms: ['MSN', 'Switch'], studios: [] });
++    const toggle = button('Filters (2)');
++    expect(toggle.getAttribute('aria-expanded')).toBe('false');
++    const panel = container.querySelector('#games-filter-panel')!;
++    expect(panel.className).toContain('hidden');
++    expect(panel.className).toContain('lg:block');
++    click(toggle);
++    expect(toggle.getAttribute('aria-expanded')).toBe('true');
++    expect(panel.className.split(' ')).toContain('block');
++  });
++
++  it('renders no panel, no view switch for a caller that passes no facets', () => {
++    act(() =>
++      root.render(
++        <GamesCatalogBrowser query="" sort="newest" resultCount={3} resultCountCapped={false} totalCount={3}>
++          <div />
++        </GamesCatalogBrowser>,
++      ),
++    );
++    expect(container.querySelector('#games-filter-panel')).toBeNull();
++    expect(buttons().some((b) => b.textContent === 'List')).toBe(false);
++  });
++});
+diff --git a/frontend/__tests__/game-list-row.test.tsx b/frontend/__tests__/game-list-row.test.tsx
+new file mode 100644
+index 0000000..220d6f3
+--- /dev/null
++++ b/frontend/__tests__/game-list-row.test.tsx
+@@ -0,0 +1,63 @@
++/**
++ * GFE-SORT: GameListRow - the compact /games list row. Pins that it offers
++ * exactly the controls its card would (same gates), and none of the
++ * management controls the list view deliberately leaves to card view.
++ */
++import { describe, it, expect } from 'vitest';
++import { renderToStaticMarkup } from 'react-dom/server';
++import GameListRow from '@/components/GameListRow';
++import type { Game } from '@/lib/types';
++
++const GAME = {
++  id: 'g1',
++  title: 'Asteroids Arezion',
++  platform: 'MSN',
++  studio_name: 'Alpha Studio',
++  created_at: '2026-09-12T08:00:00Z',
++  build_count: 1,
++  slug: 'asteroids-arezion',
++} as Game;
++
++function html(props: Partial<React.ComponentProps<typeof GameListRow>> = {}): string {
++  return renderToStaticMarkup(
++    <ul>
++      <GameListRow game={GAME} {...props} />
++    </ul>,
++  );
++}
++
++describe('GameListRow', () => {
++  it('links the title to the game page and shows the shared meta line + build badge', () => {
++    const out = html({ showStudio: true });
++    expect(out).toContain('href="/game/asteroids-arezion"');
++    expect(out).toContain('MSN · Alpha Studio · Added 12 Sep 2026');
++    expect(out).toContain('1 build');
++  });
++
++  it('fails closed: no actions without the gates', () => {
++    const out = html();
++    expect(out).not.toContain('View dashboard');
++    expect(out).not.toContain('Import documents');
++    expect(out).not.toContain('>Edit<');
++  });
++
++  it('reviewer gets dashboard + import; manage adds Edit', () => {
++    const out = html({ canReview: true, canManage: true });
++    expect(out).toContain('href="/games/g1/dashboard"');
++    expect(out).toContain('href="/imports?game=g1"');
++    expect(out).toContain('href="/games/g1/edit"');
++  });
++
++  it('never renders the card-only management controls', () => {
++    const out = html({ canReview: true, canManage: true });
++    expect(out).not.toContain('Manage builds');
++    expect(out).not.toContain('Archive');
++    expect(out).not.toContain('Delete');
++  });
++
++  it('renders a plain title when the game has no slug', () => {
++    const out = html({ game: { ...GAME, slug: null } });
++    expect(out).not.toContain('href="/game/');
++    expect(out).toContain('Asteroids Arezion');
++  });
++});
+diff --git a/frontend/__tests__/game-sort-helpers.test.ts b/frontend/__tests__/game-sort-helpers.test.ts
+new file mode 100644
+index 0000000..4f0cfcd
+--- /dev/null
++++ b/frontend/__tests__/game-sort-helpers.test.ts
+@@ -0,0 +1,145 @@
++/**
++ * GFE-SORT: pure helpers behind the /games filters, view and "Most active"
++ * sort (lib/game-search.ts) and the shared meta line (lib/game-meta.ts).
++ *
++ * The URL is the state (CH-606 decision 1, inherited), so the round trip
++ * "searchParams -> normalized state -> href / backend path" is pinned exactly:
++ * a filter that silently drops out of the backend path would look fine on a
++ * one-page seed and miss every game past page 1 in production.
++ */
++import { describe, it, expect } from 'vitest';
++import {
++  GAME_FILTER_MAX_VALUES,
++  facetsRequestPath,
++  gamesHref,
++  gamesRequestPath,
++  hasGameFilters,
++  normalizeGameFilters,
++  normalizeGamesSort,
++  normalizeGamesView,
++  toggleGameFilter,
++} from '@/lib/game-search';
++import { addedLabel, gameMetaParts } from '@/lib/game-meta';
++import type { Game } from '@/lib/types';
++
++const STUDIO_A = '11111111-1111-4111-8111-111111111111';
++const STUDIO_B = '22222222-2222-4222-8222-222222222222';
++
++describe('normalizeGamesSort (GFE-SORT)', () => {
++  it('accepts activity, and still rejects anything unknown', () => {
++    expect(normalizeGamesSort('activity')).toBe('activity');
++    expect(normalizeGamesSort('ACTIVITY')).toBe('newest');
++  });
++});
++
++describe('normalizeGamesView', () => {
++  it('defaults to card and only accepts the literal list', () => {
++    expect(normalizeGamesView(undefined)).toBe('card');
++    expect(normalizeGamesView('list')).toBe('list');
++    expect(normalizeGamesView(['list', 'card'])).toBe('list');
++    expect(normalizeGamesView('grid')).toBe('card');
++  });
++});
++
++describe('normalizeGameFilters', () => {
++  it('reads single and repeated values, drops blanks and duplicates, keeps order', () => {
++    expect(normalizeGameFilters(['MSN', ' ', 'Switch', 'MSN'], undefined)).toEqual({
++      platforms: ['MSN', 'Switch'],
++      studios: [],
++    });
++    expect(normalizeGameFilters('MSN', STUDIO_A)).toEqual({
++      platforms: ['MSN'],
++      studios: [STUDIO_A],
++    });
++  });
++
++  it('drops a studio that is not a UUID rather than letting the backend 422 the page', () => {
++    expect(normalizeGameFilters(undefined, ['not-a-uuid', STUDIO_B]).studios).toEqual([STUDIO_B]);
++  });
++
++  it('caps each facet at the backend limit', () => {
++    const many = Array.from({ length: 30 }, (_, i) => `P${i}`);
++    expect(normalizeGameFilters(many, undefined).platforms).toHaveLength(GAME_FILTER_MAX_VALUES);
++  });
++});
++
++describe('toggleGameFilter / hasGameFilters', () => {
++  it('adds then removes a value on one facet only', () => {
++    const on = toggleGameFilter({ platforms: [], studios: [STUDIO_A] }, 'platforms', 'MSN');
++    expect(on).toEqual({ platforms: ['MSN'], studios: [STUDIO_A] });
++    expect(toggleGameFilter(on, 'platforms', 'MSN')).toEqual({ platforms: [], studios: [STUDIO_A] });
++    expect(hasGameFilters({ platforms: [], studios: [] })).toBe(false);
++    expect(hasGameFilters(on)).toBe(true);
++  });
++});
++
++describe('gamesRequestPath / facetsRequestPath with filters', () => {
++  const filters = { platforms: ['MSN', '__none__'], studios: [STUDIO_A] };
++
++  it('forwards every filter value to the backend list read', () => {
++    expect(gamesRequestPath('ast', 'activity', 50, filters)).toBe(
++      `/api/games?sort=activity&page_size=50&q=ast&platform=MSN&platform=__none__&studio=${STUDIO_A}`,
++    );
++  });
++
++  it('is byte-identical to before when there are no filters', () => {
++    expect(gamesRequestPath('', 'newest')).toBe('/api/games?sort=newest&page_size=50');
++  });
++
++  it('sends the facets read the same search and filters', () => {
++    expect(facetsRequestPath('', { platforms: [], studios: [] })).toBe('/api/games/facets');
++    expect(facetsRequestPath(' ast ', filters)).toBe(
++      `/api/games/facets?q=ast&platform=MSN&platform=__none__&studio=${STUDIO_A}`,
++    );
++  });
++});
++
++describe('gamesHref with filters and view', () => {
++  it('keeps defaults out of the URL and adds filters + view when set', () => {
++    expect(gamesHref('', 'newest', { platforms: [], studios: [] }, 'card')).toBe('/games');
++    expect(gamesHref('', 'newest', { platforms: ['MSN'], studios: [] }, 'list')).toBe(
++      '/games?platform=MSN&view=list',
++    );
++    expect(gamesHref('pong', 'activity', { platforms: [], studios: [STUDIO_A] })).toBe(
++      `/games?q=pong&sort=activity&studio=${STUDIO_A}`,
++    );
++  });
++
++  it('round-trips through normalizeGameFilters', () => {
++    const href = gamesHref('', 'title', { platforms: ['A B', 'C&D'], studios: [STUDIO_B] }, 'list');
++    const url = new URL(href, 'http://localhost');
++    expect(
++      normalizeGameFilters(url.searchParams.getAll('platform'), url.searchParams.getAll('studio')),
++    ).toEqual({ platforms: ['A B', 'C&D'], studios: [STUDIO_B] });
++    expect(normalizeGamesView(url.searchParams.get('view') ?? undefined)).toBe('list');
++  });
++});
++
++describe('game meta line', () => {
++  const game = {
++    id: 'g1',
++    title: 'Asteroids',
++    platform: 'MSN',
++    studio_name: 'Alpha Studio',
++    created_at: '2026-09-12T08:00:00Z',
++    build_count: 1,
++  } as Game;
++
++  it('orders platform, studio, added date', () => {
++    expect(gameMetaParts(game, { showStudio: true })).toEqual([
++      'MSN',
++      'Alpha Studio',
++      'Added 12 Sep 2026',
++    ]);
++  });
++
++  it('omits the studio when there is only one to see, and absent fields', () => {
++    expect(gameMetaParts(game, { showStudio: false })).toEqual(['MSN', 'Added 12 Sep 2026']);
++    expect(gameMetaParts({ ...game, platform: null, created_at: null }, { showStudio: false })).toEqual([]);
++  });
++
++  it('formats in UTC and ignores unparseable dates', () => {
++    expect(addedLabel('2026-09-12T23:30:00-05:00')).toBe('Added 13 Sep 2026');
++    expect(addedLabel('not a date')).toBeNull();
++  });
++});
+diff --git a/frontend/__tests__/games-page-filters.test.tsx b/frontend/__tests__/games-page-filters.test.tsx
+new file mode 100644
+index 0000000..df7ae8d
+--- /dev/null
++++ b/frontend/__tests__/games-page-filters.test.tsx
+@@ -0,0 +1,168 @@
++/**
++ * app/games/page.tsx - GFE-SORT filters, facets read and list view.
++ *
++ * Same approach as games-page-search.test.tsx: mock auth + backendFetch,
++ * render the Server Component to static markup, and assert the exact backend
++ * paths. The boundary under test: facet filters reach the SERVER (a local
++ * filter over one page would pass on a seed and fail in production), the
++ * facets read failing never fails the page, and the list view renders rows
++ * without the per-game builds reads the card view needs.
++ */
++import { describe, it, expect, vi, beforeEach } from 'vitest';
++import { renderToStaticMarkup } from 'react-dom/server';
++
++const { mockAuth, mockBackendFetch } = vi.hoisted(() => ({
++  mockAuth: vi.fn<() => Promise<{ user: Record<string, unknown> } | null>>(),
++  mockBackendFetch: vi.fn<(path: string, email: string) => Promise<Response>>(),
++}));
++
++vi.mock('@/auth', () => ({ auth: mockAuth }));
++vi.mock('@/lib/backend-fetch.server', () => ({ backendFetch: mockBackendFetch }));
++vi.mock('@/components/BuildPills', () => ({ default: () => <div data-testid="build-pills" /> }));
++vi.mock('@/components/ArchivedGamesPanel', () => ({ default: () => <div /> }));
++vi.mock('@/components/GamesCatalogBrowser', () => ({
++  default: ({
++    view,
++    filters,
++    facets,
++    totalCount,
++    children,
++  }: {
++    view?: string;
++    filters?: { platforms: string[]; studios: string[] };
++    facets?: { ok: boolean };
++    totalCount: number | null;
++    children: React.ReactNode;
++  }) => (
++    <div
++      data-testid="browser"
++      data-view={view}
++      data-platforms={filters?.platforms.join('|')}
++      data-facets-ok={String(facets?.ok)}
++      data-total-count={totalCount === null ? 'null' : String(totalCount)}
++    >
++      {children}
++    </div>
++  ),
++}));
++
++import GamesPage from '@/app/games/page';
++
++const STUDIO_A = '11111111-1111-4111-8111-111111111111';
++const GAMES = [
++  { id: 'g1', title: 'Asteroids', build_count: 1, slug: 'asteroids', platform: 'MSN', studio_name: 'Alpha', created_at: '2026-09-01T00:00:00Z', can_manage: true },
++  { id: 'g2', title: 'Centipede', build_count: 2, slug: 'centipede', platform: 'MSN', studio_name: 'Bravo', created_at: '2026-09-02T00:00:00Z' },
++];
++const FACETS = {
++  platforms: [{ value: 'MSN', count: 2 }],
++  studios: [
++    { id: STUDIO_A, name: 'Alpha', count: 1 },
++    { id: '22222222-2222-4222-8222-222222222222', name: 'Bravo', count: 1 },
++  ],
++};
++
++function json(body: unknown, status = 200): Response {
++  return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
++}
++
++function render(params: Record<string, string | string[]> = {}) {
++  return GamesPage({ searchParams: Promise.resolve(params) }).then((el) => renderToStaticMarkup(el));
++}
++
++function paths(): string[] {
++  return mockBackendFetch.mock.calls.map((c) => c[0]);
++}
++
++beforeEach(() => {
++  vi.clearAllMocks();
++  mockAuth.mockResolvedValue({
++    user: { email: 'r@atari.com', isAdmin: false, canReview: true, isSuperAdmin: false },
++  });
++  mockBackendFetch.mockImplementation(async (path: string) => {
++    if (path.startsWith('/api/games/facets')) return json(FACETS);
++    if (path.startsWith('/api/games?')) return json(GAMES);
++    return json([]);
++  });
++});
++
++describe('facet filters reach the server', () => {
++  it('forwards repeated platform values and the studio to the list AND the facets read', async () => {
++    await render({ platform: ['MSN', '__none__'], studio: STUDIO_A });
++    expect(paths()).toContain(
++      `/api/games?sort=newest&page_size=50&platform=MSN&platform=__none__&studio=${STUDIO_A}`,
++    );
++    expect(paths()).toContain(`/api/games/facets?platform=MSN&platform=__none__&studio=${STUDIO_A}`);
++  });
++
++  it('treats a filtered list as narrowed and sizes the catalogue for "N of M"', async () => {
++    const html = await render({ platform: 'MSN' });
++    expect(paths()).toContain('/api/games?sort=newest&page_size=200');
++    expect(html).toContain('data-total-count="2"');
++  });
++
++  it('forwards sort=activity', async () => {
++    await render({ sort: 'activity' });
++    expect(paths()).toContain('/api/games?sort=activity&page_size=50');
++  });
++});
++
++describe('list view', () => {
++  it('renders list rows and skips the per-game builds reads', async () => {
++    const html = await render({ view: 'list' });
++    expect(html).toContain('data-view="list"');
++    expect(html).toContain('aria-label="Games"');
++    expect(html).not.toContain('data-testid="build-pills"');
++    expect(paths().some((p) => p.includes('/builds'))).toBe(false);
++    // Studio shows: the facets say two studios are visible.
++    expect(html).toContain('MSN · Alpha · Added 1 Sep 2026');
++    // Edit is gated per game on can_manage.
++    expect(html).toContain('aria-label="Edit Asteroids"');
++    expect(html).not.toContain('aria-label="Edit Centipede"');
++  });
++
++  it('card view still reads builds per game', async () => {
++    await render();
++    expect(paths().filter((p) => p.endsWith('/builds'))).toHaveLength(2);
++  });
++});
++
++describe('failure and empty states', () => {
++  it('still renders the catalogue when the facets read fails (AC10)', async () => {
++    mockBackendFetch.mockImplementation(async (path: string) => {
++      if (path.startsWith('/api/games/facets')) return json({ detail: 'boom' }, 500);
++      if (path.startsWith('/api/games?')) return json(GAMES);
++      return json([]);
++    });
++    // List view: the real GameCard needs a mounted app router, which a static
++    // render does not have; the list row is a pure Server Component.
++    const html = await render({ view: 'list' });
++    expect(html).toContain('data-facets-ok="false"');
++    expect(html).toContain('Asteroids');
++    // Studio falls back to the page's own rows (two names -> shown).
++    expect(html).toContain('MSN · Alpha');
++  });
++
++  it('degrades a 200 with the wrong shape instead of crashing', async () => {
++    mockBackendFetch.mockImplementation(async (path: string) => {
++      if (path.startsWith('/api/games/facets')) return json([]);
++      if (path.startsWith('/api/games?')) return json(GAMES);
++      return json([]);
++    });
++    const html = await render();
++    expect(html).toContain('data-facets-ok="false"');
++  });
++
++  it('names the filters that matched nothing and clears them, keeping the search (AC9)', async () => {
++    mockBackendFetch.mockImplementation(async (path: string) => {
++      if (path.startsWith('/api/games/facets')) return json(FACETS);
++      if (path.startsWith('/api/games?sort=newest&page_size=50')) return json([]);
++      if (path.startsWith('/api/games?')) return json(GAMES);
++      return json([]);
++    });
++    const html = await render({ q: 'zz', platform: ['Dreamcast', '__none__'], studio: STUDIO_A, view: 'list' });
++    expect(html).toContain('No games match &quot;zz&quot; with these filters');
++    expect(html).toContain('Filtered by Dreamcast, No platform, Alpha.');
++    expect(html).toContain('href="/games?q=zz&amp;view=list"');
++    expect(html).toContain('Clear filters');
++  });
++});
+diff --git a/frontend/__tests__/sessions-filters-platform.test.tsx b/frontend/__tests__/sessions-filters-platform.test.tsx
+new file mode 100644
+index 0000000..7b95b2f
+--- /dev/null
++++ b/frontend/__tests__/sessions-filters-platform.test.tsx
+@@ -0,0 +1,84 @@
++// @vitest-environment jsdom
++/**
++ * GFE-SORT: the /sessions Platform dropdown. Options come from the facets
++ * read; the value is the platform text (or __none__); picking one clears the
++ * game + build filters (a game from the old platform would AND the new one
++ * down to nothing) and resets to page 1.
++ */
++import { describe, it, expect, beforeEach, vi } from 'vitest';
++
++(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
++
++const { pushMock, facetsMock } = vi.hoisted(() => ({ pushMock: vi.fn(), facetsMock: vi.fn() }));
++let currentSearchParams = new URLSearchParams();
++
++vi.mock('next/navigation', () => ({
++  useRouter: () => ({ push: pushMock, replace: vi.fn(), prefetch: vi.fn(), refresh: vi.fn() }),
++  usePathname: () => '/sessions',
++  useSearchParams: () => currentSearchParams,
++}));
++vi.mock('@/lib/catalog-api', () => ({
++  listGames: vi.fn(async () => []),
++  listBuilds: vi.fn(async () => ({ ok: true, data: [] })),
++  listGameFacets: facetsMock,
++}));
++
++import { act } from 'react';
++import { createRoot } from 'react-dom/client';
++import SessionsFilters from '@/components/SessionsFilters';
++
++async function mount(): Promise<HTMLDivElement> {
++  const container = document.createElement('div');
++  document.body.appendChild(container);
++  const root = createRoot(container);
++  await act(async () => root.render(<SessionsFilters />));
++  await act(async () => {
++    await Promise.resolve();
++    await Promise.resolve();
++  });
++  return container;
++}
++
++beforeEach(() => {
++  vi.clearAllMocks();
++  currentSearchParams = new URLSearchParams();
++  facetsMock.mockResolvedValue({
++    platforms: [
++      { value: 'MSN', count: 3 },
++      { value: null, count: 9 },
++    ],
++    studios: [],
++  });
++});
++
++describe('SessionsFilters - Platform (GFE-SORT)', () => {
++  it('lists platforms with counts, "No platform" as __none__', async () => {
++    const container = await mount();
++    const select = container.querySelector<HTMLSelectElement>('#filter-platform')!;
++    expect(Array.from(select.options).map((o) => [o.value, o.textContent])).toEqual([
++      ['', 'All platforms'],
++      ['MSN', 'MSN (3)'],
++      ['__none__', 'No platform (9)'],
++    ]);
++  });
++
++  it('picking a platform clears game, build and page', async () => {
++    currentSearchParams = new URLSearchParams('game=g1&build=b1&page=3&severity=high');
++    const container = await mount();
++    const select = container.querySelector<HTMLSelectElement>('#filter-platform')!;
++    await act(async () => {
++      select.value = 'MSN';
++      select.dispatchEvent(new Event('change', { bubbles: true }));
++    });
++    expect(pushMock).toHaveBeenCalledWith('/sessions?severity=high&platform=MSN', { scroll: false });
++  });
++
++  it('keeps a URL platform the facets do not list, and survives a failed read', async () => {
++    facetsMock.mockRejectedValue(new Error('down'));
++    vi.spyOn(console, 'error').mockImplementation(() => {});
++    currentSearchParams = new URLSearchParams('platform=Dreamcast');
++    const container = await mount();
++    const select = container.querySelector<HTMLSelectElement>('#filter-platform')!;
++    expect(select.value).toBe('Dreamcast');
++  });
++});
+diff --git a/frontend/__tests__/sessions-filters.test.tsx b/frontend/__tests__/sessions-filters.test.tsx
+index 352653c..d13f1a3 100644
+--- a/frontend/__tests__/sessions-filters.test.tsx
++++ b/frontend/__tests__/sessions-filters.test.tsx
+@@ -35,6 +35,9 @@ vi.mock('next/navigation', () => ({
+ vi.mock('@/lib/catalog-api', () => ({
+   listGames: listGamesMock,
+   listBuilds: listBuildsMock,
++  // GFE-SORT: the Platform dropdown's options. Empty here; covered in
++  // sessions-filters-platform.test.tsx.
++  listGameFacets: vi.fn(async () => ({ platforms: [], studios: [] })),
+ }));
+ 
+ import { act } from 'react';
+diff --git a/frontend/app/games/page.tsx b/frontend/app/games/page.tsx
+index ab217e2..63a9dc5 100644
+--- a/frontend/app/games/page.tsx
++++ b/frontend/app/games/page.tsx
+@@ -4,6 +4,8 @@ import { auth } from '@/auth';
+ import { redirect } from 'next/navigation';
+ import { backendFetch } from '@/lib/backend-fetch.server';
+ import GameCard from '@/components/GameCard';
++import GameListRow from '@/components/GameListRow';
++import type { FacetsState } from '@/components/GameFilterPanel';
+ import BuildPills from '@/components/BuildPills';
+ import ArchivedGamesPanel from '@/components/ArchivedGamesPanel';
+ import GamesCatalogBrowser from '@/components/GamesCatalogBrowser';
+@@ -12,16 +14,26 @@ import InlineError from '@/components/primitives/InlineError';
+ import { buttonClasses } from '@/components/primitives/buttonClasses';
+ import {
+   GAMES_COUNT_PAGE_SIZE,
++  GAMES_NO_PLATFORM,
+   GAMES_PAGE_SIZE,
++  NO_GAME_FILTERS,
++  NO_PLATFORM_LABEL,
+   echoedTerm,
++  facetsRequestPath,
+   gamesHref,
+   gamesRequestPath,
++  hasGameFilters,
+   isCappedRead,
+   isSearchActive,
++  normalizeGameFilters,
+   normalizeGamesQuery,
+   normalizeGamesSort,
++  normalizeGamesView,
+   totalFromCappedRead,
++  type GameFacets,
++  type GameFilters,
+   type GamesSort,
++  type GamesView,
+ } from '@/lib/game-search';
+ import type { Game, Build } from '@/lib/types';
+ 
+@@ -58,6 +70,15 @@ import type { Game, Build } from '@/lib/types';
+  * catalogue, so no second request is made. A failure of that count read
+  * degrades the label to "N games" and never fails the page.
+  *
++ * Filters, "Most active" and the list view (GFE-SORT)
++ * ----------------------------------------------------
++ * `?platform=` / `?studio=` (repeatable), `?sort=activity` and `?view=list`
++ * are read here like `q` and `sort` and forwarded to the backend, which
++ * filters before limit/offset (backend/games.py::_apply_game_filters). The
++ * filter panel's options come from GET /api/games/facets, read IN PARALLEL
++ * with the list; a failed facets read degrades the panel to a notice and
++ * never fails the page (AC10). Design record: design-agent-run/game-sort/.
++ *
+  * Error handling:
+  *  - Backend unreachable / non-OK response renders an inline error banner
+  *    rather than throwing, to avoid a hard error boundary crash on the
+@@ -88,6 +109,27 @@ async function fetchGames(email: string, path: string): Promise<GamesResult> {
+   }
+ }
+ 
++async function fetchFacets(email: string, path: string): Promise<FacetsState> {
++  try {
++    const res = await backendFetch(path, email);
++    if (!res.ok) {
++      const body = (await res.json().catch(() => ({}))) as { detail?: string };
++      return { ok: false, message: body.detail ?? `HTTP ${res.status}` };
++    }
++    const body = (await res.json()) as Partial<GameFacets> | null;
++    // Shape guard: a 200 with an unexpected body (a proxy error page, an
++    // older backend without this route's contract) must degrade the panel,
++    // never crash the whole catalogue.
++    if (!body || !Array.isArray(body.platforms) || !Array.isArray(body.studios)) {
++      return { ok: false, message: 'Unexpected response from the filters service' };
++    }
++    return { ok: true, facets: { platforms: body.platforms, studios: body.studios } };
++  } catch (err: unknown) {
++    const message = err instanceof Error ? err.message : 'Failed to load filters';
++    return { ok: false, message };
++  }
++}
++
+ async function fetchBuilds(
+   gameId: string,
+   email: string,
+@@ -121,7 +163,13 @@ export default async function GamesPage({
+   const params = (await searchParams) ?? {};
+   const query = normalizeGamesQuery(params.q);
+   const sort = normalizeGamesSort(params.sort);
++  const view = normalizeGamesView(params.view);
++  const filters = normalizeGameFilters(params.platform, params.studio);
+   const searchActive = isSearchActive(query);
++  const filtersActive = hasGameFilters(filters);
++  // "Narrowed" = anything that makes the list a subset of the catalogue. The
++  // "N of M" count needs the catalogue size exactly when it is narrowed.
++  const narrowed = searchActive || filtersActive;
+ 
+   const session = await auth();
+   if (!session?.user?.email) {
+@@ -157,11 +205,12 @@ export default async function GamesPage({
+ 
+   // One list read for what is shown, plus (only while searching) a term-less
+   // read whose only job is to size the catalogue for the "N of M" label.
+-  const [gamesResult, catalogueResult] = await Promise.all([
+-    fetchGames(email, gamesRequestPath(query, sort)),
+-    searchActive
++  const [gamesResult, catalogueResult, facetsResult] = await Promise.all([
++    fetchGames(email, gamesRequestPath(query, sort, GAMES_PAGE_SIZE, filters)),
++    narrowed
+       ? fetchGames(email, gamesRequestPath('', sort, GAMES_COUNT_PAGE_SIZE))
+       : Promise.resolve(null),
++    fetchFacets(email, facetsRequestPath(query, filters)),
+   ]);
+ 
+   if (!gamesResult.ok) {
+@@ -186,7 +235,7 @@ export default async function GamesPage({
+   // there may be more rows behind it), OR - with no search - the primary read
+   // itself came back full. A list length is only a total when the list was
+   // not truncated.
+-  const totalCount = searchActive
++  const totalCount = narrowed
+     ? catalogueResult !== null && catalogueResult.ok
+       ? totalFromCappedRead(catalogueResult.games.length, GAMES_COUNT_PAGE_SIZE)
+       : null
+@@ -195,7 +244,7 @@ export default async function GamesPage({
+   // The genuinely empty catalogue (CH-183's state, unchanged). Distinct from
+   // the no-match state below: there is nothing to search here, so the search
+   // controls are not rendered at all.
+-  if (games.length === 0 && !searchActive) {
++  if (games.length === 0 && !narrowed) {
+     return (
+       <div>
+         <PageHeader isAdmin={isAdmin} />
+@@ -215,9 +264,18 @@ export default async function GamesPage({
+ 
+   // Fetch all builds in parallel — one request per game, not sequential.
+   // With seed data this is O(small N); revisit if catalog grows past ~20 games.
+-  const buildsResults = await Promise.all(
+-    games.map((g) => fetchBuilds(g.id, email)),
+-  );
++  // The list view shows no build pills, so it skips these reads entirely.
++  const buildsResults =
++    view === 'card'
++      ? await Promise.all(games.map((g) => fetchBuilds(g.id, email)))
++      : [];
++
++  // Studio names only earn space on the card when the caller can see more
++  // than one studio (viewers are studio-scoped; the same name on every card
++  // is noise). Read from the facets; if those failed, fall back to the page.
++  const showStudio = facetsResult.ok
++    ? facetsResult.facets.studios.length > 1
++    : new Set(games.map((g) => g.studio_name)).size > 1;
+ 
+   return (
+     <div>
+@@ -228,9 +286,31 @@ export default async function GamesPage({
+         resultCount={games.length}
+         resultCountCapped={resultCountCapped}
+         totalCount={totalCount}
++        filters={filters}
++        view={view}
++        facets={facetsResult}
+       >
+         {games.length === 0 ? (
+-          <NoMatchState query={query} sort={sort} />
++          <NoMatchState
++            query={query}
++            sort={sort}
++            filters={filters}
++            view={view}
++            facets={facetsResult.ok ? facetsResult.facets : null}
++          />
++        ) : view === 'list' ? (
++          <ul className="flex flex-col gap-3" aria-label="Games">
++            {games.map((game) => (
++              <GameListRow
++                key={game.id}
++                game={game}
++                canReview={canReview}
++                canManage={game.can_manage ?? false}
++                highlightTerm={query}
++                showStudio={showStudio}
++              />
++            ))}
++          </ul>
+         ) : (
+       <Suspense>
+         <div
+@@ -259,6 +339,7 @@ export default async function GamesPage({
+                 canAddBuilds={isAdmin}
+                 canDeleteGame={canDeleteGame}
+                 highlightTerm={query}
++                showStudio={showStudio}
+               />
+             );
+           })}
+@@ -292,17 +373,46 @@ export default async function GamesPage({
+ function NoMatchState({
+   query,
+   sort,
++  filters = NO_GAME_FILTERS,
++  view,
++  facets = null,
+ }: {
+   query: string;
+   sort: GamesSort;
++  filters?: GameFilters;
++  view?: GamesView;
++  facets?: GameFacets | null;
+ }): React.JSX.Element {
++  const searchActive = isSearchActive(query);
++  if (!hasGameFilters(filters)) {
++    return (
++      <EmptyState
++        title={`No games match "${echoedTerm(query)}"`}
++        body="We searched every game in the catalogue, not just this page. Try a shorter term or a different spelling."
++        action={
++          <Link href={gamesHref('', sort, filters, view)} className={buttonClasses({ variant: 'secondary' })}>
++            Clear search
++          </Link>
++        }
++      />
++    );
++  }
++  // GFE-SORT (AC9): name the filters that matched nothing, so a stale shared
++  // link or an over-narrow pick is obvious, and offer ONE way out. The search
++  // term is kept: clearing filters should not also throw away what was typed.
++  const studioName = (id: string): string =>
++    facets?.studios.find((s) => s.id === id)?.name ?? 'Unknown studio';
++  const named = [
++    ...filters.platforms.map((p) => (p === GAMES_NO_PLATFORM ? NO_PLATFORM_LABEL : p)),
++    ...filters.studios.map(studioName),
++  ].join(', ');
+   return (
+     <EmptyState
+-      title={`No games match "${echoedTerm(query)}"`}
+-      body="We searched every game in the catalogue, not just this page. Try a shorter term or a different spelling."
++      title={searchActive ? `No games match "${echoedTerm(query)}" with these filters` : 'No games match these filters'}
++      body={`Filtered by ${named}. We checked every game in the catalogue, not just this page.`}
+       action={
+-        <Link href={gamesHref('', sort)} className={buttonClasses({ variant: 'secondary' })}>
+-          Clear search
++        <Link href={gamesHref(query, sort, NO_GAME_FILTERS, view)} className={buttonClasses({ variant: 'secondary' })}>
++          Clear filters
+         </Link>
+       }
+     />
+diff --git a/frontend/app/sessions/page.tsx b/frontend/app/sessions/page.tsx
+index cd58b59..6312337 100644
+--- a/frontend/app/sessions/page.tsx
++++ b/frontend/app/sessions/page.tsx
+@@ -11,6 +11,7 @@ import SessionsFilters from '@/components/SessionsFilters';
+ import DeleteSessionControl from '@/components/DeleteSessionControl';
+ import { buttonClasses } from '@/components/primitives/buttonClasses';
+ import { SEVERITY_BADGE } from '@/lib/severity-badge';
++import { GAMES_NO_PLATFORM, NO_PLATFORM_LABEL } from '@/lib/game-search';
+ import type {
+   SessionListItem,
+   VideoStatus,
+@@ -362,6 +363,8 @@ export default async function SessionsPage({
+   const build = scalar(params['build']);
+   const status = scalar(params['status']);
+   const severity = scalar(params['severity']);
++  // GFE-SORT: platform text, or '__none__' for games with no platform.
++  const platform = scalar(params['platform']);
+   const pageRaw = parseInt(scalar(params['page']), 10);
+   const page = Number.isFinite(pageRaw) && pageRaw > 0 ? pageRaw : 1;
+ 
+@@ -370,6 +373,7 @@ export default async function SessionsPage({
+     build: build || undefined,
+     status: status || undefined,
+     severity: severity || undefined,
++    platform: platform || undefined,
+     page,
+     page_size: PAGE_SIZE,
+   });
+@@ -381,6 +385,7 @@ export default async function SessionsPage({
+   if (build) baseParams.set('build', build);
+   if (status) baseParams.set('status', status);
+   if (severity) baseParams.set('severity', severity);
++  if (platform) baseParams.set('platform', platform);
+ 
+   // CH-475: any filter set → show a read-only, human-readable summary above
+   // the table so a drill-down from the dashboard (which links here with
+@@ -391,7 +396,7 @@ export default async function SessionsPage({
+   // extra fetch. If the filtered set is empty there is no row to resolve a
+   // name from, so we fall back to the raw id (still better than nothing, and
+   // the empty state right below explains there are zero matches).
+-  const hasFilters = Boolean(game || build || severity);
++  const hasFilters = Boolean(platform || game || build || severity);
+   const firstItem = result.ok ? result.data.items[0] : undefined;
+   const summaryGameLabel = game ? (firstItem?.game ?? game) : null;
+   const summaryBuildLabel = build ? (firstItem?.build ?? build) : null;
+@@ -429,6 +434,11 @@ export default async function SessionsPage({
+           style={{ color: 'var(--color-ink-sub)' }}
+         >
+           <span>Showing:</span>
++          {platform && (
++            <span>
++              Platform: {platform === GAMES_NO_PLATFORM ? NO_PLATFORM_LABEL : platform}
++            </span>
++          )}
+           {summaryGameLabel && <span>Game: {summaryGameLabel}</span>}
+           {summaryBuildLabel && <span>Build: {summaryBuildLabel}</span>}
+           {severity && (
+@@ -436,10 +446,13 @@ export default async function SessionsPage({
+               Severity: {severity.charAt(0).toUpperCase() + severity.slice(1)}
+             </span>
+           )}
++          {/* --color-accent-text, not --color-accent: mint as text on a
++              light surface is 1.91:1 (DESIGN_SYSTEM §1.5). Found by the
++              GFE-SORT audit. min-h 44px: touch target. */}
+           <Link
+             href="/sessions"
+-            className="underline"
+-            style={{ color: 'var(--color-accent)' }}
++            className="inline-flex min-h-[44px] items-center underline"
++            style={{ color: 'var(--color-accent-text)' }}
+           >
+             Clear
+           </Link>
+@@ -456,7 +469,7 @@ export default async function SessionsPage({
+         <EmptyState
+           title="No sessions yet"
+           body={
+-            game || build || status || severity
++            platform || game || build || status || severity
+               ? 'No sessions match the current filters. Clear them to see all sessions.'
+               : 'When testers submit sessions they will appear here.'
+           }
+diff --git a/frontend/components/GameCard.tsx b/frontend/components/GameCard.tsx
+index e0c2e7c..acdfb84 100644
+--- a/frontend/components/GameCard.tsx
++++ b/frontend/components/GameCard.tsx
+@@ -124,6 +124,7 @@ import HighlightedText from '@/components/HighlightedText';
+ import ArchiveGameControl from '@/components/ArchiveGameControl';
+ import DeleteGameControl from '@/components/DeleteGameControl';
+ import { slugify } from '@/lib/slug';
++import { gameMetaParts } from '@/lib/game-meta';
+ import type { Game } from '@/lib/types';
+ import type { ReactNode } from 'react';
+ 
+@@ -157,6 +158,9 @@ type GameCardProps = {
+    *  itself runs server-side in backend/games.py::list_games; this only shows
+    *  WHY a card matched. Empty/absent renders the title untouched. */
+   highlightTerm?: string;
++  /** GFE-SORT: include the studio name in the meta line. The page passes
++   *  true only when the caller can see more than one studio. */
++  showStudio?: boolean;
+ };
+ 
+ export default function GameCard({
+@@ -167,6 +171,7 @@ export default function GameCard({
+   canAddBuilds = false,
+   canDeleteGame = false,
+   highlightTerm = '',
++  showStudio = false,
+ }: GameCardProps): React.JSX.Element {
+   const buildLabel =
+     game.build_count === 1 ? '1 build' : `${game.build_count} builds`;
+@@ -184,6 +189,7 @@ export default function GameCard({
+   // These decide whether a slot has CONTENT; the slot element itself is
+   // emitted either way, so the row keeps its track (see the file header).
+   const hasActions = canReview || canManageBuilds;
++  const metaParts = gameMetaParts(game, { showStudio });
+   const hasDelete = canDeleteGame && !hasBuilds;
+ 
+   return (
+@@ -240,17 +246,20 @@ export default function GameCard({
+         </Badge>
+       </div>
+ 
+-      {/* Slot 2 — platform. Emitted empty when the game has none, so its
++      {/* Slot 2 — meta line: platform · studio · added date (GFE-SORT; was
++          platform only). Built by lib/game-meta.ts so the list view shows the
++          identical line. Emitted empty when there is nothing to show, so its
+           absence does not lift every row below it out of alignment with the
+-          sibling cards that do have one. */}
++          sibling cards that do have one. Wraps rather than truncating, so a
++          long platform name stays readable in full at 320px. */}
+       <div>
+-        {game.platform && (
++        {metaParts.length > 0 && (
+           <p
+-            className="adp-mono mt-0.5 truncate"
++            className="adp-mono mt-0.5 break-words"
+             style={{ color: 'var(--color-ink-faint)' }}
+-            title={game.platform}
++            data-testid="game-meta"
+           >
+-            {game.platform}
++            {metaParts.join(' · ')}
+           </p>
+         )}
+       </div>
+diff --git a/frontend/components/GameFilterPanel.stories.tsx b/frontend/components/GameFilterPanel.stories.tsx
+new file mode 100644
+index 0000000..2f7e5bd
+--- /dev/null
++++ b/frontend/components/GameFilterPanel.stories.tsx
+@@ -0,0 +1,62 @@
++import type { Meta, StoryObj } from '@storybook/react';
++import { useState } from 'react';
++import GameFilterPanel, { type FacetsState } from './GameFilterPanel';
++import { toggleGameFilter, type GameFilters } from '@/lib/game-search';
++
++const FACETS: FacetsState = {
++  ok: true,
++  facets: {
++    platforms: [
++      { value: 'Atari Recharged', count: 9 },
++      { value: 'MSN', count: 4 },
++      { value: 'Nintendo Switch', count: 3 },
++      { value: 'Web', count: 2 },
++      { value: null, count: 11 },
++    ],
++    studios: [
++      { id: '11111111-1111-4111-8111-111111111111', name: 'Atari', count: 20 },
++      { id: '22222222-2222-4222-8222-222222222222', name: 'Coatsink', count: 9 },
++    ],
++  },
++};
++
++function Interactive({ facets, initial }: { facets: FacetsState; initial: GameFilters }) {
++  const [filters, setFilters] = useState(initial);
++  return (
++    <div style={{ maxWidth: 240 }}>
++      <GameFilterPanel
++        facets={facets}
++        filters={filters}
++        onToggle={(facet, value) => setFilters((f) => toggleGameFilter(f, facet, value))}
++      />
++    </div>
++  );
++}
++
++const meta: Meta<typeof Interactive> = {
++  title: 'Games/GameFilterPanel',
++  component: Interactive,
++  parameters: { layout: 'padded' },
++};
++export default meta;
++type Story = StoryObj<typeof Interactive>;
++
++export const Default: Story = { args: { facets: FACETS, initial: { platforms: [], studios: [] } } };
++export const WithSelection: Story = {
++  args: { facets: FACETS, initial: { platforms: ['MSN'], studios: [] } },
++};
++export const ManyPlatforms: Story = {
++  args: {
++    facets: {
++      ok: true,
++      facets: {
++        platforms: Array.from({ length: 14 }, (_, i) => ({ value: `Platform ${i + 1}`, count: 20 - i })),
++        studios: [],
++      },
++    },
++    initial: { platforms: [], studios: [] },
++  },
++};
++export const Unavailable: Story = {
++  args: { facets: { ok: false, message: 'HTTP 503' }, initial: { platforms: [], studios: [] } },
++};
+diff --git a/frontend/components/GameFilterPanel.tsx b/frontend/components/GameFilterPanel.tsx
+new file mode 100644
+index 0000000..dcf262a
+--- /dev/null
++++ b/frontend/components/GameFilterPanel.tsx
+@@ -0,0 +1,272 @@
++'use client';
++
++/**
++ * GameFilterPanel - the /games "Filter" panel: Platform and Studio facets with
++ * a count per option (GFE-SORT).
++ *
++ * Design record: design-agent-run/game-sort/ (Design System Agent run).
++ *
++ * Presentational + a little local state ("Show all"): the parent
++ * (GamesCatalogBrowser) owns the URL and the navigation transition, so every
++ * pick goes through the SAME router.replace + dimmed-grid pending treatment
++ * the search box and sort pills already use (CH-606 decisions 1 and 2).
++ *
++ * Why toggle rows and not checkboxes or a <select>
++ * ------------------------------------------------
++ *  - Fuji has no Checkbox primitive, and a facet is several values picked at
++ *    once, which a single-value <select> (SessionsFilters) cannot express.
++ *  - Each option is a <button aria-pressed>, the same toggle semantics the
++ *    sort pills use, laid out as a full-width row so the whole row is the
++ *    44px touch target and the count sits right-aligned beside the name
++ *    (Wickens 9: the name and its count are read together).
++ *  - A pressed row carries TWO cues besides color: a check mark and
++ *    aria-pressed (Wickens 4, redundancy gain).
++ *
++ * Scale
++ * -----
++ *  Each facet shows the first FACET_VISIBLE_OPTIONS options (most games
++ *  first, from the backend) and a "Show all N" control, so a catalogue with
++ *  30 platforms does not push the grid a screen down on a phone. A selected
++ *  option is always shown even when it would sit past the cut, so the user
++ *  can see and undo what is applied (Wickens 11, knowledge in the world).
++ *
++ * A selected value the facets no longer list (a stale shared link, or a
++ * platform an admin just renamed) is still rendered, with count 0, so it can
++ * be removed from here as well as from its chip.
++ *
++ * Studio is hidden when the caller can see only one studio and none is
++ * selected: a one-option facet filters nothing (viewers are studio-scoped).
++ */
++import { useState } from 'react';
++import InlineError from '@/components/primitives/InlineError';
++import {
++  GAMES_NO_PLATFORM,
++  NO_PLATFORM_LABEL,
++  type GameFacets,
++  type GameFilters,
++} from '@/lib/game-search';
++
++/** Options shown per facet before "Show all". */
++export const FACET_VISIBLE_OPTIONS = 8;
++
++export type FacetsState =
++  | { ok: true; facets: GameFacets }
++  | { ok: false; message: string };
++
++export type GameFilterPanelProps = {
++  facets: FacetsState;
++  filters: GameFilters;
++  onToggle: (facet: keyof GameFilters, value: string) => void;
++  /** Prefix for element ids, so two panels on one page never collide. */
++  idPrefix?: string;
++};
++
++type FacetOption = { value: string; label: string; count: number };
++
++function CheckIcon(): React.JSX.Element {
++  return (
++    <svg
++      viewBox="0 0 16 16"
++      width="12"
++      height="12"
++      fill="none"
++      stroke="currentColor"
++      strokeWidth="2"
++      aria-hidden="true"
++      focusable="false"
++    >
++      <path d="M3.5 8.5 L6.5 11.5 L12.5 4.5" strokeLinecap="round" strokeLinejoin="round" />
++    </svg>
++  );
++}
++
++/** Platform options, with the "no platform" bucket labelled and kept last. */
++export function platformOptions(facets: GameFacets, selected: string[]): FacetOption[] {
++  const options: FacetOption[] = facets.platforms.map((p) => ({
++    value: p.value ?? GAMES_NO_PLATFORM,
++    label: p.value ?? NO_PLATFORM_LABEL,
++    count: p.count,
++  }));
++  for (const value of selected) {
++    if (!options.some((o) => o.value === value)) {
++      options.push({
++        value,
++        label: value === GAMES_NO_PLATFORM ? NO_PLATFORM_LABEL : value,
++        count: 0,
++      });
++    }
++  }
++  return options;
++}
++
++/** Studio options; an unknown selected id is labelled rather than shown raw. */
++export function studioOptions(facets: GameFacets, selected: string[]): FacetOption[] {
++  const options: FacetOption[] = facets.studios.map((s) => ({
++    value: s.id,
++    label: s.name,
++    count: s.count,
++  }));
++  for (const value of selected) {
++    if (!options.some((o) => o.value === value)) {
++      options.push({ value, label: 'Unknown studio', count: 0 });
++    }
++  }
++  return options;
++}
++
++function FacetGroup({
++  id,
++  legend,
++  noun,
++  options,
++  selected,
++  onToggle,
++}: {
++  id: string;
++  legend: string;
++  /** Plural noun for the "Show all N …" control, e.g. "platforms". */
++  noun: string;
++  options: FacetOption[];
++  selected: string[];
++  onToggle: (value: string) => void;
++}): React.JSX.Element {
++  const [expanded, setExpanded] = useState(false);
++  const overflow = options.length > FACET_VISIBLE_OPTIONS;
++  const visible =
++    expanded || !overflow
++      ? options
++      : options.filter(
++          (o, i) => i < FACET_VISIBLE_OPTIONS || selected.includes(o.value),
++        );
++
++  return (
++    <fieldset className="min-w-0">
++      <legend className="adp-kicker mb-2">{legend}</legend>
++      <ul id={`${id}-options`} className="flex flex-col gap-1">
++        {visible.map((option) => {
++          const isSelected = selected.includes(option.value);
++          return (
++            <li key={option.value}>
++              <button
++                type="button"
++                aria-pressed={isSelected}
++                onClick={() => onToggle(option.value)}
++                className={[
++                  'flex min-h-[44px] w-full items-center gap-3 rounded-[var(--radius-button)] px-3 py-2 text-left',
++                  'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
++                  isSelected
++                    ? 'bg-[var(--color-accent-08)]'
++                    : 'hover:bg-[var(--color-surface-2)]',
++                ].join(' ')}
++              >
++                <span
++                  className={[
++                    // 20px box with the 8px radius-sm reads as a rounded SQUARE (a
++                    // multi-select check), where 16px went fully round and
++                    // read as a radio button (Wickens 3, top-down processing).
++                    'flex h-5 w-5 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border',
++                    isSelected
++                      ? 'border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-accent-ink)]'
++                      : 'border-[var(--color-bar-neutral)]',
++                  ].join(' ')}
++                  aria-hidden="true"
++                >
++                  {isSelected && <CheckIcon />}
++                </span>
++                <span
++                  className="adp-mono min-w-0 flex-1 break-words"
++                  style={{ color: 'var(--color-ink)' }}
++                >
++                  {option.label}
++                </span>
++                <span
++                  className="adp-mono shrink-0 tabular-nums"
++                  style={{ color: 'var(--color-ink-faint)' }}
++                  aria-label={`${option.count} ${option.count === 1 ? 'game' : 'games'}`}
++                >
++                  {option.count}
++                </span>
++              </button>
++            </li>
++          );
++        })}
++      </ul>
++      {overflow && (
++        <button
++          type="button"
++          aria-expanded={expanded}
++          aria-controls={`${id}-options`}
++          onClick={() => setExpanded((v) => !v)}
++          className="adp-mono mt-1 min-h-[44px] rounded-[var(--radius-button)] px-3 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
++          style={{ color: 'var(--color-accent-text)' }}
++        >
++          {expanded ? 'Show fewer' : `Show all ${options.length} ${noun}`}
++        </button>
++      )}
++    </fieldset>
++  );
++}
++
++export default function GameFilterPanel({
++  facets,
++  filters,
++  onToggle,
++  idPrefix = 'game-filters',
++}: GameFilterPanelProps): React.JSX.Element {
++  if (!facets.ok) {
++    return (
++      <div className="flex flex-col gap-2" data-testid="game-filters-unavailable">
++        <p className="adp-kicker">Filters</p>
++        <p className="adp-body" style={{ color: 'var(--color-ink-sub)' }}>
++          Filters are unavailable right now. The list below is still complete.
++        </p>
++        <InlineError>{facets.message}</InlineError>
++      </div>
++    );
++  }
++
++  const platforms = platformOptions(facets.facets, filters.platforms);
++  const studios = studioOptions(facets.facets, filters.studios);
++  // A facet whose only option is "No platform" (or one studio) filters
++  // nothing, so it is not offered - unless something in it is selected.
++  const namedPlatforms = platforms.filter((o) => o.value !== GAMES_NO_PLATFORM);
++  const showPlatforms = namedPlatforms.length > 0 || filters.platforms.length > 0;
++  const showStudios = studios.length > 1 || filters.studios.length > 0;
++
++  if (!showPlatforms && !showStudios) {
++    return (
++      <div className="flex flex-col gap-2" data-testid="game-filters-empty">
++        <p className="adp-kicker">Filters</p>
++        <p className="adp-body" style={{ color: 'var(--color-ink-sub)' }}>
++          No platforms have been set on these games yet. Admins can add one
++          from a game&apos;s Edit page.
++        </p>
++      </div>
++    );
++  }
++
++  return (
++    <div className="flex flex-col gap-6">
++      {showPlatforms && (
++        <FacetGroup
++          id={`${idPrefix}-platform`}
++          legend="Platform"
++          noun="platforms"
++          options={platforms}
++          selected={filters.platforms}
++          onToggle={(value) => onToggle('platforms', value)}
++        />
++      )}
++      {showStudios && (
++        <FacetGroup
++          id={`${idPrefix}-studio`}
++          legend="Studio"
++          noun="studios"
++          options={studios}
++          selected={filters.studios}
++          onToggle={(value) => onToggle('studios', value)}
++        />
++      )}
++    </div>
++  );
++}
+diff --git a/frontend/components/GameListRow.stories.tsx b/frontend/components/GameListRow.stories.tsx
+new file mode 100644
+index 0000000..ae70388
+--- /dev/null
++++ b/frontend/components/GameListRow.stories.tsx
+@@ -0,0 +1,42 @@
++import type { Meta, StoryObj } from '@storybook/react';
++import GameListRow from './GameListRow';
++import type { Game } from '@/lib/types';
++
++const GAME = {
++  id: 'g1',
++  title: 'Asteroids Arezion',
++  platform: 'MSN',
++  studio_name: 'Atari',
++  created_at: '2026-09-12T08:00:00Z',
++  build_count: 2,
++  slug: 'asteroids-arezion',
++} as Game;
++
++const meta: Meta<typeof GameListRow> = {
++  title: 'Games/GameListRow',
++  component: GameListRow,
++  decorators: [
++    (Story) => (
++      <ul style={{ listStyle: 'none', padding: 0 }}>
++        <Story />
++      </ul>
++    ),
++  ],
++};
++export default meta;
++type Story = StoryObj<typeof GameListRow>;
++
++export const Tester: Story = { args: { game: GAME } };
++export const Reviewer: Story = { args: { game: GAME, canReview: true, showStudio: true } };
++export const Manager: Story = { args: { game: GAME, canReview: true, canManage: true, showStudio: true } };
++export const LongTitleNoPlatform: Story = {
++  args: {
++    game: {
++      ...GAME,
++      title: 'RollerCoaster Tycoon Adventures Deluxe Edition for Modern Platforms',
++      platform: null,
++      build_count: 0,
++    },
++    canReview: true,
++  },
++};
+diff --git a/frontend/components/GameListRow.tsx b/frontend/components/GameListRow.tsx
+new file mode 100644
+index 0000000..99343b1
+--- /dev/null
++++ b/frontend/components/GameListRow.tsx
+@@ -0,0 +1,142 @@
++/**
++ * GameListRow - one game in the /games LIST view (GFE-SORT).
++ *
++ * Design record: design-agent-run/game-sort/ (Design System Agent run).
++ *
++ * Server Component. The compact counterpart to GameCard: the same title
++ * link, the same meta line (lib/game-meta.ts) and the same build-count Badge,
++ * so switching views never changes what a game says about itself
++ * (Consistency; Wickens 13). What it leaves out is deliberate progressive
++ * disclosure: no build pills, and none of the admin management controls
++ * (Manage builds, Archive, Delete). The list view exists to SCAN a long
++ * catalogue; picking a build still happens on the game's own page, which the
++ * title opens (the same destination the card's build pill + Continue reaches
++ * since CH-378), and management stays in the card view.
++ *
++ * The header actions the brief lists - View dashboard, Import documents,
++ * Edit - are kept, behind exactly the gates GameCard uses (canReview,
++ * canManage), so a row never offers a control its card would hide.
++ *
++ * Layout: phone first. At the narrowest width the row stacks (title + meta,
++ * then the actions wrapping below); from `sm:` the actions sit on the right
++ * of the same row. The title is a stretched link like GameCard's (CH-376),
++ * with the actions lifted above it (`relative z-10`) so they stay clickable.
++ */
++import Link from 'next/link';
++import Badge from '@/components/primitives/Badge';
++import HighlightedText from '@/components/HighlightedText';
++import { buttonClasses } from '@/components/primitives/buttonClasses';
++import { gameMetaParts } from '@/lib/game-meta';
++import { slugify } from '@/lib/slug';
++import type { Game } from '@/lib/types';
++
++export type GameListRowProps = {
++  game: Game;
++  /** Reviewer gate for View dashboard + Import documents (same as GameCard). */
++  canReview?: boolean;
++  /** Per-game management gate for Edit (GameOut.can_manage, CH-621). */
++  canManage?: boolean;
++  /** Active search term, highlighted in the title (CH-606). */
++  highlightTerm?: string;
++  /** Include the studio name in the meta line. */
++  showStudio?: boolean;
++};
++
++export default function GameListRow({
++  game,
++  canReview = false,
++  canManage = false,
++  highlightTerm = '',
++  showStudio = false,
++}: GameListRowProps): React.JSX.Element {
++  const buildLabel = game.build_count === 1 ? '1 build' : `${game.build_count} builds`;
++  const hasSlug = typeof game.slug === 'string' && game.slug.length > 0;
++  const playHref = hasSlug ? `/game/${slugify(game.slug as string)}` : null;
++  const metaParts = gameMetaParts(game, { showStudio });
++  const hasActions = canReview || canManage;
++
++  return (
++    <li>
++      <article
++        aria-label={game.title}
++        className={[
++          'relative flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--color-hair)] px-4 py-3',
++          'sm:flex-row sm:items-center sm:gap-4',
++          playHref !== null ? 'transition-colors hover:bg-[var(--color-surface-2)]' : '',
++        ]
++          .filter(Boolean)
++          .join(' ')}
++        style={{ background: 'var(--color-surface)' }}
++      >
++        <div className="min-w-0 flex-1">
++          <div className="flex items-start justify-between gap-3 sm:justify-start">
++            <h2 className="adp-h2 min-w-0 break-words" style={{ color: 'var(--color-ink)' }}>
++              {playHref !== null ? (
++                <Link
++                  href={playHref}
++                  className="underline-offset-2 hover:underline focus-visible:underline after:content-[''] after:absolute after:inset-0"
++                  style={{ color: 'inherit' }}
++                  aria-label={`How to play ${game.title}`}
++                >
++                  <HighlightedText text={game.title} term={highlightTerm} />
++                </Link>
++              ) : (
++                <HighlightedText text={game.title} term={highlightTerm} />
++              )}
++            </h2>
++            <Badge
++              variant={game.build_count > 0 ? 'info' : 'neutral'}
++              size="sm"
++              pill={false}
++              className="shrink-0 mt-0.5"
++              aria-label={`${buildLabel} available`}
++            >
++              {buildLabel}
++            </Badge>
++          </div>
++          {metaParts.length > 0 && (
++            <p
++              className="adp-mono mt-0.5 break-words"
++              style={{ color: 'var(--color-ink-faint)' }}
++              data-testid="game-meta"
++            >
++              {metaParts.join(' · ')}
++            </p>
++          )}
++        </div>
++
++        {hasActions && (
++          <div className="relative z-10 flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
++            {canReview && (
++              <Link
++                href={`/games/${encodeURIComponent(game.id)}/dashboard`}
++                className={buttonClasses({ variant: 'secondary', size: 'sm' })}
++                aria-label={`View dashboard for ${game.title}`}
++              >
++                View dashboard
++              </Link>
++            )}
++            {canReview && (
++              <Link
++                href={`/imports?game=${encodeURIComponent(game.id)}`}
++                className={buttonClasses({ variant: 'secondary', size: 'sm' })}
++                aria-label={`Import documents onto ${game.title}`}
++              >
++                Import documents
++              </Link>
++            )}
++            {canManage && (
++              <Link
++                href={`/games/${encodeURIComponent(game.id)}/edit`}
++                className={buttonClasses({ variant: 'secondary', size: 'sm' })}
++                aria-label={`Edit ${game.title}`}
++              >
++                Edit
++              </Link>
++            )}
++          </div>
++        )}
++      </article>
++    </li>
++  );
++}
+diff --git a/frontend/components/GamesCatalogBrowser.tsx b/frontend/components/GamesCatalogBrowser.tsx
+index 156f417..1ba400d 100644
+--- a/frontend/components/GamesCatalogBrowser.tsx
++++ b/frontend/components/GamesCatalogBrowser.tsx
+@@ -48,16 +48,49 @@
+  *     390px acceptance criterion.
+  *   - The count line is aria-live="polite", so a result count that changes
+  *     without a navigation is still announced.
++ *
++ * GFE-SORT additions (design record: design-agent-run/game-sort/)
++ * ---------------------------------------------------------------
++ *  - Facet filters (Platform, Studio) in GameFilterPanel, a "Most active"
++ *    sort, and a Cards / List view switch. All three live in the URL beside
++ *    `q` and `sort` and go through the SAME `navigate` (router.replace inside
++ *    the one transition), so a filter pick dims the grid exactly like a
++ *    search does and never flashes the cold-load skeleton. Inherited from
++ *    CH-606, not re-decided.
++ *  - Layout, phone first: below `lg:` the panel is collapsed behind a
++ *    "Filters" toggle (aria-expanded, shows the active count) and opens
++ *    inline above the results, pushing them down rather than covering them.
++ *    From `lg:` it is a left column beside the results, always open. This is
++ *    the author's "collapsing left side window for mobile". The panel is
++ *    always mounted and only hidden by CSS below `lg:`, so the same markup
++ *    serves both widths with no JS media query and no hydration mismatch.
++ *  - Every active filter is a removable chip above the results, with one
++ *    "Clear filters", so what is applied is always on screen (Wickens 11)
++ *    even while the phone panel is collapsed.
++ *  - All new props are optional: without `facets` no panel renders, so
++ *    every existing caller and test is unchanged.
+  */
+ import { useEffect, useState, useTransition } from 'react';
+ import { useRouter } from 'next/navigation';
+ import type { ReactNode } from 'react';
+ import Input from '@/components/primitives/Input';
++import GameFilterPanel, {
++  platformOptions,
++  studioOptions,
++  type FacetsState,
++} from '@/components/GameFilterPanel';
+ import {
+   GAME_SEARCH_MAX_CHARS,
++  GAMES_ACTIVITY_WINDOW_DAYS,
++  GAMES_VIEW_DEFAULT,
++  NO_GAME_FILTERS,
+   gamesHref,
++  hasGameFilters,
+   resultCountLabel,
++  toggleGameFilter,
++  type GameFilters,
+   type GamesSort,
++  type GamesView,
+ } from '@/lib/game-search';
+ 
+ /** Same debounce budget as FeedbackResponsesReader's SEARCH_DEBOUNCE_MS. */
+@@ -66,8 +99,36 @@ export const SEARCH_DEBOUNCE_MS = 300;
+ const SORT_OPTIONS: { value: GamesSort; label: string }[] = [
+   { value: 'newest', label: 'Newest' },
+   { value: 'title', label: 'A to Z' },
++  { value: 'activity', label: 'Most active' },
++];
++
++const VIEW_OPTIONS: { value: GamesView; label: string }[] = [
++  { value: 'card', label: 'Cards' },
++  { value: 'list', label: 'List' },
+ ];
+ 
++/** The shared pressed-pill look (sort + view): one pattern, not two. */
++function pillClass(isActive: boolean): string {
++  return [
++    'inline-flex min-h-[44px] items-center rounded-full px-4 adp-mono text-[0.75rem]',
++    'border transition-all focus:outline-none',
++    'focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2',
++    'focus-visible:ring-offset-[var(--color-bg)]',
++    isActive
++      ? 'border-[var(--color-accent)] font-semibold'
++      : 'border-[var(--color-hair)] text-[var(--color-ink-sub)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent-text)]',
++  ].join(' ');
++}
++
++function pillStyle(isActive: boolean): React.CSSProperties {
++  // Inline color beats `.adp-mono`'s semi-transparent --color-ink-sub, which
++  // would blend to a WCAG AA failure on the accent fill. Same reasoning (and
++  // same tokens) as BuildPills' active pill.
++  return isActive
++    ? { background: 'var(--color-accent)', color: 'var(--color-accent-ink)' }
++    : { background: 'transparent' };
++}
++
+ export type GamesCatalogBrowserProps = {
+   /** Current `?q=` (already normalized by the page). */
+   query: string;
+@@ -85,6 +146,13 @@ export type GamesCatalogBrowserProps = {
+   totalCount: number | null;
+   /** Server-rendered grid (or no-match empty state) to keep mounted. */
+   children: ReactNode;
++  /** GFE-SORT: active facet filters (already normalized by the page). */
++  filters?: GameFilters;
++  /** GFE-SORT: card or list layout (already normalized by the page). */
++  view?: GamesView;
++  /** GFE-SORT: filter options + counts, or the error from reading them.
++   *  Omitted = no filter panel (callers that predate GFE-SORT). */
++  facets?: FacetsState;
+ };
+ 
+ function MagnifierIcon(): React.JSX.Element {
+@@ -122,6 +190,40 @@ function ClearIcon(): React.JSX.Element {
+   );
+ }
+ 
++function FilterIcon(): React.JSX.Element {
++  return (
++    <svg
++      viewBox="0 0 16 16"
++      width="14"
++      height="14"
++      fill="none"
++      stroke="currentColor"
++      strokeWidth="1.5"
++      aria-hidden="true"
++      focusable="false"
++    >
++      <path d="M2.5 4h11 M4.5 8h7 M6.5 12h3" strokeLinecap="round" />
++    </svg>
++  );
++}
++
++function ChevronIcon(): React.JSX.Element {
++  return (
++    <svg
++      viewBox="0 0 16 16"
++      width="12"
++      height="12"
++      fill="none"
++      stroke="currentColor"
++      strokeWidth="1.75"
++      aria-hidden="true"
++      focusable="false"
++    >
++      <path d="M4 6 L8 10 L12 6" strokeLinecap="round" strokeLinejoin="round" />
++    </svg>
++  );
++}
++
+ export default function GamesCatalogBrowser({
+   query,
+   sort,
+@@ -129,6 +231,9 @@ export default function GamesCatalogBrowser({
+   resultCountCapped,
+   totalCount,
+   children,
++  filters = NO_GAME_FILTERS,
++  view = GAMES_VIEW_DEFAULT,
++  facets,
+ }: GamesCatalogBrowserProps): React.JSX.Element {
+   const router = useRouter();
+   const [isPending, startTransition] = useTransition();
+@@ -154,13 +259,27 @@ export default function GamesCatalogBrowser({
+     if (!isPending) setInput(query);
+   }
+ 
+-  function pushSearch(nextQuery: string, nextSort: GamesSort): void {
++  // Phone-only disclosure state for the filter panel (always open from lg:).
++  const [filtersOpen, setFiltersOpen] = useState(false);
++
++  function pushSearch(
++    nextQuery: string,
++    nextSort: GamesSort,
++    nextFilters: GameFilters = filters,
++    nextView: GamesView = view,
++  ): void {
+     setLastPushed(nextQuery);
+     startTransition(() => {
+-      router.replace(gamesHref(nextQuery, nextSort), { scroll: false });
++      router.replace(gamesHref(nextQuery, nextSort, nextFilters, nextView), {
++        scroll: false,
++      });
+     });
+   }
+ 
++  function toggleFilter(facet: keyof GameFilters, value: string): void {
++    pushSearch(input, sort, toggleGameFilter(filters, facet, value));
++  }
++
+   // Debounce the box into a navigation. A single keystroke is NOT a request:
+   // the timer is cleared and restarted by every change, so only a pause of
+   // SEARCH_DEBOUNCE_MS pushes. No setState at the effect's top level (the
+@@ -174,31 +293,117 @@ export default function GamesCatalogBrowser({
+       if (input.trim() === lastPushed.trim()) return;
+       setLastPushed(input);
+       startTransition(() => {
+-        router.replace(gamesHref(input, sort), { scroll: false });
++        router.replace(gamesHref(input, sort, filters, view), { scroll: false });
+       });
+     }, SEARCH_DEBOUNCE_MS);
+     return () => clearTimeout(timer);
+-  }, [input, lastPushed, sort, router, startTransition]);
++  }, [input, lastPushed, sort, filters, view, router, startTransition]);
+ 
+   function clearSearch(): void {
+     setInput('');
+     pushSearch('', sort);
+   }
+ 
++  const filtersActive = hasGameFilters(filters);
+   const searchActive = query.trim().length > 0;
+-  const countLabel = resultCountLabel(
++  const baseCountLabel = resultCountLabel(
+     resultCount,
+     resultCountCapped,
+     totalCount,
+-    searchActive,
++    searchActive || filtersActive,
++  );
++  // Say what "Most active" means where the result is read, not in a tooltip
++  // (nothing hover-only; Wickens 11).
++  const countLabel =
++    sort === 'activity'
++      ? `${baseCountLabel} · most sessions in the last ${GAMES_ACTIVITY_WINDOW_DAYS} days first`
++      : baseCountLabel;
++  const activeFilterCount = filters.platforms.length + filters.studios.length;
++
++  // Chip labels resolve values to names from the facets when they are
++  // available; otherwise (facets failed) the raw platform text is still the
++  // name, and a studio id falls back to a generic label, never a raw UUID.
++  const facetData = facets?.ok ? facets.facets : { platforms: [], studios: [] };
++  const chipLabels = new Map<string, string>(
++    [
++      ...platformOptions(facetData, filters.platforms).map(
++        (o) => [`platforms:${o.value}`, o.label] as const,
++      ),
++      ...studioOptions(facetData, filters.studios).map(
++        (o) => [`studios:${o.value}`, o.label] as const,
++      ),
++    ],
++  );
++  const chips = [
++    ...filters.platforms.map((v) => ({ facet: 'platforms' as const, value: v, kind: 'Platform' })),
++    ...filters.studios.map((v) => ({ facet: 'studios' as const, value: v, kind: 'Studio' })),
++  ];
++
++  const results = (
++    <div className="flex min-w-0 flex-col gap-4">
++      <p
++        className="adp-mono"
++        style={{ color: 'var(--color-ink-faint)' }}
++        aria-live="polite"
++        data-testid="games-result-count"
++      >
++        {isPending ? 'Searching' : countLabel}
++      </p>
++
++      {chips.length > 0 && (
++        <ul className="flex flex-wrap items-center gap-2" aria-label="Active filters">
++          {chips.map((chip) => {
++            const label = chipLabels.get(`${chip.facet}:${chip.value}`) ?? chip.value;
++            return (
++              <li key={`${chip.facet}:${chip.value}`}>
++                <button
++                  type="button"
++                  onClick={() => toggleFilter(chip.facet, chip.value)}
++                  aria-label={`Remove filter: ${chip.kind} ${label}`}
++                  className="inline-flex min-h-[44px] max-w-full items-center gap-2 rounded-full border border-[var(--color-hair)] px-4 adp-mono text-[0.75rem] transition-colors hover:border-[var(--color-accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
++                  style={{ background: 'var(--color-surface)', color: 'var(--color-ink)' }}
++                >
++                  <span className="min-w-0 break-words">{label}</span>
++                  <span style={{ color: 'var(--color-ink-sub)' }}>
++                    <ClearIcon />
++                  </span>
++                </button>
++              </li>
++            );
++          })}
++          <li>
++            <button
++              type="button"
++              onClick={() => pushSearch(input, sort, NO_GAME_FILTERS)}
++              className="adp-mono min-h-[44px] rounded-[var(--radius-button)] px-3 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
++              style={{ color: 'var(--color-accent-text)' }}
++            >
++              Clear filters
++            </button>
++          </li>
++        </ul>
++      )}
++
++      {/* The server-rendered grid. Kept mounted and merely dimmed while a
++          transition runs - see the module docstring. */}
++      <div
++        className="transition-opacity duration-150"
++        style={{ opacity: isPending ? 0.45 : 1 }}
++        aria-busy={isPending || undefined}
++        data-pending={isPending || undefined}
++        data-testid="games-results"
++      >
++        {children}
++      </div>
++    </div>
+   );
+ 
+   return (
+     <div className="flex flex-col gap-4">
+-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
++      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+         <form
+           role="search"
+-          className="relative w-full sm:max-w-sm"
++          className="relative w-full lg:max-w-sm"
+           onSubmit={(e) => {
+             // Enter searches immediately rather than waiting out the debounce.
+             e.preventDefault();
+@@ -238,68 +443,86 @@ export default function GamesCatalogBrowser({
+           )}
+         </form>
+ 
+-        <div
+-          role="group"
+-          aria-label="Sort games"
+-          className="flex shrink-0 flex-wrap gap-2"
+-        >
+-          {SORT_OPTIONS.map((option) => {
+-            const isActive = option.value === sort;
+-            return (
+-              <button
+-                key={option.value}
+-                type="button"
+-                aria-pressed={isActive}
+-                onClick={() => pushSearch(input, option.value)}
+-                className={[
+-                  'inline-flex min-h-[44px] items-center rounded-full px-4 adp-mono text-[0.75rem]',
+-                  'border transition-all focus:outline-none',
+-                  'focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2',
+-                  'focus-visible:ring-offset-[var(--color-bg)]',
+-                  isActive
+-                    ? 'border-[var(--color-accent)] font-semibold'
+-                    : 'border-[var(--color-hair)] text-[var(--color-ink-sub)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent-text)]',
+-                ].join(' ')}
+-                style={
+-                  isActive
+-                    ? {
+-                        // Inline color beats `.adp-mono`'s semi-transparent
+-                        // --color-ink-sub, which would blend to a WCAG AA
+-                        // failure on the accent fill. Same reasoning (and
+-                        // same tokens) as BuildPills' active pill.
+-                        background: 'var(--color-accent)',
+-                        color: 'var(--color-accent-ink)',
+-                      }
+-                    : { background: 'transparent' }
+-                }
+-              >
+-                {option.label}
+-              </button>
+-            );
+-          })}
++        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
++          <div role="group" aria-label="Sort games" className="flex shrink-0 flex-wrap gap-2">
++            {SORT_OPTIONS.map((option) => {
++              const isActive = option.value === sort;
++              return (
++                <button
++                  key={option.value}
++                  type="button"
++                  aria-pressed={isActive}
++                  onClick={() => pushSearch(input, option.value)}
++                  className={pillClass(isActive)}
++                  style={pillStyle(isActive)}
++                >
++                  {option.label}
++                </button>
++              );
++            })}
++          </div>
++          {facets !== undefined && (
++            <div role="group" aria-label="View" className="flex shrink-0 flex-wrap gap-2">
++              {VIEW_OPTIONS.map((option) => {
++                const isActive = option.value === view;
++                return (
++                  <button
++                    key={option.value}
++                    type="button"
++                    aria-pressed={isActive}
++                    onClick={() => pushSearch(input, sort, filters, option.value)}
++                    className={pillClass(isActive)}
++                    style={pillStyle(isActive)}
++                  >
++                    {option.label}
++                  </button>
++                );
++              })}
++            </div>
++          )}
+         </div>
+       </div>
+ 
+-      <p
+-        className="adp-mono"
+-        style={{ color: 'var(--color-ink-faint)' }}
+-        aria-live="polite"
+-        data-testid="games-result-count"
+-      >
+-        {isPending ? 'Searching' : countLabel}
+-      </p>
+-
+-      {/* The server-rendered grid. Kept mounted and merely dimmed while a
+-          transition runs - see the module docstring. */}
+-      <div
+-        className="transition-opacity duration-150"
+-        style={{ opacity: isPending ? 0.45 : 1 }}
+-        aria-busy={isPending || undefined}
+-        data-pending={isPending || undefined}
+-        data-testid="games-results"
+-      >
+-        {children}
+-      </div>
++      {facets === undefined ? (
++        results
++      ) : (
++        <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start lg:gap-8">
++          <aside aria-label="Filter games" className="min-w-0">
++            <button
++              type="button"
++              aria-expanded={filtersOpen}
++              aria-controls="games-filter-panel"
++              onClick={() => setFiltersOpen((v) => !v)}
++              className="adp-mono inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-button)] border border-[var(--color-hair)] px-4 text-[0.75rem] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] lg:hidden"
++              style={{ background: 'var(--color-surface)', color: 'var(--color-ink)' }}
++            >
++              <FilterIcon />
++              {activeFilterCount > 0 ? `Filters (${activeFilterCount})` : 'Filters'}
++              <span
++                className={`transition-transform ${filtersOpen ? 'rotate-180' : ''}`}
++                style={{ color: 'var(--color-ink-sub)' }}
++              >
++                <ChevronIcon />
++              </span>
++            </button>
++            <div
++              id="games-filter-panel"
++              className={[
++                // Surface as a class, not an inline style: an inline background
++                // would beat lg:bg-transparent and leave a padding-less white
++                // box around the desktop column.
++                'mt-3 rounded-[var(--radius-lg)] border border-[var(--color-hair)] bg-(--color-surface) p-4',
++                'lg:mt-0 lg:block lg:border-0 lg:bg-transparent lg:p-0',
++                filtersOpen ? 'block' : 'hidden',
++              ].join(' ')}
++              data-testid="games-filter-panel"
++            >
++              <GameFilterPanel facets={facets} filters={filters} onToggle={toggleFilter} />
++            </div>
++          </aside>
++          {results}
++        </div>
++      )}
+     </div>
+   );
+ }
+diff --git a/frontend/components/SessionsFilters.tsx b/frontend/components/SessionsFilters.tsx
+index 87ca93a..cbbb81e 100644
+--- a/frontend/components/SessionsFilters.tsx
++++ b/frontend/components/SessionsFilters.tsx
+@@ -13,6 +13,14 @@
+  * reads the same searchParams and passes them to backendFetch — this is the
+  * correct pattern per coding_standards §Frontend discipline ("prefer URL state").
+  *
++ * GFE-SORT adds a Platform dropdown (first, since it is the widest cut): the
++ * value is the game's platform text, or '__none__' for games with no
++ * platform, exactly what GET /api/sessions?platform= and the /games filter
++ * panel use. Options come from GET /api/games/facets (the same scoped read
++ * the /games panel uses), so the list never offers a platform the reviewer
++ * has no games on. Changing platform clears game + build: a game from the old
++ * platform would silently AND the new filter down to nothing.
++ *
+  * Filter params (all carry IDs in the URL, never free text — CH-479):
+  *   game     — game_id (UUID); the dropdown resolves it to the game title
+  *   build    — build_id (UUID), scoped to the selected game; resolves to label
+@@ -29,7 +37,8 @@
+ 
+ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+ import { useEffect, useState, useTransition } from 'react';
+-import { listGames, listBuilds } from '@/lib/catalog-api';
++import { listGames, listBuilds, listGameFacets } from '@/lib/catalog-api';
++import { GAMES_NO_PLATFORM, NO_PLATFORM_LABEL, type PlatformFacet } from '@/lib/game-search';
+ import type { Game, BuildOut } from '@/lib/types';
+ 
+ // Shared field styling — matches the Status/Severity <select> below and the
+@@ -39,7 +48,8 @@ const SELECT_CLASS =
+ const SELECT_STYLE = {
+   background: 'var(--color-field)',
+   color: 'var(--color-ink)',
+-  height: '40px',
++  // 44px (was 40): the minimum touch target (manifest accessibility.minTouchTargetPx).
++  height: '44px',
+ } as const;
+ 
+ export default function SessionsFilters(): React.JSX.Element {
+@@ -48,6 +58,7 @@ export default function SessionsFilters(): React.JSX.Element {
+   const searchParams = useSearchParams();
+   const [isPending, startTransition] = useTransition();
+ 
++  const platform = searchParams.get('platform') ?? '';
+   const game = searchParams.get('game') ?? '';
+   const build = searchParams.get('build') ?? '';
+   const status = searchParams.get('status') ?? '';
+@@ -85,6 +96,27 @@ export default function SessionsFilters(): React.JSX.Element {
+     };
+   }, []);
+ 
++  // Platform options (GFE-SORT). A failed read leaves only "All platforms"
++  // plus the URL's current value, and the filter still applies server-side.
++  const [platforms, setPlatforms] = useState<PlatformFacet[]>([]);
++  useEffect(() => {
++    let alive = true;
++    listGameFacets()
++      .then((facets) => {
++        if (alive) setPlatforms(facets.platforms);
++      })
++      .catch((err) => {
++        if (alive) console.error('SessionsFilters: failed to load platforms', err);
++      });
++    return () => {
++      alive = false;
++    };
++  }, []);
++  const platformValue = (p: PlatformFacet): string => p.value ?? GAMES_NO_PLATFORM;
++  const platformLabel = (value: string): string =>
++    value === GAMES_NO_PLATFORM ? NO_PLATFORM_LABEL : value;
++  const platformInList = platforms.some((p) => platformValue(p) === platform);
++
+   useEffect(() => {
+     if (!game) return;
+     let alive = true;
+@@ -119,6 +151,11 @@ export default function SessionsFilters(): React.JSX.Element {
+     }
+     // Changing the game invalidates any build filter (builds belong to a game).
+     if (key === 'game') next.delete('build');
++    // Changing the platform invalidates the game (and so the build) filter.
++    if (key === 'platform') {
++      next.delete('game');
++      next.delete('build');
++    }
+     // Reset to page 1 on filter change.
+     next.delete('page');
+     startTransition(() => {
+@@ -132,6 +169,35 @@ export default function SessionsFilters(): React.JSX.Element {
+       aria-label="Filter sessions"
+       data-pending={isPending || undefined}
+     >
++      {/* Platform filter (GFE-SORT) — value is the platform text */}
++      <div className="flex flex-col gap-1 min-w-[160px]">
++        <label
++          htmlFor="filter-platform"
++          className="adp-mono"
++          style={{ color: 'var(--color-ink-sub)' }}
++        >
++          Platform
++        </label>
++        <select
++          id="filter-platform"
++          value={platform}
++          onChange={(e) => updateParam('platform', e.target.value)}
++          aria-label="Filter by platform"
++          className={SELECT_CLASS}
++          style={SELECT_STYLE}
++        >
++          <option value="">All platforms</option>
++          {platform && !platformInList && (
++            <option value={platform}>{platformLabel(platform)}</option>
++          )}
++          {platforms.map((p) => (
++            <option key={platformValue(p)} value={platformValue(p)}>
++              {platformLabel(platformValue(p))} ({p.count})
++            </option>
++          ))}
++        </select>
++      </div>
++
+       {/* Game filter (CH-479) — dropdown of game titles; value is the game_id */}
+       <div className="flex flex-col gap-1 min-w-[160px]">
+         <label
+diff --git a/frontend/lib/catalog-api.ts b/frontend/lib/catalog-api.ts
+index c247c6b..b4f41ab 100644
+--- a/frontend/lib/catalog-api.ts
++++ b/frontend/lib/catalog-api.ts
+@@ -24,6 +24,8 @@ import type {
+   BuildUploadResponse,
+ } from './types';
+ 
++import type { GameFacets } from '@/lib/game-search';
++
+ const BASE = '/api';
+ 
+ // fetch() rejects on transport/offline errors before a Response exists. The
+@@ -79,6 +81,17 @@ export async function listGames(): Promise<Game[]> {
+   return res.json() as Promise<Game[]>;
+ }
+ 
++/**
++ * GET /api/games/facets -> platform + studio options with counts (GFE-SORT).
++ * Used by the /sessions Platform dropdown; /games reads the same endpoint
++ * server-side. Throws like `listGames` so callers own their error state.
++ */
++export async function listGameFacets(): Promise<GameFacets> {
++  const res = await fetch(`${BASE}/games/facets`);
++  if (!res.ok) throw new Error(`Failed to fetch game filters: ${res.status}`);
++  return res.json() as Promise<GameFacets>;
++}
++
+ /**
+  * GET /api/games?include_archived=true -> only the ARCHIVED games (CH-516).
+  *
+diff --git a/frontend/lib/game-meta.ts b/frontend/lib/game-meta.ts
+new file mode 100644
+index 0000000..777fbb7
+--- /dev/null
++++ b/frontend/lib/game-meta.ts
+@@ -0,0 +1,39 @@
++/**
++ * game-meta - the one "meta line" under a game's title (GFE-SORT).
++ *
++ * The /games card (GameCard) and the list row (GameListRow) both show the
++ * same facts about a game in the same order - platform, studio, when it was
++ * added - so they are built here once. Two hand-built lines drift the first
++ * time one screen gains a field (Consistency; Wickens 13).
++ *
++ * Pure: no React, no DOM. Dates are formatted in UTC from a fixed month table
++ * so a Server Component and a test render the identical string.
++ */
++import type { Game } from '@/lib/types';
++
++// A fixed table, not Intl: `Intl.DateTimeFormat('en-GB', { month: 'short' })`
++// renders September as "Sep" or "Sept" depending on the ICU build, so the
++// same game would read differently on two runtimes.
++const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
++
++/** "Added 12 Sep 2026", or null when the date is absent or unparseable. */
++export function addedLabel(createdAt: string | null | undefined): string | null {
++  if (!createdAt) return null;
++  const ts = new Date(createdAt);
++  if (Number.isNaN(ts.getTime())) return null;
++  return `Added ${ts.getUTCDate()} ${MONTHS[ts.getUTCMonth()]} ${ts.getUTCFullYear()}`;
++}
++
++/**
++ * The meta parts for a game, in display order. `showStudio` is false for a
++ * caller who can only see one studio: repeating the same name on every card
++ * is noise, not information.
++ */
++export function gameMetaParts(game: Game, { showStudio }: { showStudio: boolean }): string[] {
++  const parts: string[] = [];
++  if (game.platform) parts.push(game.platform);
++  if (showStudio && game.studio_name) parts.push(game.studio_name);
++  const added = addedLabel(game.created_at);
++  if (added) parts.push(added);
++  return parts;
++}
+diff --git a/frontend/lib/game-search.ts b/frontend/lib/game-search.ts
+index d4e2bf7..ff400f9 100644
+--- a/frontend/lib/game-search.ts
++++ b/frontend/lib/game-search.ts
+@@ -9,7 +9,10 @@
+  * request drift apart.
+  *
+  * The backend contract lives in backend/games.py::list_games (CH-605):
+- *   sort  "title" | "newest"  (pattern-constrained, backend default "title")
++ *   sort  "title" | "newest" | "activity"  (pattern-constrained, backend
++ *         default "title"; "activity" added by GFE-SORT)
++ *   platform, studio  repeatable facet filters (GFE-SORT), applied as WHEREs
++ *         before limit/offset exactly like q
+  *   q     case-insensitive substring on the title, max 200 chars, applied as
+  *         a WHERE BEFORE limit/offset, so a match that would sit on page 3 of
+  *         the unfiltered list is found on page 1 of the filtered one.
+@@ -20,8 +23,46 @@
+  * of GET /api/games keeps the historical title ordering untouched.
+  */
+ 
+-/** The catalogue's two orderings. Mirrors the backend's `sort` pattern. */
+-export type GamesSort = 'newest' | 'title';
++/**
++ * The catalogue's orderings. Mirrors the backend's `sort` pattern.
++ * `activity` (GFE-SORT) = most sessions submitted in the last
++ * GAMES_ACTIVITY_WINDOW_DAYS days first.
++ */
++export type GamesSort = 'newest' | 'title' | 'activity';
++
++/** Mirrors backend/games.py GAME_ACTIVITY_WINDOW_DAYS; used in UI copy only. */
++export const GAMES_ACTIVITY_WINDOW_DAYS = 30;
++
++/**
++ * How the catalogue is laid out (GFE-SORT): the row-subgrid card grid, or a
++ * compact one-row-per-game list. Default `card`, so every URL that predates
++ * this renders exactly as before.
++ */
++export type GamesView = 'card' | 'list';
++export const GAMES_VIEW_DEFAULT: GamesView = 'card';
++
++/**
++ * Facet filters (GFE-SORT). Both arrays carry the exact values the backend
++ * filters on: platform text (or GAMES_NO_PLATFORM) and studio ids. Values OR
++ * within a facet; the two facets AND.
++ */
++export type GameFilters = { platforms: string[]; studios: string[] };
++export const NO_GAME_FILTERS: GameFilters = { platforms: [], studios: [] };
++
++/** Mirrors backend/games.py GAME_FACET_NO_PLATFORM: "games with no platform". */
++export const GAMES_NO_PLATFORM = '__none__';
++/** Label shown for GAMES_NO_PLATFORM wherever a platform name would be. */
++export const NO_PLATFORM_LABEL = 'No platform';
++/** Mirrors backend/games.py GAME_FILTER_MAX_VALUES (the backend 422s past it). */
++export const GAME_FILTER_MAX_VALUES = 20;
++/** Mirrors backend/games.py GAME_SEARCH_MAX_CHARS for one platform value. */
++const GAME_FILTER_VALUE_MAX_CHARS = 200;
++
++/** One platform option from GET /api/games/facets. `value` null = no platform. */
++export type PlatformFacet = { value: string | null; count: number };
++/** One studio option from GET /api/games/facets. */
++export type StudioFacet = { id: string; name: string; count: number };
++export type GameFacets = { platforms: PlatformFacet[]; studios: StudioFacet[] };
+ 
+ /** Approved default for the games screen: newest first (CH-606). */
+ export const GAMES_SORT_DEFAULT: GamesSort = 'newest';
+@@ -87,7 +128,68 @@ function firstValue(raw: string | string[] | undefined): string {
+  * and would 422.
+  */
+ export function normalizeGamesSort(raw: string | string[] | undefined): GamesSort {
+-  return firstValue(raw) === 'title' ? 'title' : GAMES_SORT_DEFAULT;
++  const value = firstValue(raw);
++  if (value === 'title' || value === 'activity') return value;
++  return GAMES_SORT_DEFAULT;
++}
++
++/** Resolve `?view=`: only the literal 'list' leaves the card default. */
++export function normalizeGamesView(raw: string | string[] | undefined): GamesView {
++  return firstValue(raw) === 'list' ? 'list' : GAMES_VIEW_DEFAULT;
++}
++
++/** Every value of a repeatable searchParams entry, in order. */
++function allValues(raw: string | string[] | undefined): string[] {
++  if (Array.isArray(raw)) return raw;
++  return raw === undefined ? [] : [raw];
++}
++
++const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
++
++/**
++ * Resolve the repeatable `?platform=` / `?studio=` params. Blank and duplicate
++ * values are dropped, each facet is capped at GAME_FILTER_MAX_VALUES, and a
++ * studio that is not a UUID is dropped: the backend types `studio` as a UUID
++ * and would 422 the whole catalogue read over one mangled value in a pasted
++ * link. Order is kept, so the chips read in the order they were picked.
++ */
++export function normalizeGameFilters(
++  platform: string | string[] | undefined,
++  studio: string | string[] | undefined,
++): GameFilters {
++  const dedupe = (values: string[]): string[] =>
++    [...new Set(values)].slice(0, GAME_FILTER_MAX_VALUES);
++  return {
++    platforms: dedupe(
++      allValues(platform)
++        .filter((v) => v.trim().length > 0)
++        .map((v) => v.slice(0, GAME_FILTER_VALUE_MAX_CHARS)),
++    ),
++    studios: dedupe(allValues(studio).filter((v) => UUID_RE.test(v))),
++  };
++}
++
++/** True when any facet filter is applied. */
++export function hasGameFilters(filters: GameFilters): boolean {
++  return filters.platforms.length > 0 || filters.studios.length > 0;
++}
++
++/** `filters` with `value` added to / removed from one facet. */
++export function toggleGameFilter(
++  filters: GameFilters,
++  facet: keyof GameFilters,
++  value: string,
++): GameFilters {
++  const current = filters[facet];
++  const next = current.includes(value)
++    ? current.filter((v) => v !== value)
++    : [...current, value].slice(0, GAME_FILTER_MAX_VALUES);
++  return { ...filters, [facet]: next };
++}
++
++function appendFilters(params: URLSearchParams, filters: GameFilters): void {
++  for (const p of filters.platforms) params.append('platform', p);
++  for (const s of filters.studios) params.append('studio', s);
+ }
+ 
+ /**
+@@ -114,21 +216,44 @@ export function gamesRequestPath(
+   query: string,
+   sort: GamesSort,
+   pageSize: number = GAMES_PAGE_SIZE,
++  filters: GameFilters = NO_GAME_FILTERS,
+ ): string {
+   const params = new URLSearchParams({ sort, page_size: String(pageSize) });
+   if (isSearchActive(query)) params.set('q', query.trim());
++  appendFilters(params, filters);
+   return `/api/games?${params.toString()}`;
+ }
+ 
++/**
++ * Backend path for the filter panel's options + counts (GFE-SORT). Sent the
++ * same search and filters as the list read: the backend applies each facet's
++ * OTHER selections to its counts, so the numbers answer "how many games if I
++ * also pick this".
++ */
++export function facetsRequestPath(query: string, filters: GameFilters): string {
++  const params = new URLSearchParams();
++  if (isSearchActive(query)) params.set('q', query.trim());
++  appendFilters(params, filters);
++  const qs = params.toString();
++  return qs.length > 0 ? `/api/games/facets?${qs}` : '/api/games/facets';
++}
++
+ /**
+  * In-app href for a given search state. The screen default (newest, no term)
+  * is the bare '/games' - a default never bloats the URL, so a shared link is
+  * the shortest thing that reproduces what the sender saw.
+  */
+-export function gamesHref(query: string, sort: GamesSort): string {
++export function gamesHref(
++  query: string,
++  sort: GamesSort,
++  filters: GameFilters = NO_GAME_FILTERS,
++  view: GamesView = GAMES_VIEW_DEFAULT,
++): string {
+   const params = new URLSearchParams();
+   if (isSearchActive(query)) params.set('q', query.trim());
+   if (sort !== GAMES_SORT_DEFAULT) params.set('sort', sort);
++  appendFilters(params, filters);
++  if (view !== GAMES_VIEW_DEFAULT) params.set('view', view);
+   const qs = params.toString();
+   return qs.length > 0 ? `/games?${qs}` : '/games';
+ }
+@@ -160,6 +285,8 @@ export function resultCountLabel(
+   total: number | null,
+   searchActive: boolean,
+ ): string {
++  // `searchActive` means "the list is narrowed" - a search term OR (GFE-SORT)
++  // a facet filter. Both are server-side WHEREs, so the same rules hold.
+   const shownText = shownCapped ? `${shown}+` : `${shown}`;
+   if (searchActive && total !== null) return `${shownText} of ${total} games`;
+   // A capped count is never singular: 1 is below every page size we use.
+diff --git a/frontend/lib/reviewer-api.ts b/frontend/lib/reviewer-api.ts
+index 7ad13d8..8e14348 100644
+--- a/frontend/lib/reviewer-api.ts
++++ b/frontend/lib/reviewer-api.ts
+@@ -48,6 +48,8 @@ export type SessionListFilters = {
+   build?: string;
+   status?: string;
+   severity?: string;
++  /** GFE-SORT: platform text, or '__none__' for games with no platform. */
++  platform?: string;
+   page?: number;
+   page_size?: number;
+ };
+@@ -66,6 +68,7 @@ export async function fetchSessionList(
+     if (filters.build) params.set('build', filters.build);
+     if (filters.status) params.set('status', filters.status);
+     if (filters.severity) params.set('severity', filters.severity);
++    if (filters.platform) params.set('platform', filters.platform);
+     if (filters.page != null) params.set('page', String(filters.page));
+     if (filters.page_size != null) params.set('page_size', String(filters.page_size));
+ 
+diff --git a/frontend/lib/types.ts b/frontend/lib/types.ts
+index 85576df..5d61e0a 100644
+--- a/frontend/lib/types.ts
++++ b/frontend/lib/types.ts
+@@ -177,6 +177,13 @@ export interface Game {
+    * absent value as false.
+    */
+   can_manage?: boolean;
++  /**
++   * GFE-SORT: the owning studio's name (filter panel, list view) and when
++   * the game was added to the catalogue (the "Added" line). Optional for the
++   * same predates-this-field fixture reason as `slug`; absent renders nothing.
++   */
++  studio_name?: string | null;
++  created_at?: string | null;
+ }
+ 
+ // ---------------------------------------------------------------------------
+diff --git a/tests/test_ch174_games_builds.py b/tests/test_ch174_games_builds.py
+index 90c33ed..15db9fa 100644
+--- a/tests/test_ch174_games_builds.py
++++ b/tests/test_ch174_games_builds.py
+@@ -299,6 +299,10 @@ async def test_list_games_response_shape(two_studio_app):
+         # CH-621 per-game management hint (server-computed; a rendering
+         # hint, never the boundary — tests/test_ch621_can_manage.py).
+         "can_manage",
++        # GFE-SORT: owning studio's name + when the game was added
++        # (tests/test_gfe_sort_catalogue_filters.py).
++        "studio_name",
++        "created_at",
+     }
+ 
+ 
+diff --git a/tests/test_gfe_sort_catalogue_filters.py b/tests/test_gfe_sort_catalogue_filters.py
+new file mode 100644
+index 0000000..34a2edc
+--- /dev/null
++++ b/tests/test_gfe_sort_catalogue_filters.py
+@@ -0,0 +1,365 @@
++"""GFE-SORT: catalogue facet filters, the "Most active" sort, and the facets read.
++
++Covers the additive parameters on GET /api/games (``platform``, ``studio``,
++``sort=activity``), the new GET /api/games/facets, and the ``platform`` filter
++on GET /api/sessions.
++
++What is pinned, and why:
++  * a facet filter is applied BEFORE limit/offset (the same guarantee CH-605
++    gives ``q``): a platform whose only game sorts onto page 2 unfiltered is on
++    page 1 filtered. A client-side filter over one page is the tempting wrong
++    implementation;
++  * repeated values OR within a facet, and different facets AND;
++  * ``platform=__none__`` selects games with no platform (most seeded games);
++  * ``sort=activity`` counts only sessions in the window and ignores
++    soft-deleted ones, with a title tiebreak;
++  * the facets read is scoped exactly like the list: a viewer never sees
++    another studio's name or catalogue size in it;
++  * a facet's counts apply the OTHER facet's selection but not its own;
++  * the sessions platform filter narrows ``total`` identically to ``items``.
++
++All tests run against a real (ephemeral) Postgres via db_engine; skipped when
++DATABASE_URL is unset (requires_db mark), same convention as
++test_ch605_games_sort_search.py.
++"""
++from __future__ import annotations
++
++from typing import AsyncGenerator
++
++import httpx
++import pytest
++import pytest_asyncio
++
++from conftest import SEED_ADMIN_EMAIL, requires_db  # type: ignore[import-not-found]
++
++pytestmark = requires_db
++
++BEARER = "Bearer test-secret"
++PAGE_SIZE_DEFAULT = 50
++VIEWER_A_EMAIL = "gfe-sort-viewer-a@atari.com"
++
++
++def _headers(email: str) -> dict[str, str]:
++    from session_token_helper import create_session_token  # type: ignore[import-not-found]
++
++    return {
++        "Authorization": BEARER,
++        "X-Session-Token": create_session_token(email),
++    }
++
++
++@pytest_asyncio.fixture
++async def catalogue_app(db_engine):
++    """Two studios with platforms, filler to force pagination, and sessions.
++
++    Studio A ("Alpha Studio"):
++      * "Asteroids MSN" (MSN), "Centipede MSN" (MSN), "Pong Switch" (Switch),
++      * "zzz MSN Tail" (MSN) — sorts after every filler title, so under the
++        default title ordering it is on page 2 unfiltered,
++      * PAGE_SIZE_DEFAULT filler games with NO platform.
++    Studio B ("Bravo Studio"):
++      * "Tempest MSN B" (MSN) — must never be visible to a studio-A viewer.
++
++    Sessions (for sort=activity and the sessions platform filter):
++      * Pong Switch: 3 recent sessions,
++      * Centipede MSN: 2 recent sessions + 5 soft-deleted recent ones,
++      * Asteroids MSN: 4 sessions, all OUTSIDE the 30-day window.
++    """
++    import datetime as _dt
++
++    import server
++    from backend.db import get_async_db
++    from backend.models import AppUser, Build, Game, Session, Studio, UserRole
++    from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
++
++    maker = async_sessionmaker(bind=db_engine, expire_on_commit=False, class_=AsyncSession)
++    now = _dt.datetime.now(_dt.timezone.utc)
++
++    def _ago(days: int) -> _dt.datetime:
++        return now - _dt.timedelta(days=days)
++
++    async with maker() as session:
++        studio_a = Studio(name="Alpha Studio")
++        studio_b = Studio(name="Bravo Studio")
++        session.add_all([studio_a, studio_b])
++        await session.flush()
++
++        asteroids = Game(studio_id=studio_a.id, title="Asteroids MSN", platform="MSN")
++        centipede = Game(studio_id=studio_a.id, title="Centipede MSN", platform="MSN")
++        pong = Game(studio_id=studio_a.id, title="Pong Switch", platform="Switch")
++        tail = Game(studio_id=studio_a.id, title="zzz MSN Tail", platform="MSN")
++        filler = [
++            Game(studio_id=studio_a.id, title=f"Filler {i:02d}", platform=None)
++            for i in range(PAGE_SIZE_DEFAULT)
++        ]
++        tempest_b = Game(studio_id=studio_b.id, title="Tempest MSN B", platform="MSN")
++        session.add_all([asteroids, centipede, pong, tail, tempest_b, *filler])
++        await session.flush()
++
++        builds = {}
++        for g in (asteroids, centipede, pong, tempest_b):
++            b = Build(game_id=g.id, label="Checkpoint 1")
++            session.add(b)
++            builds[g.title] = b
++        await session.flush()
++
++        def _sess(game, days: int, deleted: bool = False) -> Session:
++            return Session(
++                game_id=game.id,
++                build_id=builds[game.title].id,
++                submitter_email=VIEWER_A_EMAIL,
++                created_at=_ago(days),
++                deleted_at=_ago(0) if deleted else None,
++            )
++
++        session.add_all(
++            [_sess(pong, d) for d in (1, 2, 3)]
++            + [_sess(centipede, d) for d in (1, 2)]
++            + [_sess(centipede, 1, deleted=True) for _ in range(5)]
++            + [_sess(asteroids, d) for d in (40, 45, 50, 60)]
++            + [_sess(tempest_b, 1)]
++        )
++
++        session.add(AppUser(email=SEED_ADMIN_EMAIL, role=UserRole.admin, studio_id=None))
++        session.add(AppUser(email=VIEWER_A_EMAIL, role=UserRole.viewer, studio_id=studio_a.id))
++        await session.commit()
++        studio_ids = {"A": str(studio_a.id), "B": str(studio_b.id)}
++
++    async def _override_get_async_db() -> AsyncGenerator[AsyncSession, None]:
++        async with maker() as s:
++            yield s
++
++    server.app.dependency_overrides[get_async_db] = _override_get_async_db
++    try:
++
++        def make_client() -> httpx.AsyncClient:
++            transport = httpx.ASGITransport(app=server.app)
++            return httpx.AsyncClient(transport=transport, base_url="http://testserver")
++
++        yield make_client, studio_ids
++    finally:
++        server.app.dependency_overrides.pop(get_async_db, None)
++
++
++async def _games(client, params, email: str = SEED_ADMIN_EMAIL) -> list[dict]:
++    resp = await client.get("/api/games", params=params, headers=_headers(email))
++    assert resp.status_code == 200, resp.text
++    return resp.json()
++
++
++async def _titles(client, params, email: str = SEED_ADMIN_EMAIL) -> list[str]:
++    return [g["title"] for g in await _games(client, params, email)]
++
++
++# ---------------------------------------------------------------------------
++# GET /api/games facet filters
++# ---------------------------------------------------------------------------
++
++
++@pytest.mark.asyncio
++async def test_platform_filter_is_applied_before_pagination(catalogue_app):
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        unfiltered = await _titles(client, {"sort": "title"})
++        filtered = await _titles(client, {"sort": "title", "platform": "MSN"})
++    assert "zzz MSN Tail" not in unfiltered, "fixture no longer pushes the tail off page 1"
++    assert filtered == ["Asteroids MSN", "Centipede MSN", "Tempest MSN B", "zzz MSN Tail"]
++
++
++@pytest.mark.asyncio
++async def test_repeated_platform_values_or_together(catalogue_app):
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        titles = await _titles(
++            client, [("sort", "title"), ("platform", "MSN"), ("platform", "Switch")]
++        )
++    assert titles == [
++        "Asteroids MSN",
++        "Centipede MSN",
++        "Pong Switch",
++        "Tempest MSN B",
++        "zzz MSN Tail",
++    ]
++
++
++@pytest.mark.asyncio
++async def test_no_platform_sentinel_selects_games_without_a_platform(catalogue_app):
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        games = await _games(
++            client, {"sort": "title", "platform": "__none__", "page_size": 200}
++        )
++    assert len(games) == PAGE_SIZE_DEFAULT
++    assert all(g["platform"] is None for g in games)
++
++
++@pytest.mark.asyncio
++async def test_studio_filter_and_platform_filter_and_together(catalogue_app):
++    make_client, studios = catalogue_app
++    async with make_client() as client:
++        titles = await _titles(
++            client, {"sort": "title", "platform": "MSN", "studio": studios["B"]}
++        )
++    assert titles == ["Tempest MSN B"]
++
++
++@pytest.mark.asyncio
++async def test_studio_filter_cannot_widen_scope(catalogue_app):
++    """A studio-A viewer asking for studio B's games gets nothing, not B's games."""
++    make_client, studios = catalogue_app
++    async with make_client() as client:
++        titles = await _titles(client, {"studio": studios["B"]}, email=VIEWER_A_EMAIL)
++    assert titles == []
++
++
++@pytest.mark.asyncio
++async def test_response_carries_studio_name_and_created_at(catalogue_app):
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        games = await _games(client, {"platform": "Switch"})
++    assert len(games) == 1
++    assert games[0]["studio_name"] == "Alpha Studio"
++    assert games[0]["created_at"] is not None
++
++
++@pytest.mark.asyncio
++async def test_too_many_facet_values_is_rejected(catalogue_app):
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        resp = await client.get(
++            "/api/games",
++            params=[("platform", f"P{i}") for i in range(21)],
++            headers=_headers(SEED_ADMIN_EMAIL),
++        )
++    assert resp.status_code == 422
++
++
++# ---------------------------------------------------------------------------
++# sort=activity
++# ---------------------------------------------------------------------------
++
++
++@pytest.mark.asyncio
++async def test_activity_sort_counts_recent_non_deleted_sessions(catalogue_app):
++    """Pong (3 recent) before Centipede (2 recent; its 5 deleted don't count).
++    Asteroids' 4 sessions are all outside the window, so it ties at 0 with every
++    other game and falls back to title order."""
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        titles = await _titles(client, {"sort": "activity", "platform": "MSN"}, VIEWER_A_EMAIL)
++        all_titles = await _titles(client, {"sort": "activity"}, VIEWER_A_EMAIL)
++    assert titles == ["Centipede MSN", "Asteroids MSN", "zzz MSN Tail"]
++    assert all_titles[:3] == ["Pong Switch", "Centipede MSN", "Asteroids MSN"]
++
++
++@pytest.mark.asyncio
++async def test_activity_sort_response_does_not_expose_counts(catalogue_app):
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        games = await _games(client, {"sort": "activity", "platform": "Switch"})
++    assert "recent_session_count" not in games[0]
++    assert not any("session" in key for key in games[0])
++
++
++# ---------------------------------------------------------------------------
++# GET /api/games/facets
++# ---------------------------------------------------------------------------
++
++
++@pytest.mark.asyncio
++async def test_facets_are_scoped_to_the_callers_studio(catalogue_app):
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        resp = await client.get("/api/games/facets", headers=_headers(VIEWER_A_EMAIL))
++    assert resp.status_code == 200, resp.text
++    body = resp.json()
++    assert [s["name"] for s in body["studios"]] == ["Alpha Studio"]
++    assert body["platforms"] == [
++        {"value": "MSN", "count": 3},
++        {"value": "Switch", "count": 1},
++        {"value": None, "count": PAGE_SIZE_DEFAULT},
++    ]
++
++
++@pytest.mark.asyncio
++async def test_admin_facets_cover_every_studio(catalogue_app):
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        body = (await client.get("/api/games/facets", headers=_headers(SEED_ADMIN_EMAIL))).json()
++    assert {s["name"]: s["count"] for s in body["studios"]} == {
++        "Alpha Studio": PAGE_SIZE_DEFAULT + 4,
++        "Bravo Studio": 1,
++    }
++    msn = next(p for p in body["platforms"] if p["value"] == "MSN")
++    assert msn["count"] == 4
++
++
++@pytest.mark.asyncio
++async def test_facet_counts_apply_the_other_facet_but_not_their_own(catalogue_app):
++    """With platform=MSN picked: studio counts are MSN-only, but the platform
++    counts still show Switch (so a second platform can be added), and with a
++    studio picked the platform counts narrow to that studio."""
++    make_client, studios = catalogue_app
++    async with make_client() as client:
++        by_platform = (
++            await client.get(
++                "/api/games/facets", params={"platform": "MSN"}, headers=_headers(SEED_ADMIN_EMAIL)
++            )
++        ).json()
++        by_studio = (
++            await client.get(
++                "/api/games/facets",
++                params={"studio": studios["B"]},
++                headers=_headers(SEED_ADMIN_EMAIL),
++            )
++        ).json()
++    assert {s["name"]: s["count"] for s in by_platform["studios"]} == {
++        "Alpha Studio": 3,
++        "Bravo Studio": 1,
++    }
++    assert {p["value"] for p in by_platform["platforms"]} == {"MSN", "Switch", None}
++    assert by_studio["platforms"] == [{"value": "MSN", "count": 1}]
++
++
++@pytest.mark.asyncio
++async def test_facets_apply_the_search_term(catalogue_app):
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        body = (
++            await client.get(
++                "/api/games/facets", params={"q": "pong"}, headers=_headers(SEED_ADMIN_EMAIL)
++            )
++        ).json()
++    assert body["platforms"] == [{"value": "Switch", "count": 1}]
++
++
++@pytest.mark.asyncio
++async def test_facets_route_is_not_parsed_as_a_game_id(catalogue_app):
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        resp = await client.get("/api/games/facets", headers=_headers(SEED_ADMIN_EMAIL))
++    assert resp.status_code == 200
++
++
++# ---------------------------------------------------------------------------
++# GET /api/sessions?platform=
++# ---------------------------------------------------------------------------
++
++
++@pytest.mark.asyncio
++async def test_sessions_platform_filter_narrows_items_and_total(catalogue_app):
++    make_client, _ = catalogue_app
++    async with make_client() as client:
++        resp = await client.get(
++            "/api/sessions", params={"platform": "Switch"}, headers=_headers(SEED_ADMIN_EMAIL)
++        )
++        msn = await client.get(
++            "/api/sessions", params={"platform": "MSN"}, headers=_headers(SEED_ADMIN_EMAIL)
++        )
++    assert resp.status_code == 200, resp.text
++    body = resp.json()
++    assert body["total"] == 3
++    assert {row["game"] for row in body["items"]} == {"Pong Switch"}
++    # MSN: Centipede's 2 live + Asteroids' 4 + Tempest B's 1 (admin sees all);
++    # the 5 soft-deleted Centipede sessions stay excluded.
++    assert msn.json()["total"] == 7
+-- 
+2.43.0
+

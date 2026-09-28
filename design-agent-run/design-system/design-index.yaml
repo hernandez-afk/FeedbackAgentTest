@@ -1,0 +1,36 @@
+# Design index for the Game Feedback Engine (Fuji). First project registered by
+# the Design System Agent: GFE-SORT. GFE-SHELL stands in for every page that
+# shipped before the harness (backfill when it next changes).
+projects:
+  - id: "GFE-SHELL"
+    title: "Existing GFE pages (pre-harness backfill)"
+    status: "shipped"
+    scopeSummary: "Every page that shipped before the design harness: nav, per-game pages, session detail, dashboards, admin."
+    scopeTerms: ["nav", "game page", "session detail", "dashboard"]
+    surfaces: ["nav", "game", "sessions/detail", "games/dashboard", "admin"]
+    priorities: []
+    componentsUsed: []
+    codePaths: ["frontend/components/NavClient.tsx", "frontend/app/game/**", "frontend/app/sessions/[id]/**"]
+    artifacts: []
+  - id: "GFE-SORT"
+    title: "Browse, filter and sort games and sessions"
+    status: "in-design"
+    scopeSummary: "Platform and studio filters, card/list view and a 'Most active' sort on /games; a platform filter on /sessions."
+    scopeTerms: ["game catalogue", "platform filter", "studio filter", "sort order", "list view", "session sort"]
+    surfaces: ["games", "games/filters", "sessions", "sessions/filters"]
+    priorities: ["P1", "P2", "P3"]
+    componentsUsed: ["GameCard", "SortPillGroup", "NativeSelect", "EmptyState", "InlineError", "Badge", "Card", "Button"]
+    codePaths:
+      - "frontend/app/games/page.tsx"
+      - "frontend/components/GamesCatalogBrowser.tsx"
+      - "frontend/components/GameFilterPanel.tsx"
+      - "frontend/components/GameListRow.tsx"
+      - "frontend/components/SessionsFilters.tsx"
+      - "frontend/app/sessions/page.tsx"
+      - "frontend/lib/game-search.ts"
+    artifacts: []
+navigation:
+  - { from: "nav", to: "games", via: "'Games' header link", status: "live" }
+  - { from: "nav", to: "sessions", via: "'Sessions' header link", status: "live" }
+  - { from: "games", to: "game", via: "card title / list row", status: "live" }
+  - { from: "sessions", to: "sessions/detail", via: "'View' button", status: "live" }

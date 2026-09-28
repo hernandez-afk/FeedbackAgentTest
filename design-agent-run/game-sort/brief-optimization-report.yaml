@@ -1,0 +1,120 @@
+# Brief optimization for page-brief.md against Fuji v1.0.0.
+# The author's document is untouched; every change to reach ticket-brief.yaml is here.
+id: "GFE-SORT-brief-1"
+sourceRef: "design-agent-run/game-sort/page-brief.md"
+briefRef: "GFE-SORT"
+manifestVersion: "1.0.0"
+generatedAt: "2026-09-28T09:00:00Z"
+
+lint:
+  result: "not-ready"
+  findings:
+    - "Missing or empty section: 'What this page depends on'"
+    - "7 template placeholders still in the brief (task entry points, all four States, Open questions)"
+    - "vague: 'intuitive' (Purpose), 'easy' (Goals)"
+    - "States not described: loading, empty, error, success"
+    - "Not testable: 'Card format and list format of games'"
+
+changes:
+  - kind: "vague-term"
+    section: "Purpose"
+    original: "make the game sorting of the feedback engine more intuitive"
+    optimized: "P3: A first-time user can use it with no instructions — understood in 3 s, a platform reached in ≤3 taps, done in ≤3 min."
+    reason: "vocabulary map: intuitive → 3-3-3 (usabilityHeuristics.threeThreeThree)"
+  - kind: "vague-term"
+    section: "Goals (ranked)"
+    original: "3. Easy to use for anybody"
+    optimized: "P3 (same as above), measured by AC1, AC5 and AC8."
+    reason: "vocabulary map: easy → 3-3-3"
+  - kind: "vague-term"
+    section: "Goals (ranked)"
+    original: "2. Should be easily scaleable"
+    optimized: "P2: filtering is server-side before pagination, and new facet values appear without code changes (AC3, AC4)."
+    reason: "'Scaleable' maps to no rule; interpreted as 'keeps working as the catalogue grows'. Matches the repo rule that /games never filters an already-loaded array (lib/game-search.ts). Confirm."
+    confirmed: false
+  - kind: "solution-to-need"
+    section: "Users and context"
+    original: "should probably be collapsing left side window for mobile devices"
+    optimized: "Element: the filter panel sits beside the list on wide screens and collapses behind one control on phones (AC8)."
+    reason: "Kept the author's layout (it is a layout decision the author already made), expressed as the need: filters reachable on a phone without covering the list."
+  - kind: "inferred"
+    section: "What users need to do"
+    original: "Select a filter on the homepage — starts from: [sessions or game page]"
+    optimized: "T1 starts from /games; T3 starts from /sessions."
+    reason: "Placeholder in the brief. The home route '/' redirects to /games, so 'homepage' = /games."
+    confirmed: false
+  - kind: "inferred"
+    section: "What users need to do"
+    original: "[need to find a game from msn -> goes to sort by platform -> can then find MSN]"
+    optimized: "T1: Find a game on a specific platform (e.g. MSN) — /games → filter by platform → MSN."
+    reason: "The placeholder text already described the path; lifted it into the task."
+    confirmed: false
+  - kind: "testable-criterion"
+    section: "Acceptance criteria"
+    original: "When sorting the games and sessions become easily to filter and locate what is existing"
+    optimized: "AC1 (games, ≤2 taps at 320px), AC7 (sessions platform filter), AC3 (server-side before pagination)."
+    reason: "Split into one criterion per page, each with a measurable result from maxClicksToCoreTask and mobile.minViewportPx."
+  - kind: "testable-criterion"
+    section: "Acceptance criteria"
+    original: "Card format and list format of games"
+    optimized: "AC2: switch between card and list view in 1 tap; the choice is in the URL and survives refresh/back."
+    reason: "Needed a subject, action and result. URL state follows the approved CH-606 decision for /games (q and sort live in the URL)."
+  - kind: "testable-criterion"
+    section: "Acceptance criteria"
+    original: "Sessions can be suggested to be sorted based on what recently got the most responses"
+    optimized: "AC6: /games can be sorted 'Most active' — sessions in the last 30 days, most first."
+    reason: "'Recently' is unbounded; 30 days is inferred. 'Responses' read as submitted sessions. Placed on /games because a session list can't be ordered by its own response count; the ordering that helps is which GAMES are getting responses. Confirm the window and the placement."
+    confirmed: false
+  - kind: "added-state"
+    section: "States"
+    original: "[what's slow, if anything] / [what a new user with no data sees] / [what can fail] / [how the user knows it worked]"
+    optimized: "Loading: the grid stays mounted and dims (existing CH-606 pending treatment). Empty: AC9. Error: AC10. Success: the result count line and the active-filter chips (AC5)."
+    reason: "Every async wait needs loading and error states (rubric cat. 8, motionUsagePolicy.requireLoadingAnimation). Reuses the states /games already has."
+    confirmed: false
+  - kind: "inferred"
+    section: "Content and data"
+    original: "The header contains the game title, platform, date uploaded, build type, edit, import documents, view dashboard"
+    optimized: "Element: game header with title, platform, date added, build count/pills and the role-gated Edit / Import documents / View dashboard actions. 'Build type' is read as the builds (there is no build-type field)."
+    reason: "GameCard already shows all of these except 'date uploaded' (game.created_at, not exposed yet). 'Build type' has no field; confirm it means the builds."
+    confirmed: false
+  - kind: "added-volume"
+    section: "Content and data"
+    original: "All sub groups can be read and sorted through"
+    optimized: "Platforms: about 3–15, growing (panel shows 8, then 'Show all'). Studios: 1–10. Games: 50 per page."
+    reason: "Unbounded amounts; counts inferred from the seed catalogue and GAMES_PAGE_SIZE. Over 8 options changes the panel layout."
+    confirmed: false
+
+conflicts:
+  - request: "Sort by game developer, project, and by product / product version (title → product → version)."
+    rule: "Edge-case sweep, ecosystem lens: the page can't filter on data nobody creates. game has title, platform and studio only; there is no developer, project or product entity."
+    proposedResolution: "Ship platform and studio filters now (the data exists). Open a separate brief, 'Catalogue metadata: developer, project, product and product version', for the data model and the admin forms that fill it. The filter panel is built so a new facet is one more group, not a redesign."
+    accepted: false
+  - request: "Sort by 'people such as Game developer'."
+    rule: "vocabulary: sort = order a list; filter = narrow it by a facet (manifest briefPolicy.vocabulary)."
+    proposedResolution: "Treated as filter-by (narrowing). Ordering stays the sort pills: Newest, A to Z, Most active."
+    accepted: false
+
+componentHints:
+  - element: "Filter by platform / studio"
+    candidates: ["SortPillGroup pattern as multi-select filter pills (extend)", "NativeSelect (SessionsFilters)"]
+  - element: "Filter panel, collapsed on phones"
+    candidates: ["Collapsible (header button, aria-expanded)", "new: FilterPanel (gap report)"]
+  - element: "Active filters"
+    candidates: ["Badge", "Button/secondary sm as removable chip"]
+  - element: "Card / list view switch"
+    candidates: ["SortPillGroup (aria-pressed pills)"]
+  - element: "List view row"
+    candidates: ["GameCard (compact variant — gap report)", "sessions SessionTable row pattern"]
+  - element: "Empty / error"
+    candidates: ["EmptyState", "InlineError"]
+
+relatedDesigns: []   # the design index is empty; the scope check confirms
+
+openQuestions:
+  - "Platform is free text, so 'MSN' and 'msn' are two options. Normalise to a managed list (new brief), or accept case-insensitive grouping?"
+  - "Is 'game developer' the studio (already a filter), an individual person, or an external developer company?"
+  - "What is a 'project' — a franchise (Asteroids), a release programme (Atari Recharged), or an internal code name?"
+  - "'Recently got the most responses': is 30 days the right window, and is /games the right place for it (see AC6)?"
+  - "'Related pages and designs: From Andreas Beijer' — is there a design file or page from Andreas to stay consistent with?"
+
+readiness: "needs-answers"

@@ -1,0 +1,334 @@
+# Fuji — the Game Feedback Engine design system, expressed as a Design System
+# Agent manifest. Every value is read from atari-game-feedback-engine:
+#   tokens/primitive.json, tokens/semantic.json, DESIGN_SYSTEM.md,
+#   frontend/components/primitives/*
+# Nothing here is new: where Fuji has no rule, the Baseline default is used and
+# marked "(Baseline default)". Check: python3 tools/check_compatibility.py <this>
+
+platform:
+  targets: ["claude-code"]
+
+meta:
+  name: "Fuji"
+  version: "1.0.0"
+  framework: "nextjs"
+  stylingEngine: "tailwind"
+  decisionProtocol: "ask-major-only"
+  claudeMd:
+    path: "CLAUDE.md"
+    required: true
+  brandExclusions:
+    - "pure red for errors (use --color-negative coral)"
+    - "mint (--color-accent) over ~10% of a screen by area"
+    - "mint (--color-accent) as text on light surfaces (1.91:1) — use --color-accent-text"
+    - "chart data painted in --color-accent (the 'two greens' bug) — use --color-chart-1..6"
+    - "raw greys (#888, #999) — they don't flip in dark mode"
+    - "new Terminal legacy token usage"
+    - "color as the only signal for a state"
+
+color:
+  neutrals:
+    background: "#f7f5f1"      # --color-bg
+    surface: "#ffffff"         # --color-surface
+    border: "rgba(22,21,26,0.09)"  # --color-hair
+    textPrimary: "#16151a"     # --color-ink
+    textSecondary: "rgba(22,21,26,0.64)"  # --color-ink-faint (AA 4.93:1 on white)
+    temperature: "warm"
+  accents:
+    primary: "#00d4aa"         # --color-accent (fills, focus rings — never text)
+    onPrimary: "#07271f"       # --color-accent-ink
+    secondary: "#2b63f0"       # --color-info
+    success: "#007a63"         # --color-accent-text / positive text
+    warning: "#9b6a00"         # --color-mixed text
+    error: "#bf4b36"           # --color-negative text
+    info: "#2b63f0"
+  contrastStandard: "WCAG-AA"
+  interactionStates:
+    hover: "#00d4aa"
+    active: "#0a9c7e"
+    focus: "#00d4aa"
+  usagePolicy:
+    primaryAccentRole: "accents.primary"
+    secondaryAccentRole: "accents.secondary"
+    maxSimultaneousSecondaryAccents: 1
+    maxPrimaryActionsPerScreen: 1
+  themes:
+    - { id: "light", name: "Light" }
+    - { id: "dark", name: "Dark" }
+
+typography:
+  typefaces:
+    display: "Archivo"
+    body: "Archivo"
+    ui: "JetBrains Mono"
+  weights: [500, 700, 800]
+  scale:
+    baseSizePx: 15             # .adp-body 0.9375rem
+    ratio: 1.25
+    steps: ["mono-12", "body-15", "h2-18/20", "h1-28/34", "stat-28/36", "display-32/60"]
+  lineHeightRatio: 1.5
+  roles:
+    heading: "typefaces.display"        # .adp-h1 / .adp-h2, Archivo 800
+    readableSubtext: "typefaces.body"   # .adp-body, --color-ink-sub
+    formLabel: "typefaces.ui"           # .adp-mono / Label primitive
+
+spacing:
+  baseUnitPx: 4
+  scale: [4, 8, 12, 16, 20, 24, 32, 40, 48, 64]
+
+radius:
+  tokens:
+    - { name: "radius-sm", px: 8, usage: "Small chips, inline labels." }
+    - { name: "radius-button", px: 10, usage: "Buttons, inputs, chips." }
+    - { name: "radius-banner", px: 12, usage: "Banners, toasts." }
+    - { name: "radius-lg", px: 16, usage: "Cards, page panels." }
+    - { name: "radius-modal", px: 20, usage: "Modals." }
+    - { name: "radius-pill", px: 9999, usage: "Pill tags, filter pills, toggle track." }
+
+layout:
+  gridColumns: 12
+  gutterPx: 24                 # gap-6 on the /games grid
+  breakpoints: { sm: 640, md: 768, lg: 1024, xl: 1280 }   # Tailwind 4 defaults, used throughout
+  containerMaxWidthPx: 1280
+  alignmentTolerancePx: 0
+
+motion:
+  durationsMs: { micro: 160, state: 200, page: 320 }
+  easing: { entrance: "cubic-bezier(.4,0,.2,1)", exit: "cubic-bezier(.4,0,.2,1)", transition: "cubic-bezier(.4,0,.2,1)" }
+  respectReducedMotion: true
+
+icons:
+  library: "inline-svg"
+  importPattern: "Inline <svg aria-hidden> with stroke=currentColor (see GamesCatalogBrowser MagnifierIcon)"
+
+accessibility:
+  level: "AA"
+  minTouchTargetPx: 44
+  requireVisibleFocusStates: true
+  requireSemanticHtml: true
+
+components:
+  - name: "Button"
+    category: "action"
+    status: "approved"
+    importPath: "@/components/primitives/Button"
+    props: ["variant", "size", "disabled", "onClick", "children"]
+    description: "Every action. buttonClasses() for <Link>. One primary per screen; md for page CTAs, sm for chrome."
+    variants:
+      - { name: "primary", status: "approved" }
+      - { name: "secondary", status: "approved" }
+      - { name: "destructive", status: "approved" }
+      - { name: "utility", status: "approved" }
+  - name: "Input"
+    category: "input"
+    status: "approved"
+    importPath: "@/components/primitives/Input"
+    props: ["value", "onChange", "disabled", "error", "placeholder"]
+    variants:
+      - { name: "default", status: "approved" }
+      - { name: "error", status: "approved" }
+  - name: "Textarea"
+    category: "input"
+    status: "approved"
+    importPath: "@/components/primitives/Textarea"
+    props: ["value", "onChange", "disabled", "error", "resize"]
+    variants: [{ name: "default", status: "approved" }]
+  - name: "Toggle"
+    category: "input"
+    status: "approved"
+    importPath: "@/components/primitives/Toggle"
+    props: ["checked", "onChange", "label", "disabled"]
+    variants: [{ name: "default", status: "approved" }]
+  - name: "SortPillGroup"
+    category: "input"
+    status: "approved"
+    importPath: "@/components/GamesCatalogBrowser (inline pattern, CH-606)"
+    props: ["options", "value", "onChange", "label"]
+    description: "aria-pressed pill buttons, min 44px, accent fill when active. Used for the /games sort."
+    variants: [{ name: "default", status: "approved" }]
+  - name: "NativeSelect"
+    category: "input"
+    status: "approved"
+    importPath: "@/components/SessionsFilters (SELECT_CLASS pattern, CH-479)"
+    props: ["options", "value", "onChange", "label", "disabled"]
+    description: "Native <select> on the field token; 40px tall. Used for the /sessions filters."
+    variants: [{ name: "default", status: "approved" }]
+  - name: "Card"
+    category: "display"
+    status: "approved"
+    importPath: "@/components/primitives/Card"
+    props: ["padding", "shadow", "border", "as", "children"]
+    variants:
+      - { name: "default", status: "approved" }
+  - name: "GameCard"
+    category: "display"
+    status: "approved"
+    importPath: "@/components/GameCard"
+    props: ["game", "buildSection", "canReview", "canManageBuilds", "canDeleteGame", "highlightTerm"]
+    description: "Row-subgrid game card (DESIGN_SYSTEM §3.10)."
+    variants: [{ name: "default", status: "approved" }]
+  - name: "Badge"
+    category: "display"
+    status: "approved"
+    importPath: "@/components/primitives/Badge"
+    props: ["variant", "size", "pill", "as", "children"]
+    variants:
+      - { name: "neutral", status: "approved" }
+      - { name: "info", status: "approved" }
+      - { name: "positive", status: "approved" }
+      - { name: "negative", status: "approved" }
+      - { name: "mixed", status: "approved" }
+  - name: "Label"
+    category: "display"
+    status: "approved"
+    importPath: "@/components/primitives/Label"
+    props: ["variant", "size", "children"]
+    variants: [{ name: "default", status: "approved" }]
+  - name: "StatusDot"
+    category: "display"
+    status: "approved"
+    importPath: "@/components/primitives/StatusDot"
+    props: ["status", "label", "size"]
+    variants: [{ name: "default", status: "approved" }]
+  - name: "InlineAlert"
+    category: "feedback"
+    status: "approved"
+    importPath: "@/components/primitives/Banner"
+    props: ["variant", "title", "children", "action", "onDismiss"]
+    description: "Fuji Banner: persistent page-level state, icon + text + color."
+    variants:
+      - { name: "info", status: "approved" }
+      - { name: "success", status: "approved" }
+      - { name: "warning", status: "approved" }
+      - { name: "error", status: "approved" }
+  - name: "InlineError"
+    category: "feedback"
+    status: "approved"
+    importPath: "@/components/primitives/InlineError"
+    props: ["children", "className"]
+    variants: [{ name: "default", status: "approved" }]
+  - name: "Toast"
+    category: "feedback"
+    status: "approved"
+    importPath: "@/components/primitives/Toast"
+    props: ["tone", "message", "duration"]
+    variants: [{ name: "default", status: "approved" }]
+  - name: "Skeleton"
+    category: "feedback"
+    status: "approved"
+    importPath: "@/components/primitives/Skeleton"
+    props: ["width", "height", "lines"]
+    variants:
+      - { name: "default", status: "approved" }
+      - { name: "SkeletonCard", status: "approved" }
+  - name: "EmptyState"
+    category: "feedback"
+    status: "approved"
+    importPath: "@/components/primitives/EmptyState"
+    props: ["title", "body", "action", "compact"]
+    variants:
+      - { name: "default", status: "approved" }
+      - { name: "compact", status: "approved" }
+  - name: "Collapsible"
+    category: "navigation"
+    status: "approved"
+    importPath: "@/components/primitives/Collapsible"
+    props: ["title", "defaultOpen", "children"]
+    description: "Animated disclosure; header is a <button> with aria-expanded."
+    variants: [{ name: "default", status: "approved" }]
+  - name: "Dialog"
+    category: "overlay"
+    status: "approved"
+    importPath: "@/components/DeleteSessionControl (destructive-confirm dialog pattern)"
+    props: ["open", "title", "children", "onConfirm", "onCancel", "confirmLabel"]
+    variants:
+      - { name: "confirm-destructive", status: "approved" }
+  - name: "Breadcrumb"
+    category: "navigation"
+    status: "proposed"
+    importPath: "(none yet)"
+    props: ["items"]
+    description: "Not in Fuji. Pages use a back link. Listed so the checker knows it's a known gap."
+    variants: [{ name: "default", status: "proposed" }]
+  - name: "Pagination"
+    category: "navigation"
+    status: "approved"
+    importPath: "app/sessions/page.tsx (Pagination, Link-based)"
+    props: ["total", "page", "pageSize", "searchParamsBase"]
+    variants: [{ name: "default", status: "approved" }]
+  - name: "Tabs"
+    category: "navigation"
+    status: "approved"
+    importPath: "@/components/dashboard/DashboardTabs"
+    props: ["items", "value", "onChange"]
+    variants: [{ name: "default", status: "approved" }]
+
+registryPolicy:
+  onMissingComponent: "propose-and-continue"
+  onMissingVariant: "propose-and-continue"
+  requireApprovalBeforeReuse: true
+  requireOperationalVerification: true
+  verificationReviewer: "human-designer"
+  similarityCheck:
+    reuseThreshold: 0.7
+    extendThreshold: 0.4
+    weights: { propOverlap: 0.5, variantOverlap: 0.35, semanticNameSimilarity: 0.15 }
+    onlyCompareApprovedStatus: true
+
+automation:
+  auditTrigger: "automatic-post-generation"
+  maxAutoReviseAttempts: 2
+  notifyOnAutoRevise: true
+
+compositionHeuristics:
+  listPaginationThreshold: 50        # GAMES_PAGE_SIZE / sessions PAGE_SIZE
+  maxInlineInputs: 7
+  requireProgressiveDisclosure: true
+  requireTicketPriorityTraceability: true
+
+navigationHeuristics:
+  requireNavigationalTies: true
+  breadcrumbThresholdDepth: 2
+
+motionUsagePolicy:
+  requireLoadingAnimation: true
+  requireDataVizAnimation: true
+
+briefPolicy:
+  requireOptimization: true
+  approvalBeforeGeneration: true
+  requireAcceptanceCriteria: true
+  requireEdgeCaseSweep: true
+  edgeCaseLenses:
+    - { name: "studio-scope", ask: "Viewers and editors only see their own studio's games. Does anything here leak or reveal another studio's catalogue?" }
+  vocabulary:
+    "home list page": "/games (the catalogue grid, GamesCatalogBrowser)"
+    "sort": "Order a list (sort pills) — distinct from filter (narrow the list by a facet)"
+
+mobile:
+  minViewportPx: 320
+  maxTextScalePercent: 200
+  minTargetSpacingPx: 8
+  maxFixedSizePx: 64
+  textExpansionPercent: 40
+  thumbZonePrimaryAction: true
+  orientations: ["portrait", "landscape"]
+
+development:
+  uiPaths: ["frontend/app/**/*.tsx", "frontend/components/**/*.tsx", "frontend/app/**/*.css"]
+  tokenLint: { mode: "warn", framework: "tailwind", allow: ["1px"] }
+  designContext: { onUnownedUi: "warn" }
+
+usabilityHeuristics:
+  threeThreeThree: { glanceSeconds: 3, glanceBreakpoint: "sm", maxClicksToCoreTask: 3, maxCoreTaskMinutes: 3 }
+  displayDesign: { minReadableTextPx: 11, maxAbsoluteJudgmentLevels: 5 }
+
+scopePolicy:
+  designIndexPath: "design-index.yaml"
+  requireScopeCheck: true
+  overlapCheck:
+    mergeThreshold: 0.6
+    relatedThreshold: 0.3
+    weights: { termOverlap: 0.4, surfaceOverlap: 0.35, priorityOverlap: 0.25 }
+  onOverlap: "ask"
+  changePropagation: { flagDependentsOnChange: true, flagSharedPatternProjects: true }

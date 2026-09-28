@@ -1,0 +1,20 @@
+# Step 2b — scope placement for GFE-SORT against the design index.
+id: "GFE-SORT-scope-1"
+briefRef: "GFE-SORT"
+designIndexVersion: "empty"
+candidates: []
+elementRouting:
+  - { element: "Filter by platform, with a count per platform", route: "this-project" }
+  - { element: "Filter by studio", route: "this-project" }
+  - { element: "The filter panel", route: "this-project" }
+  - { element: "Active filters", route: "this-project" }
+  - { element: "Sort: newest, A to Z, most active", route: "reuse-pattern-from", ref: "CH-606 /games search + sort (shipped before the harness; backfill)", note: "Inherit: URL state, router.replace, 300ms debounce, dimmed-grid pending treatment, aria-pressed pills." }
+  - { element: "Card view and list view", route: "this-project" }
+  - { element: "Game header", route: "reuse-pattern-from", ref: "GameCard row subgrid (DESIGN_SYSTEM §3.10)" }
+  - { element: "Platform filter on /sessions", route: "reuse-pattern-from", ref: "CH-479 SessionsFilters (native select, URL ids)" }
+recommendation: "new-project-with-shared-patterns"
+reusedDecisions:
+  - "CH-606: search/sort state lives in the URL; router.replace not push; the grid stays mounted and dims while pending."
+  - "CH-479: /sessions filters are native <select> dropdowns carrying values in the URL; changing a filter resets to page 1."
+  - "DESIGN_SYSTEM §3.10: card grids are row subgrids with a fixed slot count."
+humanDecision: null   # no overlap requiring a decision (index empty)

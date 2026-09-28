@@ -1,0 +1,26 @@
+# Step 3 — reuse check for GFE-SORT. Two gaps filed; both drafted
+# (registryPolicy.onMissingComponent: propose-and-continue), status proposed.
+id: "GFE-SORT-gap-1"
+briefRef: "GFE-SORT"
+manifestVersion: "1.0.0"
+reuse:
+  - { element: "Sort: newest, A to Z, most active", component: "SortPillGroup", score: 0.92, route: "reuse" }
+  - { element: "Card view and list view (switch)", component: "SortPillGroup", score: 0.78, route: "reuse", note: "Same aria-pressed pill; shared pillClass()/pillStyle() so sort and view can't drift." }
+  - { element: "Game header (card)", component: "GameCard", score: 0.9, route: "reuse", note: "Slot 2 widened from platform to the shared meta line." }
+  - { element: "Platform filter on /sessions", component: "NativeSelect", score: 0.88, route: "reuse" }
+  - { element: "Empty / error states", component: "EmptyState, InlineError", score: 0.95, route: "reuse" }
+  - { element: "Active filters", component: "Badge", score: 0.41, route: "reuse-nearest-approved", note: "Badge is not interactive; chips reuse the sort-pill border + ClearIcon instead (no new component)." }
+gaps:
+  - name: "GameFilterPanel (FacetOption row)"
+    gapType: "missing-component"
+    recommendation: "create-new"
+    nearest: { component: "SortPillGroup", score: 0.36, why: "Same toggle semantics (aria-pressed) but multi-select, vertical, with a count per option." }
+    alsoMissing: "Fuji has no Checkbox (check_compatibility: recommended component not present)."
+    status: "proposed"
+    path: "frontend/components/GameFilterPanel.tsx"
+  - name: "GameListRow"
+    gapType: "missing-variant"
+    recommendation: "extend-existing-variant"
+    nearest: { component: "GameCard", score: 0.55, why: "Same title link, meta line, badge and gates; drops build pills and admin management (progressive disclosure)." }
+    status: "proposed"
+    path: "frontend/components/GameListRow.tsx"

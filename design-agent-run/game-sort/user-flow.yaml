@@ -1,0 +1,67 @@
+# Step 2c — user flow for GFE-SORT.
+# Check: python3 tools/flow_check.py user-flow.yaml --index ../design-system/design-index.yaml --brief ticket-brief.yaml
+id: "GFE-SORT-flow-1"
+projectId: "GFE-SORT"
+briefRef: "GFE-SORT"
+generatedAt: "2026-09-28T09:30:00Z"
+assumptions:
+  - "The home route '/' redirects to /games (app/page.tsx), so the brief's 'homepage' is /games."
+  - "Filter, sort and view state live in the URL, as CH-606 decided for q and sort."
+
+screens:
+  - { id: "SYS1", name: "Sign in", kind: "system", route: "/login" }
+  - { id: "S0", name: "Header nav", kind: "existing", surface: "nav", owningProject: "GFE-SHELL", route: "(every page)" }
+  - { id: "S1", name: "Games catalogue with filters (revised)", kind: "new", surface: "games", route: "/games?platform={p}&studio={id}&sort={s}&view={card|list}&q={term}" }
+  - { id: "S2", name: "Sessions list with platform filter (revised)", kind: "new", surface: "sessions", route: "/sessions?platform={p}&game={id}&…" }
+  - { id: "S3", name: "Game how-to-play page", kind: "existing", surface: "game", owningProject: "GFE-SHELL", route: "/game/{slug}" }
+  - { id: "S4", name: "Session detail", kind: "existing", surface: "sessions/detail", owningProject: "GFE-SHELL", route: "/sessions/{id}" }
+  - { id: "X1", name: "Shared /games link (chat, ticket)", kind: "external" }
+
+entryPoints:
+  - { id: "E1", from: "S0", to: "S1", trigger: "'Games' in the header nav", carriesState: "Nothing: default is newest, card view, no filters.", whenSignedOut: "SYS1, then back to /games.", typicalDevice: "any" }
+  - { id: "E2", from: "S0", to: "S2", trigger: "'Sessions' in the header nav (reviewers only)", carriesState: "Nothing.", whenSignedOut: "SYS1, then back to /sessions.", typicalDevice: "desktop" }
+  - { id: "E3", from: "X1", to: "S1", trigger: "A pasted /games?platform=MSN link", carriesState: "The platform filter, sort and view.", whenSignedOut: "SYS1, then back to the same URL with the filter applied.", typicalDevice: "any" }
+
+flows:
+  - taskId: "T1"
+    entryPoint: "E1"
+    steps:
+      - { screen: "S1", action: "Phone: tap 'Filters' (shows active count). Wide screens: the panel is already open beside the grid.", isClick: true }
+      - { screen: "S1", action: "Tap 'MSN' under Platform", isClick: true, async: true }
+      - { screen: "S1", action: "Tap the game card to open it", isClick: true, next: "S3" }
+    done: "The grid shows only MSN games, the count reads 'N games', and an 'MSN ×' chip sits above the grid."
+    alternatePaths:
+      - { kind: "empty", when: "No game matches the filters (e.g. filters + search)", then: "EmptyState: 'No games match these filters' naming them, with 'Clear filters'." }
+      - { kind: "error", when: "The facet read fails", then: "The grid still loads; the panel shows 'Filters unavailable' with the error text." }
+      - { kind: "error", when: "The games read fails", then: "InlineError with the message, same as today." }
+      - { kind: "signed-out", when: "Session expired", then: "SYS1, then back to the filtered URL.", to: "SYS1" }
+      - { kind: "not-found", when: "A shared link names a platform that no longer exists", then: "Zero results; the chip is shown so it can be removed; EmptyState offers 'Clear filters'." }
+  - taskId: "T2"
+    entryPoint: "E1"
+    steps:
+      - { screen: "S1", action: "Tap 'List' in the view switch", isClick: true }
+    done: "Games render as compact rows; 'List' is pressed; ?view=list is in the URL."
+    alternatePaths:
+      - { kind: "empty", when: "No games", then: "Same empty states as card view." }
+  - taskId: "T3"
+    entryPoint: "E2"
+    steps:
+      - { screen: "S2", action: "Choose 'MSN' in the Platform dropdown", isClick: true, async: true }
+      - { screen: "S2", action: "Tap 'View' on a session", isClick: true, next: "S4" }
+    done: "The table shows only sessions on MSN games; 'Platform: MSN' shows in the Showing summary."
+    alternatePaths:
+      - { kind: "empty", when: "No sessions on that platform", then: "EmptyState: 'No sessions match the current filters…' (existing copy)." }
+      - { kind: "error", when: "The platform options fail to load", then: "The dropdown shows 'All platforms' only; the URL value is still applied server-side." }
+      - { kind: "permission", when: "A viewer opens /sessions", then: "Redirect to / (existing CH-243 gate)." }
+
+backNavigation:
+  - { screen: "S1", back: "Top-level page: the header nav is always present.", to: "S0" }
+  - { screen: "S2", back: "Top-level page: the header nav is always present.", to: "S0" }
+
+exits:
+  - { from: "S1", to: "S3", when: "A game is chosen" }
+  - { from: "S2", to: "S4", when: "A session is opened" }
+
+integrationChanges:
+  - { id: "IC1", screen: "S0", change: "None needed: the 'Games' and 'Sessions' header links already exist (live) and carry no state.", owner: "GFE-SHELL", kind: "changed-entry-point", status: "done" }
+  - { id: "IC2", screen: "X1", change: "Filtered /games URLs become shareable (platform, studio, sort, view in the query string). Nothing to change outside the product.", owner: "GFE-SORT", kind: "deep-link", status: "accepted" }
