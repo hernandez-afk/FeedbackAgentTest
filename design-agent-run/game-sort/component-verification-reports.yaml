@@ -21,7 +21,7 @@ reports:
     verdict: "awaiting-reviewer"
   - component: "CatalogTree"
     operationalSpec: { states: [expanded, collapsed project/platform, active game, filtered, no-match, empty, truncated, critical, starred], props: [items, truncated, activeGameId, canReview, filterText] }
-    dynamicBehavior: { longContent: "names wrap", scale: "1,000-game cap with note", grouping: "case-insensitive platforms, titles with 2+ versions nest" }
+    dynamicBehavior: { longContent: "names wrap", scale: "1,000-game cap with a note", grouping: "case-insensitive platforms; titles with 2+ versions nest", narrowest: "320px drawer min(22rem, 88vw): leaves wrap, star and '!' stay right", text200: "leaves grow (min-h 44px); drawer scrolls (phone320-text200-drawer)", input: "project/platform headers are buttons with aria-expanded; leaves are links" }
     verification: { allStatesImplemented: true, tests: "__tests__/catalog-tree.test.tsx" }
     verdict: "awaiting-reviewer"
   - component: "StarButton"
@@ -31,15 +31,17 @@ reports:
     verdict: "awaiting-reviewer"
   - component: "CriticalFlag"
     operationalSpec: { variants: [compact "!", full "! Negative reviews"], a11y: "accessible name 'Reviews overly negative'; sidebar legend explains the glyph" }
+    dynamicBehavior: { narrowest: "compact '!' is 20px fixed; the full badge wraps its label (max-w-full, whitespace-normal)", longContent: "fixed copy", text200: "full badge wraps onto two lines at 320px; no overflow (phone320-text200-list)", input: "not interactive; role=img with a name" }
     verification: { contrast: "accent-ink on coral ~5.0:1", allStatesImplemented: true }
     verdict: "awaiting-reviewer"
   - component: "TitleGroup"
     operationalSpec: { states: [collapsed (1 card slot), expanded (full row, inner grid), list variant, negative-reviews], props: [name, games, view, children, defaultOpen] }
-    dynamicBehavior: { grid: "collapsed spans the 7 card row tracks so no empty cells (screenshot desktop-00)" }
+    dynamicBehavior: { grid: "collapsed spans the 7 card row tracks, so there are no empty cells (screenshot desktop-00)", narrowest: "320px: one column; version names wrap", longContent: "title and version list wrap (break-words)", text200: "header wraps; badge and star wrap to the next line", input: "a single button with aria-expanded; keyboard and touch", pinned: "shows the static star when any version has a starred build (audit round 3)" }
     verification: { allStatesImplemented: true, tests: "__tests__/catalog-tree.test.tsx (groupByTitle)" }
     verdict: "awaiting-reviewer"
   - component: "GroupingFields"
     operationalSpec: { states: [empty, typed, suggestions, suggestions-failed], props: [idPrefix, labelClass, optionalHint, project, onProjectChange, franchise, onFranchiseChange] }
+    dynamicBehavior: { sizing: "each field fills its form column", narrowest: "fields stack at 320px", longContent: "native input scrolls text; datalist suggestions wrap in the OS popup", text200: "inputs grow with rem sizing", input: "keyboard type-ahead; touch shows the native suggestion list; typing a new name creates it" }
     verification: { allStatesImplemented: true, tests: "__tests__/edit-game-form.test.tsx (mounts it)" }
     verdict: "awaiting-reviewer"
   - component: "SortButtons"

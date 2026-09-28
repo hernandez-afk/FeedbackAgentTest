@@ -28,7 +28,7 @@ design-agent-run/
     audit-report*.md             the independent critic's audits
     screenshots/                 the real app on seeded data: 1440, 390 and 320 px, and 320 px at 200% text
     prototype.html               clickable prototype on sample data
-    game-sort.patch              the implementation: 5 commits for atari-game-feedback-engine
+    game-sort.patch              the implementation: 6 commits for atari-game-feedback-engine
 ```
 
 Apply the implementation from an `atari-game-feedback-engine` checkout:
@@ -75,14 +75,16 @@ Apply the implementation from an `atari-game-feedback-engine` checkout:
   - new filters and sorts on `GET /api/games`; starred builds pin first there and on `GET /api/sessions`
 
 **Verified locally**
-- Frontend: 1755 tests, tsc and eslint clean, story coverage OK.
+- Frontend: 1757 tests, tsc and eslint clean, story coverage OK.
 - At 320px with text at 200%, nothing inside the page body overflows (screenshots `phone320-text200-*`).
-- Backend: pytest, ruff SAST, mypy, a single migration head, and the downgrade guards.
+- Backend: 2203 pytest tests passed; ruff SAST, mypy, a single migration head, and the downgrade guards.
 
 ## Still with the author
+
+- **Critical sort vs stars:** under the Critical sort, games with a starred build still come first, even when they aren't critical ("shown first … whatever the sort"). Say if Critical should override stars.
 
 - **Component approval:** the new components need a human designer's sign-off (`component-verification-reports.yaml`).
 - **Fuji gaps found by the agent:**
   - The mint focus ring is only 1.75:1 against the page background. WCAG AA needs 3:1.
   - There's no Checkbox or Breadcrumb component.
-- **Header at 200% text:** the site header nav (pre-existing, GFE-SHELL) overflows at 320px. Flagged in the design index for its owner.
+- **Header at 200% text:** the site header nav (pre-existing, GFE-SHELL) overflows at 320px. Flagged in the design index for its owner, along with the dashboard's "Sentiment: Mixed" label, which disagrees with the critical flag.

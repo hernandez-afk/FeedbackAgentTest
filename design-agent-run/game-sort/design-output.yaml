@@ -38,6 +38,15 @@ glanceTest:
   - { surface: "/sessions", breakpoint: "lg", firstThings: ["'Sessions' heading", "filter row incl. Platform", "first row (a starred build's session, star filled)"], pass: true, evidence: "screenshots/desktop-05-sessions-starred-pinned.png" }
   - { surface: "a game's dashboard", breakpoint: "lg", firstThings: ["sidebar search + tree", "game title", "sentiment summary"], pass: true, evidence: "screenshots/desktop-04-dashboard-sidebar.png" }
 
+# Time estimates: an expert user, KLM-style (about 1.2s per point-and-tap plus reading).
+taskTimes:
+  - { task: "T1", seconds: 6, note: "phone: open drawer, tap MSN, scan" }
+  - { task: "T2", seconds: 2 }
+  - { task: "T3", seconds: 4, note: "open dropdown, pick" }
+  - { task: "T4", seconds: 3 }
+  - { task: "T5", seconds: 2, note: "one tap; later visits need 0 taps" }
+  - { task: "T6", seconds: 5, note: "scan for '!' or tap Critical, then open" }
+  - { task: "T7", seconds: 3 }
 taskPaths:
   # Click counts match user-flow.yaml steps exactly (audit round 1).
   - { task: "T1", clicks: 3, path: "Browse & filter → MSN → a game (phone); 2 on desktop", pass: true }
@@ -51,7 +60,16 @@ taskPaths:
 mobileCheck:
   designedPhoneFirst: true
   reflowAtMinViewport: { pass: true, evidence: "scrollWidth - innerWidth = 0 on /games (cards, list), /sessions, drawer open, at 320/390/1440 (measured)" }
-  textScale200: { pass: "partial", evidence: "Measured at 320px with text zoomed to 200%: 0 overflowing elements inside <main> on /games cards and list (screenshots/phone320-text200-*).", note: "The site header nav (NavClient, GFE-SHELL) overflows at 200%. It predates this work and is out of scope, so it is reported to its owner." }
+  textScale200:
+    pass: "partial"
+    method: "320px viewport, root font-size 200%, full-page screenshots; count elements inside <main> whose box crosses the viewport, excluding horizontal scrollers"
+    results:
+      - { surface: "/games cards", overflowing: 0, evidence: "screenshots/phone320-text200-cards.png" }
+      - { surface: "/games list", overflowing: 0, evidence: "screenshots/phone320-text200-list.png" }
+      - { surface: "drawer open", overflowing: 0, evidence: "screenshots/phone320-text200-drawer.png" }
+      - { surface: "/sessions", overflowing: 0, note: "The table scrolls sideways inside its own scroller (the existing table pattern).", evidence: "screenshots/phone320-text200-sessions.png" }
+      - { surface: "dashboard", overflowing: 1, note: "'Re-analyze feedback' is GFE-SHELL's dashboard content. Flagged to its owner.", evidence: "screenshots/phone320-text200-dashboard.png" }
+    note: "The site header (NavClient, GFE-SHELL) overflows by 54px at 200% on every page. It predates this work, so it is flagged to its owner in design-index.yaml." 
   noHoverOnly: true
   touchTargets: { pass: true, note: "All new controls >= 44px, including card and list-row actions and Archive (audit round 2 fix)." }
   thumbReach: "Drawer button top of list; reason: precedes what it filters."
@@ -68,7 +86,7 @@ acceptanceResults:
   - { id: "AC8", met: true, where: "Measured scrollWidth - innerWidth = 0 at 320px; drawer closed by default (screenshots/phone320-04-list.png, phone320-05-drawer.png)" }
   - { id: "AC9", met: true, where: "'names the filters that matched nothing and clears them, keeping the search (AC9)'" }
   - { id: "AC10", met: true, where: "'still renders the catalogue when the facets read fails (AC10)'" }
-  - { id: "AC11", met: true, where: "StarButton in BuildPills and /sessions rows; test_build_star_is_private_idempotent_and_pins_the_game_first; test_sessions_on_starred_builds_are_pinned_first; test_cannot_star_a_build_outside_scope_or_under_the_wrong_game; screenshots desktop-03/05" }
+  - { id: "AC11", met: true, where: "StarButton in BuildPills and /sessions rows; test_build_star_is_private_idempotent_and_pins_the_game_first; test_sessions_on_starred_builds_are_pinned_first; test_cannot_star_a_build_outside_scope_or_under_the_wrong_game; screenshots desktop-00 (starred games and the starred Asteroids title group first) and desktop-05 (starred sessions first)" }
   - { id: "AC12", met: true, where: "has_critical (40%/5 confirmed); test_critical_means_overly_negative_reviews; test_critical_is_hidden_from_non_reviewers" }
   - { id: "AC13", met: true, where: "TitleGroup + tree; screenshots desktop-00/01" }
   - { id: "AC14", met: true, where: "CatalogShell on /games + dashboard; screenshot desktop-04" }

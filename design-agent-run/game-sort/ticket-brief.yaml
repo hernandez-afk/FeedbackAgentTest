@@ -46,7 +46,7 @@ acceptanceCriteria:
   - { id: "AC3", statement: "Filters are applied by the server before pagination: a platform whose games are all on page 3 of the unfiltered list shows them on page 1.", linkedPriority: "P2", source: "inferred" }
   - { id: "AC4", statement: "Each filter option shows how many games it holds; a new platform typed into a game appears as an option with no code change.", linkedPriority: "P2", source: "inferred" }
   - { id: "AC5", statement: "Every active filter is shown as a removable chip, with one 'Clear all', so the user never has to remember what's applied.", linkedPriority: "P3", source: "inferred" }
-  - { id: "AC6", statement: "/games can be sorted by 'Most active', ordering games by sessions submitted in the last 30 days (most first).", linkedTask: "T3", source: "rewritten" }
+  - { id: "AC6", statement: "/games can be sorted by 'Most active', ordering games by sessions submitted in the last 30 days (most first).", linkedTask: "T4", source: "rewritten" }
   - { id: "AC7", statement: "/sessions can be filtered by platform, and the filter composes with the existing game/build/status/severity filters.", linkedTask: "T3", source: "rewritten" }
   - { id: "AC8", statement: "At 320px nothing scrolls sideways, every filter control is at least 44px tall, and the filter panel is collapsed by default.", linkedPriority: "P3", source: "inferred" }
   - { id: "AC9", statement: "When filters match nothing, the page says which filters matched nothing and offers one action to clear them.", linkedPriority: "P3", source: "inferred" }

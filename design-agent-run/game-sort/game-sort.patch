@@ -1,7 +1,7 @@
 From 2942459ab515213d3ca8fd8a2b7df5240ff599fd Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Mon, 28 Sep 2026 08:17:38 +0000
-Subject: [PATCH 1/5] feat(games): platform/studio filters, list view and Most
+Subject: [PATCH 1/6] feat(games): platform/studio filters, list view and Most
  active sort (GFE-SORT)
 
 Designed through the Design System Agent harness (brief -> scope -> flow ->
@@ -3406,7 +3406,7 @@ index 0000000..34a2edc
 From 6586e5f567d74c0cfa88fdf88d963cd857e316d2 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Mon, 28 Sep 2026 08:34:25 +0000
-Subject: [PATCH 2/5] fix(games): keep the filter panel's padded card on
+Subject: [PATCH 2/6] fix(games): keep the filter panel's padded card on
  desktop
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
@@ -3442,7 +3442,7 @@ index 1ba400d..29ff84c 100644
 From fa3c26c6980baaf081c28a3aa4d5643b05294182 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Mon, 28 Sep 2026 11:15:20 +0000
-Subject: [PATCH 3/5] feat(games): sidebar tree, titles, projects, stars and
+Subject: [PATCH 3/6] feat(games): sidebar tree, titles, projects, stars and
  negative-review warning (GFE-SORT round 2)
 
 After the brief author's answers and Andreas Beijer's design:
@@ -8326,7 +8326,7 @@ index 0000000..b789d6c
 From 4b0ff66526fa97a13d717b82559e1065044c4041 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Mon, 28 Sep 2026 11:55:52 +0000
-Subject: [PATCH 4/5] feat(games): star builds (pinned first on games and
+Subject: [PATCH 4/6] feat(games): star builds (pinned first on games and
  sessions) + audit round 2 fixes
 
 Author: star whatever builds you want; starred builds are shown first in
@@ -10430,7 +10430,7 @@ index b789d6c..d180d86 100644
 From 63a5ade504df8249dfea6374d126d1f040f852f9 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Mon, 28 Sep 2026 12:02:57 +0000
-Subject: [PATCH 5/5] fix(games): let catalogue actions and badges wrap at 200%
+Subject: [PATCH 5/6] fix(games): let catalogue actions and badges wrap at 200%
  text size (GFE-SORT audit round 2)
 
 At 320px with text zoomed to 200%, card actions, the drawer button,
@@ -10544,6 +10544,296 @@ index ce1b3d3..139d081 100644
          ! Negative reviews
        </Badge>
      );
+-- 
+2.43.0
+
+From 2e72ddeaa6820b3f96dd1ce709ca107958c5fbb9 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 28 Sep 2026 12:20:46 +0000
+Subject: [PATCH 6/6] fix(games): match platform filters case-insensitively and
+ star pinned title groups (GFE-SORT audit round 3)
+
+- A ?platform=msn link now ticks the MSN facet, shows no phantom row,
+  and labels its chip MSN, matching the backend's case-insensitive filter.
+- A collapsed title group that holds a starred build shows the same
+  static star as GameCard, so its pinned position has a visible reason.
+- SortButtons takes label and note props instead of hard-coded copy.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ frontend/__tests__/game-filter-panel.test.tsx | 11 +++++++++++
+ frontend/__tests__/game-sort-helpers.test.ts  | 10 ++++++++++
+ frontend/components/GameFilterPanel.tsx       | 16 +++++++++++++---
+ frontend/components/GamesCatalogBrowser.tsx   |  9 ++++++++-
+ frontend/components/catalog/SortButtons.tsx   | 16 ++++++++++++----
+ frontend/components/catalog/TitleGroup.tsx    | 14 ++++++++++++++
+ frontend/lib/game-search.ts                   | 14 ++++++++++++--
+ 7 files changed, 80 insertions(+), 10 deletions(-)
+
+diff --git a/frontend/__tests__/game-filter-panel.test.tsx b/frontend/__tests__/game-filter-panel.test.tsx
+index d32041e..1ce2a70 100644
+--- a/frontend/__tests__/game-filter-panel.test.tsx
++++ b/frontend/__tests__/game-filter-panel.test.tsx
+@@ -123,6 +123,17 @@ describe('GameFilterPanel', () => {
+     expect(stale.textContent).toContain('0');
+   });
+ 
++  it('ticks a platform picked in another case, with no phantom row (audit round 3)', () => {
++    renderPanel(
++      { platforms: ['msn'], studios: [], projects: [], titles: [] },
++      { ok: true, facets: { platforms: [{ value: 'MSN', count: 5 }], studios: [] } },
++    );
++    const rows = Array.from(container.querySelectorAll('fieldset li button'));
++    expect(rows).toHaveLength(1);
++    expect(rows[0]!.textContent).toContain('MSN');
++    expect(rows[0]!.getAttribute('aria-pressed')).toBe('true');
++  });
++
+   it('shows the first options then "Show all", and never hides a selected one', () => {
+     const platforms = Array.from({ length: FACET_VISIBLE_OPTIONS + 4 }, (_, i) => ({
+       value: `P${String(i).padStart(2, '0')}`,
+diff --git a/frontend/__tests__/game-sort-helpers.test.ts b/frontend/__tests__/game-sort-helpers.test.ts
+index 4b16d58..71708ca 100644
+--- a/frontend/__tests__/game-sort-helpers.test.ts
++++ b/frontend/__tests__/game-sort-helpers.test.ts
+@@ -147,3 +147,13 @@ describe('game meta line', () => {
+     expect(addedLabel('not a date')).toBeNull();
+   });
+ });
++
++describe('platform values compare like the backend (audit round 3)', () => {
++  it('toggles "msn" off when "MSN" is picked, and keeps ids exact', async () => {
++    const { toggleGameFilter, sameFilterValue, NO_GAME_FILTERS } = await import('@/lib/game-search');
++    const start = { ...NO_GAME_FILTERS, platforms: ['msn'] };
++    expect(toggleGameFilter(start, 'platforms', 'MSN').platforms).toEqual([]);
++    expect(sameFilterValue('platforms', ' MSN ', 'msn')).toBe(true);
++    expect(sameFilterValue('studios', 'A', 'a')).toBe(false);
++  });
++});
+diff --git a/frontend/components/GameFilterPanel.tsx b/frontend/components/GameFilterPanel.tsx
+index 43f33ef..7e9e74a 100644
+--- a/frontend/components/GameFilterPanel.tsx
++++ b/frontend/components/GameFilterPanel.tsx
+@@ -39,6 +39,7 @@ import {
+   GAMES_NO_PLATFORM,
+   NO_PLATFORM_LABEL,
+   NO_PROJECT_LABEL,
++  sameFilterValue,
+   type GameFacets,
+   type GameFilters,
+ } from '@/lib/game-search';
+@@ -95,13 +96,14 @@ function CheckIcon(): React.JSX.Element {
+ 
+ /** Keep selected values the response no longer lists, with count 0. */
+ function withSelected(
++  facet: keyof GameFilters,
+   options: FacetOption[],
+   selected: string[],
+   label: (value: string) => string,
+ ): FacetOption[] {
+   const out = [...options];
+   for (const value of selected) {
+-    if (!out.some((o) => o.value === value)) out.push({ value, label: label(value), count: 0 });
++    if (!out.some((o) => sameFilterValue(facet, o.value, value))) out.push({ value, label: label(value), count: 0 });
+   }
+   return out;
+ }
+@@ -109,6 +111,7 @@ function withSelected(
+ /** Platform options, with the "no platform" bucket labelled and kept last. */
+ export function platformOptions(facets: GameFacets, selected: string[]): FacetOption[] {
+   return withSelected(
++    'platforms',
+     facets.platforms.map((p) => ({
+       value: p.value ?? GAMES_NO_PLATFORM,
+       label: p.value ?? NO_PLATFORM_LABEL,
+@@ -122,6 +125,7 @@ export function platformOptions(facets: GameFacets, selected: string[]): FacetOp
+ /** Studio options; an unknown selected id is labelled rather than shown raw. */
+ export function studioOptions(facets: GameFacets, selected: string[]): FacetOption[] {
+   return withSelected(
++    'studios',
+     facets.studios.map((s) => ({ value: s.id, label: s.name, count: s.count })),
+     selected,
+     () => 'Unknown studio',
+@@ -131,6 +135,7 @@ export function studioOptions(facets: GameFacets, selected: string[]): FacetOpti
+ /** Project options; "No project" last, unknown ids labelled. */
+ export function projectOptions(facets: GameFacets, selected: string[]): FacetOption[] {
+   return withSelected(
++    'projects',
+     (facets.projects ?? []).map((p) => ({
+       value: p.id ?? GAMES_NO_PLATFORM,
+       label: p.name ?? NO_PROJECT_LABEL,
+@@ -163,6 +168,11 @@ export function facetGroups(facets: GameFacets, filters: GameFilters): FacetGrou
+   return groups;
+ }
+ 
++/** Whether `value` is among `selected`, by the facet's own comparison. */
++export function isFacetSelected(facet: keyof GameFilters, selected: string[], value: string): boolean {
++  return selected.some((v) => sameFilterValue(facet, v, value));
++}
++
+ function FacetGroupView({
+   id,
+   group,
+@@ -182,14 +192,14 @@ function FacetGroupView({
+   const visible =
+     expanded || !overflow
+       ? options
+-      : options.filter((o, i) => i < visibleOptions || selected.includes(o.value));
++      : options.filter((o, i) => i < visibleOptions || isFacetSelected(group.facet, selected, o.value));
+ 
+   return (
+     <fieldset className="min-w-0">
+       <legend className="adp-kicker mb-2">{group.legend}</legend>
+       <ul id={`${id}-options`} className="flex flex-col gap-2">
+         {visible.map((option) => {
+-          const isSelected = selected.includes(option.value);
++          const isSelected = isFacetSelected(group.facet, selected, option.value);
+           return (
+             <li key={option.value}>
+               <button
+diff --git a/frontend/components/GamesCatalogBrowser.tsx b/frontend/components/GamesCatalogBrowser.tsx
+index d90245e..1d2c4ec 100644
+--- a/frontend/components/GamesCatalogBrowser.tsx
++++ b/frontend/components/GamesCatalogBrowser.tsx
+@@ -92,6 +92,7 @@ import {
+   gamesHref,
+   hasGameFilters,
+   resultCountLabel,
++  sameFilterValue,
+   toggleGameFilter,
+   type GameFilters,
+   type GameNavigation,
+@@ -384,7 +385,13 @@ export default function GamesCatalogBrowser({
+       {chips.length > 0 && (
+         <ul className="flex flex-wrap items-center gap-2" aria-label="Active filters">
+           {chips.map((chip) => {
+-            const label = chipLabels.get(`${chip.facet}:${chip.value}`) ?? chip.value;
++            // Platforms match their facet label case-insensitively, so a
++            // ?platform=msn link reads "MSN", as the panel does.
++            const platformLabel =
++              chip.facet === 'platforms'
++                ? platformOptions(facetData, []).find((o) => sameFilterValue('platforms', o.value, chip.value))?.label
++                : undefined;
++            const label = platformLabel ?? chipLabels.get(`${chip.facet}:${chip.value}`) ?? chip.value;
+             return (
+               <li key={`${chip.facet}:${chip.value}`}>
+                 {/* The shared pill (audit round 1: not a re-implementation). */}
+diff --git a/frontend/components/catalog/SortButtons.tsx b/frontend/components/catalog/SortButtons.tsx
+index 4759c26..4f91d11 100644
+--- a/frontend/components/catalog/SortButtons.tsx
++++ b/frontend/components/catalog/SortButtons.tsx
+@@ -45,17 +45,23 @@ export default function SortButtons({
+   onChange,
+   canReview,
+   options = DEFAULT_SORT_OPTIONS,
++  label = 'Sort',
++  note = 'Starred builds always come first.',
+ }: {
+   sort: GamesSort;
+   onChange: (sort: GamesSort) => void;
+   canReview: boolean;
+   options?: SortOption[];
++  /** Visible group heading. */
++  label?: string;
++  /** Line under the buttons; pass null to hide it. */
++  note?: string | null;
+ }): React.JSX.Element {
+   const shown = options.filter((o) => !o.reviewerOnly || canReview);
+   return (
+     <div>
+       <p className="adp-kicker mb-2" aria-hidden="true">
+-        Sort
++        {label}
+       </p>
+       <div role="group" aria-label="Sort games" className="flex flex-wrap gap-2">
+         {shown.map((option) => {
+@@ -75,9 +81,11 @@ export default function SortButtons({
+           );
+         })}
+       </div>
+-      <p className="adp-mono mt-2" style={{ color: 'var(--color-ink-faint)' }}>
+-        Starred builds always come first.
+-      </p>
++      {note && (
++        <p className="adp-mono mt-2" style={{ color: 'var(--color-ink-faint)' }}>
++          {note}
++        </p>
++      )}
+     </div>
+   );
+ }
+diff --git a/frontend/components/catalog/TitleGroup.tsx b/frontend/components/catalog/TitleGroup.tsx
+index 31678ba..2dc9622 100644
+--- a/frontend/components/catalog/TitleGroup.tsx
++++ b/frontend/components/catalog/TitleGroup.tsx
+@@ -24,6 +24,7 @@
+ import { useId, useState, type ReactNode } from 'react';
+ import Badge from '@/components/primitives/Badge';
+ import CriticalFlag from '@/components/catalog/CriticalFlag';
++import { StarIcon } from '@/components/catalog/StarButton';
+ import type { Game } from '@/lib/types';
+ 
+ export type TitleGroupProps = {
+@@ -44,6 +45,9 @@ export default function TitleGroup({
+   const [open, setOpen] = useState(defaultOpen);
+   const panelId = useId();
+   const anyCritical = games.some((g) => g.has_critical === true);
++  // A group holding a starred build is pinned first, so it says why, with
++  // the same static star GameCard uses (audit round 3).
++  const anyFavorite = games.some((g) => g.is_favorite === true);
+ 
+   const Wrapper = view === 'list' ? 'li' : 'div';
+   return (
+@@ -72,6 +76,16 @@ export default function TitleGroup({
+             <Badge variant="neutral" size="sm" pill={false}>
+               {games.length} versions
+             </Badge>
++            {anyFavorite && (
++              <span
++                className="inline-flex"
++                style={{ color: 'var(--color-mixed)' }}
++                role="img"
++                aria-label="You starred a build of this title"
++              >
++                <StarIcon filled />
++              </span>
++            )}
+             {anyCritical && <CriticalFlag variant="full" />}
+           </span>
+           <span className="adp-mono break-words" style={{ color: 'var(--color-ink-faint)' }}>
+diff --git a/frontend/lib/game-search.ts b/frontend/lib/game-search.ts
+index bfe2277..18153ae 100644
+--- a/frontend/lib/game-search.ts
++++ b/frontend/lib/game-search.ts
+@@ -225,6 +225,16 @@ export function hasGameFilters(filters: GameFilters): boolean {
+   );
+ }
+ 
++/**
++ * Whether two values of one facet name the same thing. Platforms compare
++ * case- and space-insensitively, like the backend ("MSN" and " msn" are one
++ * platform, D9), so a shared ?platform=msn link still ticks "MSN". Ids compare
++ * exactly.
++ */
++export function sameFilterValue(facet: keyof GameFilters, a: string, b: string): boolean {
++  return facet === 'platforms' ? a.trim().toLowerCase() === b.trim().toLowerCase() : a === b;
++}
++
+ /** `filters` with `value` added to / removed from one facet. */
+ export function toggleGameFilter(
+   filters: GameFilters,
+@@ -232,8 +242,8 @@ export function toggleGameFilter(
+   value: string,
+ ): GameFilters {
+   const current = filters[facet];
+-  const next = current.includes(value)
+-    ? current.filter((v) => v !== value)
++  const next = current.some((v) => sameFilterValue(facet, v, value))
++    ? current.filter((v) => !sameFilterValue(facet, v, value))
+     : [...current, value].slice(0, GAME_FILTER_MAX_VALUES);
+   return { ...filters, [facet]: next };
+ }
 -- 
 2.43.0
 

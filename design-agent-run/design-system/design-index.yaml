@@ -11,7 +11,7 @@ projects:
     priorities: []
     componentsUsed: []
     codePaths: ["frontend/components/NavClient.tsx", "frontend/app/game/**", "frontend/app/games/[gameId]/dashboard/**", "frontend/app/sessions/[id]/**"]
-    flags: ["GFE-SORT wraps games/dashboard in the catalogue sidebar (scope-2)", "Header nav overflows at 200% text size at 320px (found in the GFE-SORT audit round 3 measurements)"]
+    flags: ["GFE-SORT wraps games/dashboard in the catalogue sidebar (scope-2)", "Header nav overflows at 200% text size at 320px: ATARI and ADMIN overlap, and the menu button is clipped (GFE-SORT audit round 3)", "Dashboard: 'Re-analyze feedback' overflows at 200% text at 320px", "Dashboard header says 'Sentiment: Mixed' for a game at 55% negative, which the GFE-SORT critical flag marks overly negative. The label and the flag should agree."]
     artifacts: []
   - id: "GFE-SORT"
     title: "Browse, filter and sort games and sessions"
@@ -44,7 +44,7 @@ projects:
       - { id: "GFE-SORT-scope-2", type: "scope-overlap-report", path: "game-sort/scope-overlap-report.yaml", version: 2, reviewStatus: "current" }
       - { id: "GFE-SORT-flow-3", type: "user-flow", path: "game-sort/user-flow.yaml", version: 3, reviewStatus: "current" }
       - { id: "GFE-SORT-gap-3", type: "component-gap-report", path: "game-sort/component-gap-report.yaml", version: 3, reviewStatus: "current" }
-      - { id: "GFE-SORT-verification", type: "component-verification-report", path: "game-sort/component-verification-reports.yaml", version: 2, reviewStatus: "current" }
+      - { id: "GFE-SORT-verification", type: "component-verification-report", path: "game-sort/component-verification-reports.yaml", version: 3, reviewStatus: "current" }
       - { id: "GFE-SORT-design-3", type: "design-output", path: "game-sort/design-output.yaml", version: 3, reviewStatus: "current" }
       - { id: "audit-report-GFE-SORT-round1", type: "audit-report", path: "game-sort/audit-report-round1.md", version: 1, reviewStatus: "current" }
       - { id: "audit-report-GFE-SORT-round2", type: "audit-report", path: "game-sort/audit-report-round2.md", version: 2, reviewStatus: "current" }
