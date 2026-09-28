@@ -1,7 +1,7 @@
 From 2942459ab515213d3ca8fd8a2b7df5240ff599fd Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Mon, 28 Sep 2026 08:17:38 +0000
-Subject: [PATCH] feat(games): platform/studio filters, list view and Most
+Subject: [PATCH 1/2] feat(games): platform/studio filters, list view and Most
  active sort (GFE-SORT)
 
 Designed through the Design System Agent harness (brief -> scope -> flow ->
@@ -3400,6 +3400,43 @@ index 0000000..34a2edc
 +    # MSN: Centipede's 2 live + Asteroids' 4 + Tempest B's 1 (admin sees all);
 +    # the 5 soft-deleted Centipede sessions stay excluded.
 +    assert msn.json()["total"] == 7
+-- 
+2.43.0
+
+
+From 6586e5f567d74c0cfa88fdf88d963cd857e316d2 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 28 Sep 2026 08:34:25 +0000
+Subject: [PATCH 2/2] fix(games): keep the filter panel's padded card on
+ desktop
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ frontend/components/GamesCatalogBrowser.tsx | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/frontend/components/GamesCatalogBrowser.tsx b/frontend/components/GamesCatalogBrowser.tsx
+index 1ba400d..29ff84c 100644
+--- a/frontend/components/GamesCatalogBrowser.tsx
++++ b/frontend/components/GamesCatalogBrowser.tsx
+@@ -508,11 +508,12 @@ export default function GamesCatalogBrowser({
+             <div
+               id="games-filter-panel"
+               className={[
+-                // Surface as a class, not an inline style: an inline background
+-                // would beat lg:bg-transparent and leave a padding-less white
+-                // box around the desktop column.
++                // The same padded surface card at every width: on phones it
++                // opens under the toggle, from lg: it is the left column.
++                // (It was borderless + unpadded from lg:, which left the
++                // options flush against the column edge.)
+                 'mt-3 rounded-[var(--radius-lg)] border border-[var(--color-hair)] bg-(--color-surface) p-4',
+-                'lg:mt-0 lg:block lg:border-0 lg:bg-transparent lg:p-0',
++                'lg:sticky lg:top-6 lg:mt-0 lg:block',
+                 filtersOpen ? 'block' : 'hidden',
+               ].join(' ')}
+               data-testid="games-filter-panel"
 -- 
 2.43.0
 
