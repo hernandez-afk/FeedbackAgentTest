@@ -63,3 +63,28 @@ This would fit on the "games" and "sessions" pages as a main way to sort. Also f
 ## Open questions
 
 - [Anything you don't know yet. Better listed here than guessed.]
+
+---
+
+## Addendum — author's answers and new criteria (round 2)
+
+*From the author in conversation, after the first design and audit. Recorded
+verbatim in meaning; the reference design is in `reference-andreas-beijer/`.*
+
+- Nested games: **option A** — a Title above games; versions listed under it.
+- Platform names in different capitals: **should be the same**.
+- Game developer = **the studio**. Project = **what the intended use is for**.
+- "Recently got the most responses": **yes** — last 30 days, on the games page.
+- Phone filters: **whatever is most functional**.
+- Related design: **Andreas Beijer's sidebar design** (two screenshots attached):
+  a persistent left sidebar with search, sort icons (alphabetical, date,
+  starred, critical), and a Project → Platform → game tree with a star and a
+  red "!" per game, shown beside both the games list and a game's dashboard.
+
+### Acceptance criteria (updated)
+
+- When sorting the games and sessions become easily to filter and locate what is existing
+- Card format and list format of games
+- Sessions can be suggested to be sorted based on what recently got the most responses
+- Want to be able to "star" favorite game builds
+- Critical warning: when reviews become overly negative

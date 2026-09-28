@@ -1,0 +1,511 @@
+<title>Game Sort Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{
+  --bg:#f7f5f1; --surface:#ffffff; --surface-2:#fbfaf7; --field:#ffffff;
+  --ink:#16151a; --ink-sub:rgba(22,21,26,.6); --ink-faint:rgba(22,21,26,.64);
+  --hair:rgba(22,21,26,.09); --bar:rgba(22,21,26,.2);
+  --accent:#00d4aa; --accent-text:#007a63; --accent-ink:#07271f;
+  --accent-08:rgba(0,212,170,.08); --accent-15:rgba(0,212,170,.15); --accent-22:rgba(0,212,170,.22);
+  --negative:#e5705b; --negative-text:#bf4b36; --negative-fill:rgba(229,112,91,.12);
+  --info:#2b63f0; --info-fill:rgba(43,99,240,.1); --star:#d9a23b;
+  --shadow:0 10px 30px rgba(22,21,26,.06); --shadow-hi:0 22px 46px rgba(22,21,26,.12);
+  --r-sm:8px; --r-btn:10px; --r-card:16px;
+  --display:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121113; --surface:#1b1a1d; --surface-2:#211f23; --field:#1b1a1d;
+    --ink:#f4f1ef; --ink-sub:rgba(244,241,239,.62); --ink-faint:rgba(244,241,239,.55);
+    --hair:rgba(255,255,255,.1); --bar:rgba(244,241,239,.25);
+    --accent-text:#3fe3c2; --negative-text:#f08a76; --info:#6b93ff; --info-fill:rgba(107,147,255,.14);
+    --shadow:0 12px 34px rgba(0,0,0,.34); --shadow-hi:0 22px 48px rgba(0,0,0,.46);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121113; --surface:#1b1a1d; --surface-2:#211f23; --field:#1b1a1d;
+  --ink:#f4f1ef; --ink-sub:rgba(244,241,239,.62); --ink-faint:rgba(244,241,239,.55);
+  --hair:rgba(255,255,255,.1); --bar:rgba(244,241,239,.25);
+  --accent-text:#3fe3c2; --negative-text:#f08a76; --info:#6b93ff; --info-fill:rgba(107,147,255,.14);
+  --shadow:0 12px 34px rgba(0,0,0,.34); --shadow-hi:0 22px 48px rgba(0,0,0,.46);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--display);font-weight:500;font-size:15px;line-height:1.5;padding-inline:16px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--mono);font-size:12px}
+.kicker{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--ink-faint)}
+.wrap{max-width:1280px;margin-inline:auto;padding-block:0 48px}
+
+/* prototype bar */
+.proto{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--hair);font-family:var(--mono);font-size:12px;color:var(--ink-sub)}
+.proto strong{color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--hair);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:6px 12px;min-height:32px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* app header */
+.top{display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid var(--hair);margin-bottom:28px}
+.brand{font-family:var(--mono);font-weight:700;font-size:15px}
+.brand b{color:var(--accent-text)}
+.nav{display:flex;gap:4px;margin-left:auto}
+.nav button{border:0;background:transparent;padding:10px 12px;min-height:44px;border-radius:var(--r-btn);color:var(--ink-sub)}
+.nav button[aria-current="page"]{color:var(--ink);background:var(--accent-08)}
+h1{font-weight:800;font-size:clamp(28px,4vw,34px);line-height:1.1;margin:0;text-wrap:balance}
+.lede{color:var(--ink-sub);margin:6px 0 24px}
+
+/* shell */
+.shell{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:32px;align-items:start}
+.side{grid-column:span 3;position:sticky;top:16px;display:flex;flex-direction:column;gap:20px;max-height:calc(100vh - 32px);overflow:auto;padding-bottom:8px}
+.main{grid-column:span 9;min-width:0;display:flex;flex-direction:column;gap:16px}
+.shell > .drawer-btn,.drawer-close{display:none}
+.backdrop{display:none}
+
+/* controls */
+.search{position:relative}
+.search input{width:100%;height:44px;border:1px solid var(--hair);background:var(--field);border-radius:var(--r-btn);padding:0 12px 0 36px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-faint)}
+.sorts{display:flex;flex-wrap:wrap;gap:8px}
+.sbtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border:1px solid var(--hair);border-radius:var(--r-btn);background:var(--surface);font-family:var(--mono);font-size:12px;color:var(--ink-sub)}
+.sbtn:hover{border-color:var(--accent);background:var(--accent-08)}
+.sbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.card{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-card)}
+.filters{padding:16px;display:flex;flex-direction:column;gap:20px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend{padding:0;margin-bottom:6px}
+.opt{display:flex;width:100%;align-items:center;gap:12px;min-height:44px;padding:6px 10px;border:0;border-radius:var(--r-btn);background:transparent;text-align:left}
+.opt:hover{background:var(--accent-08)}
+.opt[aria-pressed="true"]{background:var(--accent-15)}
+.box{width:20px;height:20px;flex:none;border:1px solid var(--bar);border-radius:var(--r-sm);display:grid;place-items:center}
+.opt[aria-pressed="true"] .box{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.opt .l{flex:1;min-width:0;font-family:var(--mono);font-size:12px;overflow-wrap:anywhere}
+.opt .n{font-family:var(--mono);font-size:12px;color:var(--ink-faint);font-variant-numeric:tabular-nums}
+
+/* tree */
+.proj{padding:0 8px 8px}
+.th{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;border:0;background:transparent;text-align:left;padding:0 8px;border-radius:var(--r-btn)}
+.th:hover{color:var(--accent-text)}
+.proj>.th{font-weight:800;font-size:18px}
+.plat{border:1px solid var(--hair);border-radius:var(--r-btn);margin-top:8px}
+.plat>.th{font-family:var(--mono);font-size:12px;font-weight:700}
+.plat>.th:hover{background:var(--accent-08);color:var(--ink)}
+.chev{flex:none;transition:transform .2s}
+[aria-expanded="false"] .chev{transform:rotate(-90deg)}
+.leaves{list-style:none;margin:0 0 4px 16px;padding:0 0 0 8px;border-left:1px solid var(--hair)}
+.leaf{display:flex;align-items:center;gap:4px}
+.leaf a{flex:1;min-width:0;display:flex;align-items:center;min-height:44px;padding:4px 8px;border-radius:var(--r-btn);color:var(--ink);text-decoration:none;font-size:14px}
+.leaf a:hover{background:var(--accent-08)}
+.leaf a[aria-current="page"]{background:var(--accent-15);font-weight:700}
+.tgroup .kicker{padding:8px 8px 0}
+.star{width:44px;height:44px;flex:none;display:grid;place-items:center;border:0;background:transparent;border-radius:var(--r-btn);color:var(--ink-faint)}
+.star:hover{background:var(--accent-08)}
+.star[aria-pressed="true"]{color:var(--star)}
+.bang{flex:none;min-width:20px;height:20px;padding:0 4px;border-radius:var(--r-sm);background:var(--negative);color:var(--accent-ink);font-family:var(--mono);font-weight:700;font-size:12px;display:grid;place-items:center}
+.legend{display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:12px;color:var(--ink-faint)}
+
+/* results */
+.bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+.pill{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:1px solid var(--hair);border-radius:999px;background:transparent;font-family:var(--mono);font-size:12px;color:var(--ink-sub)}
+.pill:hover{border-color:var(--accent);color:var(--accent-text)}
+.pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.chips .pill{background:var(--surface);color:var(--ink)}
+.link{border:0;background:transparent;min-height:44px;padding:0 10px;font-family:var(--mono);font-size:12px;color:var(--accent-text);border-radius:var(--r-btn)}
+.link:hover{text-decoration:underline;color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.gc{padding:24px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.gc h3,.row h3,.tg h3{font-weight:800;font-size:19px;line-height:1.2;margin:0;overflow-wrap:anywhere}
+.head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.badge{display:inline-flex;align-items:center;white-space:nowrap;font-family:var(--mono);font-weight:700;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:3px 7px;border-radius:5px;background:var(--info);color:#fff}
+.badge.neutral{background:transparent;border:1px solid var(--hair);color:var(--ink-sub)}
+.badge.neg{background:var(--negative);color:var(--accent-ink)}
+.meta{font-family:var(--mono);font-size:12px;color:var(--ink-faint);overflow-wrap:anywhere}
+.builds{display:flex;flex-wrap:wrap;gap:8px}
+.build{min-height:36px;padding:0 12px;border:1px solid var(--hair);border-radius:999px;background:transparent;font-family:var(--mono);font-size:12px;color:var(--ink-sub)}
+.build[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.cta{min-height:44px;border:0;border-radius:var(--r-btn);background:var(--accent);color:var(--accent-ink);font-family:var(--mono);font-weight:700;margin-top:auto}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.sec{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border:1px solid var(--hair);border-radius:var(--r-btn);background:transparent;font-family:var(--mono);font-size:11px;color:var(--ink-sub);text-decoration:none}
+.sec:hover{border-color:var(--accent);color:var(--ink)}
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.row{padding:12px 16px;display:flex;align-items:center;gap:16px}
+.row .grow{flex:1;min-width:0}
+.tg{background:var(--surface-2);border:1px solid var(--hair);border-radius:var(--r-card);padding:16px}
+.tg{align-self:start}
+.tg.open{grid-column:1 / -1}
+.tgh{display:flex;width:100%;justify-content:space-between;gap:12px;border:0;background:transparent;text-align:left;padding:0}
+.tgh:hover h3{color:var(--accent-text)}
+.tg .inner{margin-top:16px}
+.empty{padding:48px 24px;text-align:center}
+.empty p{color:var(--ink-sub);max-width:44ch;margin:8px auto 20px}
+
+/* dashboard + sessions */
+.dash{padding:24px;display:grid;gap:20px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.kpi{padding:16px}
+.kpi b{display:block;font-weight:800;font-size:30px;font-variant-numeric:tabular-nums}
+.sent{height:10px;border-radius:999px;overflow:hidden;display:flex;background:var(--hair)}
+.warn{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:12px;background:var(--negative-fill);border:1px solid var(--negative)}
+.warn .bang{margin-top:2px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:560px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--hair)}
+th{font-family:var(--mono);font-size:11px;color:var(--ink-sub);background:var(--surface-2)}
+td.mono{color:var(--ink-sub)}
+select{height:44px;border:1px solid var(--hair);border-radius:var(--r-btn);background:var(--field);padding:0 10px;font-family:var(--mono);font-size:12px}
+.frow{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.frow label{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:12px;color:var(--ink-sub)}
+.note{font-family:var(--mono);font-size:12px;color:var(--ink-faint)}
+
+@media (max-width:1023px){
+  .shell{display:flex;flex-direction:column;gap:16px}
+  .main{width:100%}
+  .shell > .drawer-btn{display:inline-flex;align-self:flex-start}
+  .side{display:none}
+  .side.open{display:flex;position:fixed;inset:0 auto 0 0;z-index:50;width:min(22rem,88vw);max-height:none;background:var(--bg);padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0px));box-shadow:var(--shadow-hi)}
+  .side.open .drawer-close{display:flex;justify-content:space-between;align-items:center}
+  .backdrop.open{display:block;position:fixed;inset:0;z-index:40;background:var(--ink);opacity:.32}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:640px){
+  .grid{grid-template-columns:1fr}
+  .row{flex-direction:column;align-items:stretch}
+  .nav button{padding:10px 8px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="proto" role="note">
+    <span><strong>Prototype</strong> · Game Feedback Engine · games &amp; sessions sorting (sample data)</span>
+    <span style="display:flex;gap:8px;align-items:center">Viewing as
+      <span class="seg" role="group" aria-label="Viewing as">
+        <button type="button" id="role-reviewer" aria-pressed="true">Reviewer</button>
+        <button type="button" id="role-tester" aria-pressed="false">Tester</button>
+      </span>
+    </span>
+  </div>
+  <header class="top">
+    <span class="brand"><b>GFE</b> Game Feedback</span>
+    <nav class="nav" aria-label="Main">
+      <button type="button" id="nav-games" aria-current="page">Games</button>
+      <button type="button" id="nav-sessions">Sessions</button>
+    </nav>
+  </header>
+  <div id="app"></div>
+</div>
+
+<script>
+(() => {
+const STUDIOS = { a: 'Atari', c: 'Coatsink' };
+// Sample catalogue modelled on Andreas Beijer's sketch + the brief's examples.
+const GAMES = [
+  g('Asteroids Classics Plus','HTML5','Andreas Sketches','Asteroids','a',1,14,55),
+  g('PONG Classics Plus','HTML5','Andreas Sketches','Pong','a',2,6,12),
+  g('Breakout Classics Plus','HTML5','Andreas Sketches','Breakout','a',3,3,18),
+  g('Lunar Taxi','ALAN - 9','Andreas Sketches',null,'a',4,9,10),
+  g('PopopoP','ALAN - 9','Andreas Sketches',null,'a',5,11,58),
+  g('Ninja Soccer','ATARI - 7800','Andreas Sketches',null,'a',6,2,null),
+  g('Azerion PONG','MSN','Azerion H5 games','Pong','a',7,8,20),
+  g('Azerion Breakout','msn','Azerion H5 games','Breakout','a',8,4,15),
+  g('Asteroids Arezion (MSN)','MSN','Azerion H5 games','Asteroids','a',9,17,22),
+  g('Asteroids Classic Azerion (MSN)','MSN','Azerion H5 games','Asteroids','a',10,5,31),
+  g('Guess the Game (MSN)','MSN','Azerion H5 games',null,'c',11,20,26),
+  g('Missile Command Recharged','Atari Recharged','Atari Recharged',null,'a',12,19,48),
+  g('Centipede Recharged','Atari Recharged','Atari Recharged',null,'a',14,7,9),
+  g('Breakout Recharged','Atari Recharged','Atari Recharged','Breakout','a',16,1,null),
+  g("Demento's Curse",null,'Andreas Sketches',null,'c',18,3,null),
+  g("Vampire's Fall 2",'Steam / Android / iOS',null,null,'c',20,12,14),
+  g('Guess the Game (Reddit)','Reddit',null,null,'c',22,6,11),
+  g('Haunted House','Nintendo Switch',null,null,'c',25,7,19),
+  g('Yars Rising','Nintendo Switch',null,null,'a',28,6,8),
+  g('Warlords',null,null,null,'c',45,1,null),
+];
+function g(title, platform, project, franchise, studio, days, recent, neg){
+  const id = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const d = new Date(Date.UTC(2026, 8, 28)); d.setUTCDate(d.getUTCDate() - days);
+  return { id, title, platform, project, franchise, studio, added: d, recent, neg, builds: recent > 10 ? ['Checkpoint 1','Release candidate'] : ['v1'] };
+}
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmt = d => `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+const isCritical = x => x.neg !== null && x.neg >= 40; // >= 40% negative over >= 5 reviews
+const platKey = p => (p || '').trim().toLowerCase();
+
+const state = {
+  page: 'games', dashId: null, role: 'reviewer',
+  q: '', sort: 'newest', view: 'card',
+  filters: { platform: [], project: [], studio: [] },
+  stars: new Set(['asteroids-classics-plus','missile-command-recharged']),
+  open: new Set(), collapsed: new Set(), drawer: false, sessPlatform: '',
+};
+try { const v = localStorage.getItem('gfe-proto-view'); if (v === 'list' || v === 'card') state.view = v; } catch {}
+
+const $app = document.getElementById('app');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const reviewer = () => state.role === 'reviewer';
+
+const ICON = {
+  search:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14" stroke-linecap="round"/></svg>',
+  star: f => `<svg width="16" height="16" viewBox="0 0 16 16" fill="${f?'currentColor':'none'}" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.8 9.9 5.7 14.2 6.3 11.1 9.3 11.8 13.6 8 11.6 4.2 13.6 4.9 9.3 1.8 6.3 6.1 5.7Z"/></svg>`,
+  chev:'<svg class="chev" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 6 8 10 12 6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  check:'<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  x:'<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 4 12 12M12 4 4 12" stroke-linecap="round"/></svg>',
+  menu:'<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2.5 4h11M4.5 8h7M6.5 12h3" stroke-linecap="round"/></svg>',
+};
+const SORTS = [
+  ['title','A to Z','<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12.5 5 4l2.5 8.5M3.3 10h3.4M10 4.5h3.5L10 11.5h3.5"/></svg>'],
+  ['newest','Newest','<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3l2 1.5"/></svg>'],
+  ['activity','Active','<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 8.5h3l2-5 3 9 2-4h3"/></svg>'],
+  ['starred','Starred', ICON.star(false)],
+  ['critical','Critical','<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M8 2 14.5 13.5h-13ZM8 6.5v3M8 11.5v.1"/></svg>'],
+];
+const NOTE = { activity:'most sessions in the last 30 days first', starred:'your starred games first', critical:'games with overly negative reviews first' };
+
+function matches(x, f = state.filters, q = state.q){
+  if (q.trim() && !x.title.toLowerCase().includes(q.trim().toLowerCase())) return false;
+  if (f.platform.length && !f.platform.includes(platKey(x.platform) || '__none__')) return false;
+  if (f.project.length && !f.project.includes(x.project || '__none__')) return false;
+  if (f.studio.length && !f.studio.includes(x.studio)) return false;
+  return true;
+}
+function ordered(list){
+  const byTitle = (a,b) => a.title.localeCompare(b.title,'en',{sensitivity:'base'});
+  const s = state.sort === 'critical' && !reviewer() ? 'title' : state.sort;
+  const cmp = {
+    title: byTitle,
+    newest: (a,b) => b.added - a.added || byTitle(a,b),
+    activity: (a,b) => b.recent - a.recent || byTitle(a,b),
+    starred: (a,b) => state.stars.has(b.id) - state.stars.has(a.id) || byTitle(a,b),
+    critical: (a,b) => isCritical(b) - isCritical(a) || byTitle(a,b),
+  }[s];
+  return [...list].sort(cmp);
+}
+function facet(key, label, noneLabel){
+  // Counts apply the OTHER facets' selections, not this one's.
+  const others = { ...state.filters, [key]: [] };
+  const counts = new Map();
+  for (const x of GAMES) {
+    if (!matches(x, others)) continue;
+    const raw = key === 'platform' ? x.platform : key === 'project' ? x.project : x.studio;
+    const v = key === 'platform' ? (platKey(raw) || '__none__') : (raw || '__none__');
+    const name = v === '__none__' ? noneLabel : key === 'studio' ? STUDIOS[raw] : (key === 'platform' ? raw.trim() : raw);
+    const cur = counts.get(v) || { v, name, n: 0 };
+    cur.n++; if (key === 'platform' && raw && raw === raw.toUpperCase()) cur.name = raw.trim();
+    counts.set(v, cur);
+  }
+  const opts = [...counts.values()].sort((a,b) => (a.v==='__none__') - (b.v==='__none__') || b.n - a.n || a.name.localeCompare(b.name));
+  return { key, label, opts };
+}
+function chipName(key, v){
+  if (v === '__none__') return key === 'platform' ? 'No platform' : 'No project';
+  if (key === 'studio') return STUDIOS[v];
+  if (key === 'platform') return (GAMES.find(x => platKey(x.platform) === v) || {}).platform?.trim() || v;
+  return v;
+}
+
+function sidebar(activeId){
+  const groups = state.page === 'games' ? [facet('platform','Platform','No platform'), facet('project','Project','No project'), facet('studio','Studio','—')].filter(f => f.key !== 'studio' || f.opts.length > 1) : [];
+  const nf = Object.values(state.filters).flat().length;
+  return `
+  <div class="drawer-close"><span class="kicker">Browse &amp; filter</span><button type="button" class="sbtn" data-act="drawer-close">Close</button></div>
+  <form class="search" role="search" data-act="search-form">
+    <label class="kicker" for="q" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Search games by title</label>
+    ${ICON.search}<input id="q" type="search" placeholder="Search games" autocomplete="off" value="${esc(state.q)}">
+  </form>
+  <div>
+    <p class="kicker" style="margin:0 0 8px" aria-hidden="true">Sort</p>
+    <div class="sorts" role="group" aria-label="Sort games">
+      ${SORTS.filter(([k]) => k !== 'critical' || reviewer()).map(([k,l,i]) => `<button type="button" class="sbtn" data-sort="${k}" aria-pressed="${state.sort===k}">${i}${l}</button>`).join('')}
+    </div>
+  </div>
+  ${groups.length ? `<section aria-labelledby="fh"><h2 class="kicker" id="fh" style="margin:0 0 8px">Filters${nf ? ` · ${nf} on` : ''}</h2>
+    <div class="card filters">${groups.map(f => `<fieldset><legend class="kicker">${f.label}</legend>
+      ${f.opts.map(o => `<button type="button" class="opt" data-facet="${f.key}" data-v="${esc(o.v)}" aria-pressed="${state.filters[f.key].includes(o.v)}"><span class="box">${state.filters[f.key].includes(o.v) ? ICON.check : ''}</span><span class="l">${esc(o.name)}</span><span class="n" aria-label="${o.n} games">${o.n}</span></button>`).join('')}
+    </fieldset>`).join('')}</div></section>` : ''}
+  <section aria-labelledby="bh"><h2 class="kicker" id="bh" style="margin:0 0 8px">Browse</h2>${tree(activeId)}</section>`;
+}
+
+function tree(activeId){
+  const items = ordered(GAMES.filter(x => !state.q.trim() || x.title.toLowerCase().includes(state.q.trim().toLowerCase())));
+  if (!items.length) return `<p class="note">No game titles contain “${esc(state.q.trim())}”.</p>`;
+  const projects = new Map();
+  for (const x of items) {
+    const pk = x.project || '\u0000'; const p = projects.get(pk) || { label: x.project || 'No project', plats: new Map() }; projects.set(pk, p);
+    const lk = platKey(x.platform) || '\u0000'; const pl = p.plats.get(lk) || { label: x.platform?.trim() || 'No platform', entries: [] }; p.plats.set(lk, pl);
+    const t = x.franchise && pl.entries.find(e => e.t === x.franchise);
+    if (t) t.games.push(x); else pl.entries.push(x.franchise ? { t: x.franchise, games: [x] } : { g: x });
+  }
+  const sortL = (a,b) => (a[0]==='\u0000') - (b[0]==='\u0000') || a[1].label.localeCompare(b[1].label,'en',{sensitivity:'base'});
+  const leaf = x => `<li class="leaf"><a href="#" data-open="${x.id}" ${x.id===activeId?'aria-current="page"':''}>${esc(x.title)}</a>${reviewer() && isCritical(x) ? '<span class="bang" role="img" aria-label="Reviews overly negative">!</span>' : ''}${starBtn(x)}</li>`;
+  return `<nav aria-label="Browse games" style="display:flex;flex-direction:column;gap:16px">${[...projects.entries()].sort(sortL).map(([pk,p]) => {
+    const pid = 'p-' + (pk === '\u0000' ? 'none' : pk.replace(/\W+/g,'-')); const pOpen = !state.collapsed.has(pid);
+    return `<section class="card proj"><button type="button" class="th" data-toggle="${pid}" aria-expanded="${pOpen}" aria-controls="${pid}">${ICON.chev}<span>${esc(p.label)}</span></button>
+    <div id="${pid}" ${pOpen?'':'hidden'}>${[...p.plats.entries()].sort(sortL).map(([lk,pl]) => {
+      const lid = pid + '-' + (lk === '\u0000' ? 'none' : lk.replace(/\W+/g,'-')); const lOpen = !state.collapsed.has(lid);
+      return `<div class="plat"><button type="button" class="th" data-toggle="${lid}" aria-expanded="${lOpen}" aria-controls="${lid}">${ICON.chev}<span>${esc(pl.label)}</span></button>
+      <ul class="leaves" id="${lid}" ${lOpen?'':'hidden'}>${pl.entries.map(e => e.g ? leaf(e.g) : e.games.length === 1 ? leaf(e.games[0]) :
+        `<li class="tgroup"><p class="kicker" style="margin:0">${esc(e.t)} · ${e.games.length} versions</p><ul class="leaves" style="margin-left:8px">${e.games.map(leaf).join('')}</ul></li>`).join('')}</ul></div>`;
+    }).join('')}</div></section>`;
+  }).join('')}${reviewer() ? '<p class="legend"><span class="bang" aria-hidden="true">!</span>= reviews overly negative</p>' : ''}</nav>`;
+}
+
+const starBtn = x => { const on = state.stars.has(x.id); return `<button type="button" class="star" data-star="${x.id}" aria-pressed="${on}" aria-label="${on?'Unstar':'Star'} ${esc(x.title)}">${ICON.star(on)}</button>`; };
+const negBadge = x => reviewer() && isCritical(x) ? '<span class="badge neg" aria-label="Reviews overly negative">! Negative reviews</span>' : '';
+const metaLine = x => [x.platform?.trim(), STUDIOS[x.studio], 'Added ' + fmt(x.added)].filter(Boolean).join(' · ');
+
+function cardHtml(x){
+  return `<article class="card gc" aria-label="${esc(x.title)}">
+    <div class="head"><h3>${esc(x.title)}</h3><span style="display:flex;align-items:flex-start;gap:2px"><span class="badge" style="margin-top:4px">${x.builds.length} ${x.builds.length===1?'build':'builds'}</span>${starBtn(x)}</span></div>
+    <div class="meta">${esc(metaLine(x))}</div>${negBadge(x) ? `<div>${negBadge(x)}</div>` : ''}
+    <p class="kicker" style="margin:4px 0 0">Select a build</p>
+    <div class="builds">${x.builds.map((b,i) => `<button type="button" class="build" aria-pressed="${i===x.builds.length-1}">${esc(b)}</button>`).join('')}</div>
+    <button type="button" class="cta" data-open="${x.id}">Continue</button>
+    ${reviewer() ? `<div class="acts"><a href="#" class="sec" data-open="${x.id}">View dashboard</a><a href="#" class="sec" data-noop>Import documents</a><a href="#" class="sec" data-noop>Edit</a></div>` : ''}
+  </article>`;
+}
+function rowHtml(x){
+  return `<li><article class="card row" aria-label="${esc(x.title)}"><div class="grow">
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><h3>${esc(x.title)}</h3><span class="badge">${x.builds.length} ${x.builds.length===1?'build':'builds'}</span>${negBadge(x)}</div>
+    <div class="meta" style="margin-top:4px">${esc(metaLine(x))}</div></div>
+    <div class="acts">${starBtn(x)}${reviewer() ? `<a href="#" class="sec" data-open="${x.id}">View dashboard</a><a href="#" class="sec" data-noop>Import documents</a><a href="#" class="sec" data-noop>Edit</a>` : `<a href="#" class="sec" data-open="${x.id}">How to play</a>`}</div>
+  </article></li>`;
+}
+function titleGroupHtml(name, games){
+  const open = state.open.has(name);
+  const inner = state.view === 'list' ? `<ul class="list inner">${games.map(rowHtml).join('')}</ul>` : `<div class="grid inner">${games.map(cardHtml).join('')}</div>`;
+  const W = state.view === 'list' ? 'li' : 'div';
+  return `<${W} class="tg${open?' open':''}"><button type="button" class="tgh" data-group="${esc(name)}" aria-expanded="${open}">
+    <span style="display:flex;flex-direction:column;gap:8px;min-width:0">
+      <span style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><h3>${esc(name)}</h3><span class="badge neutral">${games.length} versions</span>${games.some(x => reviewer() && isCritical(x)) ? '<span class="badge neg">! Negative reviews</span>' : ''}</span>
+      <span class="meta">${games.map(x => esc(x.title)).join(' · ')}</span>
+      <span class="kicker" style="color:var(--accent-text)">${open ? 'Hide versions' : 'Show versions'}</span>
+    </span>${ICON.chev.replace('class="chev"', `class="chev" style="transform:rotate(${open?180:0}deg)"`)}</button>${open ? inner : ''}</${W}>`;
+}
+
+function gamesPage(){
+  const list = ordered(GAMES.filter(x => matches(x)));
+  const narrowed = state.q.trim() || Object.values(state.filters).some(v => v.length);
+  const count = narrowed ? `${list.length} of ${GAMES.length} games` : `${GAMES.length} games`;
+  const s = state.sort === 'critical' && !reviewer() ? 'title' : state.sort;
+  const chips = Object.entries(state.filters).flatMap(([k, vs]) => vs.map(v => `<li><button type="button" class="pill" data-facet="${k}" data-v="${esc(v)}" aria-label="Remove filter: ${chipName(k,v)}">${esc(chipName(k,v))} ${ICON.x}</button></li>`));
+  // Fold versions of one title together, at the first version's position.
+  const seen = new Map(); const entries = [];
+  const fcount = {}; list.forEach(x => { if (x.franchise) fcount[x.franchise] = (fcount[x.franchise]||0) + 1; });
+  for (const x of list) {
+    if (x.franchise && fcount[x.franchise] > 1) { if (!seen.has(x.franchise)) { const e = { t: x.franchise, games: [] }; seen.set(x.franchise, e); entries.push(e); } seen.get(x.franchise).games.push(x); }
+    else entries.push({ g: x });
+  }
+  const body = !list.length ? `<div class="card empty"><h2 style="margin:0;font-weight:800">No games match these filters</h2><p>We checked every game in the catalogue. Remove a filter or clear them all.</p><button type="button" class="pill" data-act="clear">Clear filters</button></div>`
+    : state.view === 'list' ? `<ul class="list" aria-label="Games">${entries.map(e => e.g ? rowHtml(e.g) : titleGroupHtml(e.t, e.games)).join('')}</ul>`
+    : `<div class="grid" aria-label="Games">${entries.map(e => e.g ? cardHtml(e.g) : titleGroupHtml(e.t, e.games)).join('')}</div>`;
+  return `<h1>Games</h1><p class="lede">Select a game and build to start a feedback session.</p>
+  <div class="shell"><button type="button" class="pill drawer-btn" data-act="drawer" aria-expanded="${state.drawer}" aria-controls="side">${ICON.menu} Browse &amp; filter${Object.values(state.filters).flat().length ? ` (${Object.values(state.filters).flat().length})` : ''}</button>
+    <div class="backdrop${state.drawer?' open':''}" data-act="drawer-close"></div>
+    <aside id="side" class="side${state.drawer?' open':''}" aria-label="Browse and filter games" ${state.drawer?'role="dialog" aria-modal="true"':''}>${sidebar(null)}</aside>
+    <div class="main">
+      <div class="bar"><p class="mono" style="margin:0;color:var(--ink-faint)" aria-live="polite">${count}${NOTE[s] ? ' · ' + NOTE[s] : ''}</p>
+        <div style="display:flex;gap:8px;align-items:center"><span class="kicker">View</span><span role="group" aria-label="View" style="display:flex;gap:8px">
+          <button type="button" class="pill" data-view="card" aria-pressed="${state.view==='card'}">Cards</button><button type="button" class="pill" data-view="list" aria-pressed="${state.view==='list'}">List</button></span></div></div>
+      ${chips.length ? `<ul class="chips" aria-label="Active filters">${chips.join('')}<li><button type="button" class="link" data-act="clear">Clear filters</button></li></ul>` : ''}
+      ${body}
+    </div></div>`;
+}
+
+function dashPage(){
+  const x = GAMES.find(y => y.id === state.dashId);
+  const total = 20 + x.recent * 2, neg = x.neg ?? 0, pos = Math.max(0, 100 - neg - 20);
+  const crit = reviewer() && isCritical(x);
+  return `<div class="shell"><button type="button" class="pill drawer-btn" data-act="drawer" aria-expanded="${state.drawer}">${ICON.menu} Browse games</button>
+    <div class="backdrop${state.drawer?' open':''}" data-act="drawer-close"></div>
+    <aside id="side" class="side${state.drawer?' open':''}" aria-label="Browse games" ${state.drawer?'role="dialog" aria-modal="true"':''}>${sidebar(x.id)}</aside>
+    <div class="main">
+      <p style="margin:0"><button type="button" class="link" data-act="back" style="padding:0">← All games</button></p>
+      <section class="card dash">
+        <div class="head"><div><h1>${esc(x.title)}</h1><p class="meta" style="margin:6px 0 0">${esc(metaLine(x))} · ${x.builds.length} ${x.builds.length===1?'build':'builds'}</p></div>${starBtn(x)}</div>
+        ${crit ? `<div class="warn" role="status"><span class="bang" aria-hidden="true">!</span><div><strong>Reviews have turned overly negative</strong><div class="meta" style="color:var(--ink-sub)">${neg}% of the latest scored feedback is negative (warning at 40%, needs 5+ reviews).</div></div></div>` : ''}
+        ${x.neg === null ? '<p class="note">Sentiment: not analysed yet. No warning is possible until feedback has been scored.</p>' : `<div><p class="kicker" style="margin:0 0 8px">Sentiment · ${pos}% positive · 20% neutral · ${neg}% negative</p>
+          <div class="sent" role="img" aria-label="${pos}% positive, 20% neutral, ${neg}% negative"><span style="width:${pos}%;background:#3aa39a"></span><span style="width:20%;background:var(--bar)"></span><span style="width:${neg}%;background:var(--negative)"></span></div></div>`}
+      </section>
+      <div class="kpis">${[['Total feedback', total],['Sessions · 30 days', x.recent],['Play again', x.neg === null ? '—' : (100 - neg - 10) + '%'],['With video', Math.round(70 + x.recent) % 100 + '%']].map(([l,v]) => `<div class="card kpi"><span class="kicker">${l}</span><b>${v}</b></div>`).join('')}</div>
+      <p class="note">Dashboard content is a placeholder. The point of this screen is the sidebar: it stays beside every game's dashboard, with the open game highlighted, so you can move between games directly.</p>
+    </div></div>`;
+}
+
+function sessionsPage(){
+  if (!reviewer()) return `<h1>Sessions</h1><div class="card empty"><p>Sessions are for reviewers. Testers can't see other testers' sessions.</p><button type="button" class="pill" data-act="as-reviewer">View as reviewer</button></div>`;
+  const plats = facet('platform','Platform','No platform').opts;
+  const rows = [];
+  let n = 0;
+  for (const x of ordered(GAMES)) {
+    if (state.sessPlatform && (platKey(x.platform) || '__none__') !== state.sessPlatform) continue;
+    for (let i = 0; i < Math.min(x.recent, 3); i++) rows.push({ x, when: i === 0 ? `${(n++ % 9) + 1} hours ago` : `${i + 1} days ago`, who: ['mia','jon','ada','kai','sam'][(n + i) % 5] + '@studio.test' });
+  }
+  return `<h1>Sessions</h1><p class="lede">Playtest sessions submitted across all games and builds.</p>
+  <div class="frow" style="margin-bottom:16px">
+    <label for="sp">Platform<select id="sp" data-act="sess-platform"><option value="">All platforms</option>${plats.map(o => `<option value="${esc(o.v)}" ${state.sessPlatform===o.v?'selected':''}>${esc(o.name)} (${o.n} ${o.n===1?'game':'games'})</option>`).join('')}</select></label>
+    <label for="sg">Game<select id="sg"><option>All games</option></select></label>
+    <label for="ss">Severity<select id="ss"><option>All severities</option></select></label>
+  </div>
+  ${state.sessPlatform ? `<p class="mono" style="color:var(--ink-sub)">Showing: Platform ${esc(plats.find(o => o.v===state.sessPlatform)?.name || '')} · ${rows.length} sessions <button type="button" class="link" data-act="sess-clear">Clear</button></p>` : ''}
+  <div class="card tablewrap"><table aria-label="Sessions"><thead><tr><th>Game</th><th>Platform</th><th>Submitter</th><th>Submitted</th><th></th></tr></thead>
+  <tbody>${rows.slice(0, 18).map(r => `<tr><td>${esc(r.x.title)} ${negBadge(r.x)}</td><td class="mono">${esc(r.x.platform?.trim() || '—')}</td><td class="mono">${r.who}</td><td class="mono">${r.when}</td><td><a href="#" class="sec" data-noop>View</a></td></tr>`).join('')}</tbody></table></div>`;
+}
+
+function render(keepFocus){
+  const active = document.activeElement; const id = active && active.id; const sel = id === 'q' ? [active.selectionStart, active.selectionEnd] : null;
+  $app.innerHTML = state.page === 'games' ? gamesPage() : state.page === 'dash' ? dashPage() : sessionsPage();
+  document.getElementById('nav-games').setAttribute('aria-current', state.page !== 'sessions' ? 'page' : 'false');
+  document.getElementById('nav-sessions').setAttribute('aria-current', state.page === 'sessions' ? 'page' : 'false');
+  document.body.style.overflow = state.drawer ? 'hidden' : '';
+  if (keepFocus && id) { const el = document.getElementById(id); if (el) { el.focus(); if (sel) el.setSelectionRange(...sel); } }
+  if (state.drawer && !keepFocus) document.querySelector('.side.open [data-act="drawer-close"]')?.focus();
+}
+const go = (page, dashId = null) => { state.page = page; state.dashId = dashId; state.drawer = false; render(); window.scrollTo({ top: 0 }); };
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('button, a'); if (!t) return;
+  if (t.tagName === 'A') e.preventDefault();
+  const d = t.dataset;
+  if (t.id === 'role-reviewer' || t.id === 'role-tester' || d.act === 'as-reviewer') {
+    state.role = t.id === 'role-tester' ? 'tester' : 'reviewer';
+    document.getElementById('role-reviewer').setAttribute('aria-pressed', state.role === 'reviewer');
+    document.getElementById('role-tester').setAttribute('aria-pressed', state.role === 'tester');
+    return render();
+  }
+  if (t.id === 'nav-games') return go('games');
+  if (t.id === 'nav-sessions') return go('sessions');
+  if (d.sort) { state.sort = d.sort; return render(); }
+  if (d.view) { state.view = d.view; try { localStorage.setItem('gfe-proto-view', d.view); } catch {} return render(); }
+  if (d.facet) { const a = state.filters[d.facet]; const i = a.indexOf(d.v); i >= 0 ? a.splice(i,1) : a.push(d.v); if (state.page !== 'games') state.page = 'games'; return render(true); }
+  if (d.star) { state.stars.has(d.star) ? state.stars.delete(d.star) : state.stars.add(d.star); return render(true); }
+  if (d.toggle) { state.collapsed.has(d.toggle) ? state.collapsed.delete(d.toggle) : state.collapsed.add(d.toggle); return render(true); }
+  if (d.group) { state.open.has(d.group) ? state.open.delete(d.group) : state.open.add(d.group); return render(true); }
+  if (d.open) return reviewer() || state.page === 'dash' ? go('dash', d.open) : null;
+  if (d.act === 'clear') { state.filters = { platform: [], project: [], studio: [] }; return render(); }
+  if (d.act === 'drawer') { state.drawer = true; return render(); }
+  if (d.act === 'drawer-close') { state.drawer = false; render(); return document.querySelector('.drawer-btn')?.focus(); }
+  if (d.act === 'back') return go('games');
+  if (d.act === 'sess-clear') { state.sessPlatform = ''; return render(); }
+});
+document.addEventListener('input', e => { if (e.target.id === 'q') { state.q = e.target.value; render(true); } });
+document.addEventListener('change', e => { if (e.target.dataset.act === 'sess-platform') { state.sessPlatform = e.target.value; render(); } });
+document.addEventListener('submit', e => { e.preventDefault(); if (state.page !== 'games') go('games'); });
+document.addEventListener('keydown', e => {
+  if (!state.drawer) return;
+  if (e.key === 'Escape') { state.drawer = false; render(); document.querySelector('.drawer-btn')?.focus(); return; }
+  if (e.key === 'Tab') {
+    const f = [...document.querySelectorAll('.side.open button, .side.open a, .side.open input')].filter(el => !el.closest('[hidden]'));
+    if (!f.length) return; const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+});
+render();
+})();
+</script>

@@ -1,26 +1,22 @@
-# Step 3 — reuse check for GFE-SORT. Two gaps filed; both drafted
-# (registryPolicy.onMissingComponent: propose-and-continue), status proposed.
-id: "GFE-SORT-gap-1"
+# Step 3 — reuse check for GFE-SORT (round 2). Every new component is
+# status "proposed" until a human designer signs its verification report.
+id: "GFE-SORT-gap-2"
 briefRef: "GFE-SORT"
 manifestVersion: "1.0.0"
 reuse:
-  - { element: "Sort: newest, A to Z, most active", component: "SortPillGroup", score: 0.92, route: "reuse" }
-  - { element: "Card view and list view (switch)", component: "SortPillGroup", score: 0.78, route: "reuse", note: "Same aria-pressed pill; shared pillClass()/pillStyle() so sort and view can't drift." }
-  - { element: "Game header (card)", component: "GameCard", score: 0.9, route: "reuse", note: "Slot 2 widened from platform to the shared meta line." }
+  - { element: "Sort (A to Z, Newest, Active, Starred, Critical)", component: "SortPillGroup", score: 0.74, route: "extend", note: "Same aria-pressed toggle; icon + word, button radius (Andreas's icon row)." }
+  - { element: "View switch", component: "SortPillGroup", score: 0.92, route: "reuse" }
+  - { element: "Active filter chips", component: "SortPillGroup", score: 0.78, route: "reuse", note: "pillClass(false) (audit round 1)." }
+  - { element: "Game header (card)", component: "GameCard", score: 0.9, route: "reuse" }
   - { element: "Platform filter on /sessions", component: "NativeSelect", score: 0.88, route: "reuse" }
+  - { element: "Negative-reviews warning (full)", component: "Badge/negative", score: 0.8, route: "reuse" }
   - { element: "Empty / error states", component: "EmptyState, InlineError", score: 0.95, route: "reuse" }
-  - { element: "Active filters", component: "Badge", score: 0.41, route: "reuse-nearest-approved", note: "Badge is not interactive; chips reuse the sort-pill border + ClearIcon instead (no new component)." }
 gaps:
-  - name: "GameFilterPanel (FacetOption row)"
-    gapType: "missing-component"
-    recommendation: "create-new"
-    nearest: { component: "SortPillGroup", score: 0.36, why: "Same toggle semantics (aria-pressed) but multi-select, vertical, with a count per option." }
-    alsoMissing: "Fuji has no Checkbox (check_compatibility: recommended component not present)."
-    status: "proposed"
-    path: "frontend/components/GameFilterPanel.tsx"
-  - name: "GameListRow"
-    gapType: "missing-variant"
-    recommendation: "extend-existing-variant"
-    nearest: { component: "GameCard", score: 0.55, why: "Same title link, meta line, badge and gates; drops build pills and admin management (progressive disclosure)." }
-    status: "proposed"
-    path: "frontend/components/GameListRow.tsx"
+  - { name: "GameFilterPanel", gapType: "missing-component", recommendation: "create-new", nearest: "SortPillGroup (0.36)", why: "multi-select facet rows with counts; Fuji has no Checkbox", path: "frontend/components/GameFilterPanel.tsx", status: "proposed" }
+  - { name: "GameListRow", gapType: "missing-variant", recommendation: "extend-existing-variant", nearest: "GameCard (0.55)", path: "frontend/components/GameListRow.tsx", status: "proposed" }
+  - { name: "CatalogShell (sidebar + phone drawer)", gapType: "missing-component", recommendation: "create-new", nearest: "none (no layout/overlay primitive; Dialog pattern only for confirms)", path: "frontend/components/catalog/CatalogShell.tsx", status: "proposed" }
+  - { name: "CatalogTree", gapType: "missing-component", recommendation: "create-new", nearest: "Collapsible (0.3)", path: "frontend/components/catalog/CatalogTree.tsx", status: "proposed" }
+  - { name: "StarButton", gapType: "missing-component", recommendation: "create-new", nearest: "Toggle (0.35)", why: "an icon toggle, not a switch", path: "frontend/components/catalog/StarButton.tsx", status: "proposed" }
+  - { name: "CriticalFlag (compact)", gapType: "missing-variant", recommendation: "extend-existing-variant", nearest: "Badge/negative (0.6)", path: "frontend/components/catalog/CriticalFlag.tsx", status: "proposed" }
+  - { name: "TitleGroup", gapType: "missing-component", recommendation: "create-new", nearest: "Collapsible (0.5)", path: "frontend/components/catalog/TitleGroup.tsx", status: "proposed" }
+  - { name: "GroupingFields", gapType: "missing-variant", recommendation: "reuse-nearest-approved", nearest: "Input (0.8) + native datalist", path: "frontend/components/catalog/GroupingFields.tsx", status: "proposed" }

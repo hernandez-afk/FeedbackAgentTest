@@ -1,6 +1,6 @@
 # Step 2c — user flow for GFE-SORT.
 # Check: python3 tools/flow_check.py user-flow.yaml --index ../design-system/design-index.yaml --brief ticket-brief.yaml
-id: "GFE-SORT-flow-1"
+id: "GFE-SORT-flow-2"
 projectId: "GFE-SORT"
 briefRef: "GFE-SORT"
 generatedAt: "2026-09-28T09:30:00Z"
@@ -15,18 +15,21 @@ screens:
   - { id: "S2", name: "Sessions list with platform filter (revised)", kind: "new", surface: "sessions", route: "/sessions?platform={p}&game={id}&…" }
   - { id: "S3", name: "Game how-to-play page", kind: "existing", surface: "game", owningProject: "GFE-SHELL", route: "/game/{slug}" }
   - { id: "S4", name: "Session detail", kind: "existing", surface: "sessions/detail", owningProject: "GFE-SHELL", route: "/sessions/{id}" }
+  - { id: "S5", name: "Game dashboard", kind: "existing", surface: "games/dashboard", owningProject: "GFE-SHELL", route: "/games/{id}/dashboard?sort={s}" }
+  - { id: "S6", name: "Catalogue sidebar on the dashboard (new)", kind: "new", surface: "catalog-sidebar", route: "(beside /games/{id}/dashboard)" }
   - { id: "X1", name: "Shared /games link (chat, ticket)", kind: "external" }
 
 entryPoints:
   - { id: "E1", from: "S0", to: "S1", trigger: "'Games' in the header nav", carriesState: "Nothing: default is newest, card view, no filters.", whenSignedOut: "SYS1, then back to /games.", typicalDevice: "any" }
   - { id: "E2", from: "S0", to: "S2", trigger: "'Sessions' in the header nav (reviewers only)", carriesState: "Nothing.", whenSignedOut: "SYS1, then back to /sessions.", typicalDevice: "desktop" }
+  - { id: "E4", from: "S5", to: "S6", trigger: "The sidebar beside every game dashboard (phone: 'Browse & filter')", carriesState: "The open game (highlighted) and the sort.", typicalDevice: "desktop" }
   - { id: "E3", from: "X1", to: "S1", trigger: "A pasted /games?platform=MSN link", carriesState: "The platform filter, sort and view.", whenSignedOut: "SYS1, then back to the same URL with the filter applied.", typicalDevice: "any" }
 
 flows:
   - taskId: "T1"
     entryPoint: "E1"
     steps:
-      - { screen: "S1", action: "Phone: tap 'Filters' (shows active count). Wide screens: the panel is already open beside the grid.", isClick: true }
+      - { screen: "S1", action: "Phone: tap 'Browse & filter' (opens the drawer). Wide screens: the sidebar is already open beside the grid.", isClick: true }
       - { screen: "S1", action: "Tap 'MSN' under Platform", isClick: true, async: true }
       - { screen: "S1", action: "Tap the game card to open it", isClick: true, next: "S3" }
     done: "The grid shows only MSN games, the count reads 'N games', and an 'MSN ×' chip sits above the grid."
@@ -47,16 +50,50 @@ flows:
     entryPoint: "E2"
     steps:
       - { screen: "S2", action: "Choose 'MSN' in the Platform dropdown", isClick: true, async: true }
-      - { screen: "S2", action: "Tap 'View' on a session", isClick: true, next: "S4" }
     done: "The table shows only sessions on MSN games; 'Platform: MSN' shows in the Showing summary."
     alternatePaths:
       - { kind: "empty", when: "No sessions on that platform", then: "EmptyState: 'No sessions match the current filters…' (existing copy)." }
       - { kind: "error", when: "The platform options fail to load", then: "The dropdown shows 'All platforms' only; the URL value is still applied server-side." }
       - { kind: "permission", when: "A viewer opens /sessions", then: "Redirect to / (existing CH-243 gate)." }
 
+  - taskId: "T4"
+    entryPoint: "E1"
+    steps:
+      - { screen: "S1", action: "Tap 'Active' in the sidebar Sort group (phone: inside the drawer, after 'Browse & filter')", isClick: true, async: true }
+    done: "Games with the most sessions in the last 30 days come first; the count line says so."
+    alternatePaths:
+      - { kind: "error", when: "The games read fails", then: "InlineError, same as today." }
+  - taskId: "T5"
+    entryPoint: "E1"
+    steps:
+      - { screen: "S1", action: "Tap the star on a card, row or sidebar entry", isClick: true, async: true }
+      - { screen: "S1", action: "Tap 'Starred' in Sort", isClick: true, async: true }
+    done: "The star fills (aria-pressed) at once; Starred puts it first."
+    alternatePaths:
+      - { kind: "error", when: "Saving the star fails", then: "The star flips back and a polite status says it couldn't be saved." }
+      - { kind: "permission", when: "The caller has no user account row", then: "403; the star flips back with the same message." }
+  - taskId: "T6"
+    entryPoint: "E1"
+    steps:
+      - { screen: "S1", action: "Scan for the red '!' / 'Negative reviews', or tap 'Critical' in Sort", isClick: true, async: true }
+      - { screen: "S1", action: "Tap the game in the sidebar to open its dashboard", isClick: true }
+    done: "Negatively reviewed games come first and carry the flag; the dashboard shows the sentiment behind it."
+    alternatePaths:
+      - { kind: "empty", when: "No game has a sentiment report yet", then: "No flags; Critical falls back to A to Z order within the flag." }
+      - { kind: "error", when: "The games read fails", then: "InlineError, same as today." }
+      - { kind: "permission", when: "A tester", then: "No flag and no Critical option (the flag is derived from feedback)." }
+  - taskId: "T7"
+    entryPoint: "E4"
+    steps:
+      - { screen: "S6", action: "Tap another game in the sidebar tree (phone: open 'Browse & filter' first)", isClick: true, next: "S5" }
+    done: "That game's dashboard opens, highlighted in the tree."
+    alternatePaths:
+      - { kind: "error", when: "The tree read fails", then: "The sidebar says the game list is unavailable; the dashboard is unaffected." }
+
 backNavigation:
   - { screen: "S1", back: "Top-level page: the header nav is always present.", to: "S0" }
   - { screen: "S2", back: "Top-level page: the header nav is always present.", to: "S0" }
+  - { screen: "S6", back: "Close (phone drawer) or the header 'Games' link.", to: "S5" }
 
 exits:
   - { from: "S1", to: "S3", when: "A game is chosen" }
@@ -64,4 +101,5 @@ exits:
 
 integrationChanges:
   - { id: "IC1", screen: "S0", change: "None needed: the 'Games' and 'Sessions' header links already exist (live) and carry no state.", owner: "GFE-SHELL", kind: "changed-entry-point", status: "done" }
+  - { id: "IC3", screen: "S5", change: "Wrap the game dashboard in the catalogue sidebar (Andreas Beijer's design), requested by the brief author.", owner: "GFE-SHELL", kind: "new-entry-point", status: "accepted" }
   - { id: "IC2", screen: "X1", change: "Filtered /games URLs become shareable (platform, studio, sort, view in the query string). Nothing to change outside the product.", owner: "GFE-SORT", kind: "deep-link", status: "accepted" }

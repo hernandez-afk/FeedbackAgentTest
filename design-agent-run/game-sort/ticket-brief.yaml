@@ -7,8 +7,8 @@ title: "Browse, filter and sort games and sessions"
 sourceType: "page-brief"
 sourceRef: "design-agent-run/game-sort/page-brief.md"
 
-scopeTerms: ["game catalogue", "platform filter", "studio filter", "sort order", "list view", "session sort"]
-nonEntityTerms: ["sort order", "list view", "session sort", "platform filter", "studio filter"]
+scopeTerms: ["game catalogue", "platform filter", "studio filter", "sort order", "list view", "session sort", "project", "title", "favourite", "critical warning", "sidebar tree"]
+nonEntityTerms: ["sort order", "list view", "session sort", "platform filter", "studio filter", "critical warning", "sidebar tree"]
 surfaces: ["games", "games/filters", "sessions", "sessions/filters"]
 
 connections:
@@ -24,7 +24,11 @@ priorities:
 coreTasks:
   - { id: "T1", statement: "Find a game on a specific platform (e.g. MSN).", linkedPriority: "P1", entryPoint: "/games" }
   - { id: "T2", statement: "Switch the games between a card view and a compact list view.", linkedPriority: "P1", entryPoint: "/games" }
-  - { id: "T3", statement: "Narrow the sessions list to one platform, then see the most recently active games first.", linkedPriority: "P1", entryPoint: "/sessions" }
+  - { id: "T3", statement: "Narrow the sessions list to one platform.", linkedPriority: "P1", entryPoint: "/sessions" }
+  - { id: "T4", statement: "See the games that recently got the most responses first.", linkedPriority: "P1", entryPoint: "/games" }
+  - { id: "T5", statement: "Star a game and find it again first.", linkedPriority: "P3", entryPoint: "/games" }
+  - { id: "T6", statement: "Spot games whose reviews have turned overly negative.", linkedPriority: "P1", entryPoint: "/games" }
+  - { id: "T7", statement: "Move from one game's dashboard to another without going back to the list.", linkedPriority: "P3", entryPoint: "a game's dashboard" }
 
 requiredElements:
   - { description: "Filter by platform, with a count per platform", targetCategory: "input", linkedPriority: "P1", estimatedVolume: "about 3–15 platforms, growing", states: ["loading", "empty", "error"] }
@@ -46,6 +50,10 @@ acceptanceCriteria:
   - { id: "AC7", statement: "/sessions can be filtered by platform, and the filter composes with the existing game/build/status/severity filters.", linkedTask: "T3", source: "rewritten" }
   - { id: "AC8", statement: "At 320px nothing scrolls sideways, every filter control is at least 44px tall, and the filter panel is collapsed by default.", linkedPriority: "P3", source: "inferred" }
   - { id: "AC9", statement: "When filters match nothing, the page says which filters matched nothing and offers one action to clear them.", linkedPriority: "P3", source: "inferred" }
+  - { id: "AC11", statement: "Any signed-in user can star a game in 1 tap from the sidebar, its card or its row; 'Starred' puts their starred games first; stars are private to them.", linkedTask: "T5", source: "explicit" }
+  - { id: "AC12", statement: "A reviewer sees a red '!' (sidebar) and 'Negative reviews' (card/row) on a game whose latest sentiment report is >= 40% negative over >= 5 reviews; 'Critical' puts those games first. Testers never see it.", linkedTask: "T6", source: "rewritten" }
+  - { id: "AC13", statement: "Games sharing a title show as one entry naming its versions, expanding to them in 1 tap.", linkedPriority: "P2", source: "explicit" }
+  - { id: "AC14", statement: "The sidebar (search, sort, Project -> Platform -> game tree) is on /games and on every game dashboard; on phones it opens as a drawer.", linkedTask: "T7", source: "explicit" }
   - { id: "AC10", statement: "If the filter options fail to load, the games list still loads, and the panel says options are unavailable.", linkedPriority: "P2", source: "inferred" }
 
 entities:
@@ -59,7 +67,7 @@ entities:
     description: "Free-text column on game (e.g. 'Atari Recharged'). No platform table."
     operations:
       create:  { handledBy: "this-project", note: "Implicit: a platform exists once a game carries it. Facet values are DISTINCT game.platform." }
-      source:  { handledBy: "question", ref: "Platform is free text, so 'MSN' and 'msn' are two options. Normalise to a managed list (new brief), or accept case-insensitive grouping?" }
+      source:  { handledBy: "this-project", note: "Author: 'should be the same'. Grouped and filtered on lower(trim(platform))." }
   - name: "studio"
     operations:
       create:  { handledBy: "this-project", note: "Exists: POST /api/studios (admin). Unchanged." }
@@ -67,36 +75,45 @@ entities:
   - name: "developer"
     description: "Named in the brief ('sort by people such as Game developer'). Not in the data model."
     operations:
-      create:  { handledBy: "new-brief", ref: "Catalogue metadata: developer, project, product and product version" }
-      source:  { handledBy: "question", ref: "Is 'game developer' the studio (already a filter), an individual person, or an external developer company?" }
+      create:  { handledBy: "this-project", note: "Author: developer = the studio. Covered by the Studio filter." }
+      source:  { handledBy: "this-project", note: "game.studio_id" }
   - name: "project"
     description: "Named in the brief ('by project'). Not in the data model."
     operations:
-      create:  { handledBy: "new-brief", ref: "Catalogue metadata: developer, project, product and product version" }
-      source:  { handledBy: "question", ref: "What is a 'project' — a franchise (Asteroids), a release programme (Atari Recharged), or an internal code name?" }
-  - name: "product"
-    description: "title → product → product version (e.g. Asteroids → Asteroids Arezion → MSN). No product level exists; a game has builds directly."
+      create:  { handledBy: "this-project", note: "Author: 'what the intended use is for'. New project table; set by name on add/edit game (get-or-create)." }
+      source:  { handledBy: "this-project", note: "Typed on the add/edit game form, suggestions from existing names." }
+  - name: "title"
+    description: "Option A: the TITLE several games are versions of (Asteroids → Asteroids Arezion (MSN), Asteroids Classic Azerion (MSN)). Table: franchise."
     operations:
-      create:  { handledBy: "new-brief", ref: "Catalogue metadata: developer, project, product and product version" }
-      source:  { handledBy: "new-brief", ref: "Catalogue metadata: developer, project, product and product version" }
+      create:  { handledBy: "this-project", note: "Option A: a TITLE (franchise table) above games; each game is a version. Set by name on add/edit game." }
+      source:  { handledBy: "this-project", note: "Typed on the add/edit game form, suggestions from existing names." }
   - name: "build"
     description: "Closest existing thing to a 'product version'. Label is free text (e.g. 'Checkpoint 1')."
     operations:
       create:  { handledBy: "this-project", note: "Exists: Manage builds panel / build upload. Unchanged." }
       source:  { handledBy: "this-project", note: "Shown as the build count and build pills on the card; list view shows the count." }
+  - name: "favourite"
+    description: "A user's starred game (AC11)."
+    operations:
+      create:  { handledBy: "this-project", note: "The star button (sidebar, card, row): PUT /api/games/{id}/favorite." }
+      source:  { handledBy: "this-project", note: "game_favorite(user_id, game_id); private to the user." }
+      delete:  { handledBy: "this-project", note: "Unstar: DELETE; removed with the user or the game (cascade)." }
   - name: "session"
     operations:
       create:  { handledBy: "this-project", note: "Created by testers through the capture flow. Unchanged; sessions feed the 'Most active' sort." }
       source:  { handledBy: "this-project", note: "session.created_at within 30 days, excluding soft-deleted sessions." }
 
 edgeCases:
-  - { id: "EC1", lens: "ecosystem", case: "Developer, project and the product / product-version hierarchy have no data behind them.", disposition: "new-brief", action: "Catalogue metadata: developer, project, product and product version" }
+  - { id: "EC1", lens: "ecosystem", case: "Project and title need data: who sets them?", disposition: "in-scope", action: "element: Project + Title fields on the add/edit game forms (AC13)" }
+  - { id: "EC17", lens: "privacy", case: "Stars reveal what a person is interested in.", disposition: "in-scope", action: "AC11 (stars private to their user)" }
+  - { id: "EC18", lens: "roles", case: "The negative-reviews flag is derived from feedback testers may not read.", disposition: "in-scope", action: "AC12 (reviewers only)" }
+  - { id: "EC19", lens: "scale", case: "A catalogue too big for one sidebar tree.", disposition: "in-scope", action: "element: tree capped at 1,000 games with a 'search to find the rest' note" }
   - { id: "EC2", lens: "roles", case: "A viewer (tester) sees only their studio's games; a studio facet with one option is noise.", disposition: "in-scope", action: "element: studio filter only renders with 2+ studios" }
   - { id: "EC3", lens: "roles", case: "Only reviewers can open /sessions; the 'Most active' sort on /games must not reveal who submitted.", disposition: "in-scope", action: "AC6 (counts only, no PII)" }
   - { id: "EC4", lens: "setup", case: "No games have a platform yet (most seeded games have none).", disposition: "in-scope", action: "state: platform facet shows 'No platform' as its own option; hidden if it is the only one" }
   - { id: "EC5", lens: "time", case: "'Most active' window: activity older than 30 days drops out, so the order changes over time.", disposition: "in-scope", action: "AC6; the sort pill's label names the window" }
   - { id: "EC6", lens: "concurrency", case: "An admin changes a game's platform while someone has that platform filtered.", disposition: "in-scope", action: "state: next load reflects it; a filter value with zero games still shows as an active chip so it can be removed" }
-  - { id: "EC7", lens: "integrity", case: "Free-text platforms: 'MSN', 'msn ' and 'Msn' split one platform into three.", disposition: "question", action: "Case-insensitive, trimmed grouping, or a managed platform list?" }
+  - { id: "EC7", lens: "integrity", case: "Free-text platforms: 'MSN', 'msn ' and 'Msn' split one platform into three.", disposition: "in-scope", action: "element: platform facet groups case-insensitively and trimmed (author: should be the same)" }
   - { id: "EC8", lens: "scale", case: "30+ platforms make a long panel on a phone.", disposition: "in-scope", action: "element: filter panel shows 8 options then 'Show all N'" }
   - { id: "EC9", lens: "scale", case: "A very long platform or studio name.", disposition: "in-scope", action: "state: option label wraps (never truncated without title), count stays right-aligned" }
   - { id: "EC10", lens: "failure", case: "The facet read fails.", disposition: "in-scope", action: "AC10" }
@@ -113,10 +130,7 @@ constraints:
 
 outOfScope:
   - "AI-assisted search or recommendations (author: 'It does not use any AI to locate features')."
-  - "Developer, project, product and product-version filters: they need new catalogue data first (new brief)."
+  - "A separate developer entity: the author confirmed developer = studio."
   - "Announcing the feature: no announcement; the filters are visible on the page."
 
-openQuestions:
-  - "Platform is free text, so 'MSN' and 'msn' are two options. Normalise to a managed list (new brief), or accept case-insensitive grouping?"
-  - "Is 'game developer' the studio (already a filter), an individual person, or an external developer company?"
-  - "What is a 'project' — a franchise (Asteroids), a release programme (Atari Recharged), or an internal code name?"
+openQuestions: []   # all answered by the author in round 2 (page-brief.md addendum)

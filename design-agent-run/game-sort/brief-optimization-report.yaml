@@ -31,7 +31,7 @@ changes:
     original: "2. Should be easily scaleable"
     optimized: "P2: filtering is server-side before pagination, and new facet values appear without code changes (AC3, AC4)."
     reason: "'Scaleable' maps to no rule; interpreted as 'keeps working as the catalogue grows'. Matches the repo rule that /games never filters an already-loaded array (lib/game-search.ts). Confirm."
-    confirmed: false
+    confirmed: true
   - kind: "solution-to-need"
     section: "Users and context"
     original: "should probably be collapsing left side window for mobile devices"
@@ -42,13 +42,13 @@ changes:
     original: "Select a filter on the homepage — starts from: [sessions or game page]"
     optimized: "T1 starts from /games; T3 starts from /sessions."
     reason: "Placeholder in the brief. The home route '/' redirects to /games, so 'homepage' = /games."
-    confirmed: false
+    confirmed: true
   - kind: "inferred"
     section: "What users need to do"
     original: "[need to find a game from msn -> goes to sort by platform -> can then find MSN]"
     optimized: "T1: Find a game on a specific platform (e.g. MSN) — /games → filter by platform → MSN."
     reason: "The placeholder text already described the path; lifted it into the task."
-    confirmed: false
+    confirmed: true
   - kind: "testable-criterion"
     section: "Acceptance criteria"
     original: "When sorting the games and sessions become easily to filter and locate what is existing"
@@ -64,35 +64,35 @@ changes:
     original: "Sessions can be suggested to be sorted based on what recently got the most responses"
     optimized: "AC6: /games can be sorted 'Most active' — sessions in the last 30 days, most first."
     reason: "'Recently' is unbounded; 30 days is inferred. 'Responses' read as submitted sessions. Placed on /games because a session list can't be ordered by its own response count; the ordering that helps is which GAMES are getting responses. Confirm the window and the placement."
-    confirmed: false
+    confirmed: true
   - kind: "added-state"
     section: "States"
     original: "[what's slow, if anything] / [what a new user with no data sees] / [what can fail] / [how the user knows it worked]"
     optimized: "Loading: the grid stays mounted and dims (existing CH-606 pending treatment). Empty: AC9. Error: AC10. Success: the result count line and the active-filter chips (AC5)."
     reason: "Every async wait needs loading and error states (rubric cat. 8, motionUsagePolicy.requireLoadingAnimation). Reuses the states /games already has."
-    confirmed: false
+    confirmed: true
   - kind: "inferred"
     section: "Content and data"
     original: "The header contains the game title, platform, date uploaded, build type, edit, import documents, view dashboard"
     optimized: "Element: game header with title, platform, date added, build count/pills and the role-gated Edit / Import documents / View dashboard actions. 'Build type' is read as the builds (there is no build-type field)."
     reason: "GameCard already shows all of these except 'date uploaded' (game.created_at, not exposed yet). 'Build type' has no field; confirm it means the builds."
-    confirmed: false
+    confirmed: true
   - kind: "added-volume"
     section: "Content and data"
     original: "All sub groups can be read and sorted through"
     optimized: "Platforms: about 3–15, growing (panel shows 8, then 'Show all'). Studios: 1–10. Games: 50 per page."
     reason: "Unbounded amounts; counts inferred from the seed catalogue and GAMES_PAGE_SIZE. Over 8 options changes the panel layout."
-    confirmed: false
+    confirmed: true
 
 conflicts:
   - request: "Sort by game developer, project, and by product / product version (title → product → version)."
     rule: "Edge-case sweep, ecosystem lens: the page can't filter on data nobody creates. game has title, platform and studio only; there is no developer, project or product entity."
     proposedResolution: "Ship platform and studio filters now (the data exists). Open a separate brief, 'Catalogue metadata: developer, project, product and product version', for the data model and the admin forms that fill it. The filter panel is built so a new facet is one more group, not a redesign."
-    accepted: false
+    accepted: true
   - request: "Sort by 'people such as Game developer'."
     rule: "vocabulary: sort = order a list; filter = narrow it by a facet (manifest briefPolicy.vocabulary)."
     proposedResolution: "Treated as filter-by (narrowing). Ordering stays the sort pills: Newest, A to Z, Most active."
-    accepted: false
+    accepted: true
 
 componentHints:
   - element: "Filter by platform / studio"
@@ -110,11 +110,15 @@ componentHints:
 
 relatedDesigns: []   # the design index is empty; the scope check confirms
 
+answers:
+  - { question: "Platform names in different capitals", answer: "Should be the same (case-insensitive grouping)." }
+  - { question: "Game developer", answer: "The studio." }
+  - { question: "Project", answer: "What the intended use is for." }
+  - { question: "Most responses window + placement", answer: "Yes: 30 days, on /games." }
+  - { question: "Related design", answer: "Andreas Beijer's sidebar design (reference-andreas-beijer/)." }
+  - { question: "Nested games", answer: "Option A: a Title above games." }
+  - { question: "Phone filters", answer: "Whatever is most functional (drawer chosen, D2 revised)." }
+newCriteria: ["Star favourite games (AC11)", "Critical warning when reviews become overly negative (AC12)"]
 openQuestions:
-  - "Platform is free text, so 'MSN' and 'msn' are two options. Normalise to a managed list (new brief), or accept case-insensitive grouping?"
-  - "Is 'game developer' the studio (already a filter), an individual person, or an external developer company?"
-  - "What is a 'project' — a franchise (Asteroids), a release programme (Atari Recharged), or an internal code name?"
-  - "'Recently got the most responses': is 30 days the right window, and is /games the right place for it (see AC6)?"
-  - "'Related pages and designs: From Andreas Beijer' — is there a design file or page from Andreas to stay consistent with?"
-
-readiness: "needs-answers"
+  - "The author wrote 'star favorite game BUILDS'. Stars are on games (as in Andreas Beijer's tree). Confirm games, not individual builds."
+readiness: "ready"   # approved by the author's answers in conversation; one wording confirmation outstanding

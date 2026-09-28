@@ -1,72 +1,72 @@
-# Step 10 — design output for GFE-SORT (Claude Code: the design is the code).
-id: "GFE-SORT-design-1"
+# Step 10 — design output for GFE-SORT, revision 2 (after the author's answers,
+# Andreas Beijer's reference design and audit round 1).
+id: "GFE-SORT-design-2"
 projectId: "GFE-SORT"
 briefRef: "GFE-SORT"
 scopeOverlapReportRef: "scope-overlap-report.yaml"
 userFlowRef: "user-flow.yaml"
 manifestVersion: "1.0.0"
+supersedes: "GFE-SORT-design-1"
 artifact:
   kind: "code"
   repo: "Atari-Inc/atari-game-feedback-engine"
-  branch: "design-agent/game-sort (local; delivered as ../implementation/game-sort.patch)"
-  screenshots: "screenshots/ (390x844, 320x700, 1440x900; dev stack with seeded data)"
+  delivered: "game-sort.patch (3 commits)"
+  screenshots: "screenshots/ (1440x900, 390x844, 320x700; local stack, seeded data)"
+  reference: "reference-andreas-beijer/"
 
 layout:
-  phone: "Search, then sort + view pills (wrap), then a 'Filters (n)' toggle (aria-expanded). The panel opens INLINE above the results and pushes them down. Count line, then removable chips + 'Clear filters', then results."
-  lg-and-up: "Two columns: 15rem filter column (always open) beside the results. Controls row: search left, sort + view right."
-  cardView: "Unchanged row-subgrid grid (DESIGN_SYSTEM §3.10); slot 2 is now 'platform · studio · Added <date>'."
-  listView: "One row per game: title (stretched link) + build badge + meta line; View dashboard / Import documents / Edit on the right from sm:, wrapped below on phones. No build pills, no admin management (card view keeps those)."
+  shell: "Andreas Beijer's persistent left sidebar on /games AND every game dashboard: columns 1-3 of 12 from lg:, a drawer below lg:."
+  sidebar: "Search → Sort (A to Z, Newest, Active, Starred, Critical*) → Filters card (Platform, Project, Studio*) on /games only → Browse tree Project → Platform → Title → game, each with star and red '!'*.  (*reviewers / when relevant)"
+  results: "Count line + View (Cards | List), removable chips, then the grid or list. Versions of one title collapse into one tile/row."
 
 decisionLog:
-  - { id: "D1", mode: "inherited", decision: "Filter, sort and view state live in the URL and navigate with router.replace inside one transition; the grid dims while pending.", source: "CH-606", tradeoff: "n/a (inherited)" }
-  - { id: "D2", mode: "auto-applied", decision: "Phone panel is an inline disclosure, not an overlay drawer.", tradeoff: "Gains: no focus trap, no scroll lock, results still reachable, same markup at every width. Costs: long facet lists push results down (mitigated by 'Show all' after 8)." , note: "Author already chose 'collapsing left side window'; the drawer vs inline question was treated as a detail within that choice. Flag if you wanted an overlay." }
-  - { id: "D3", mode: "auto-applied", decision: "Facets are multi-select toggle rows (aria-pressed) with counts, not <select>s.", tradeoff: "Gains: several platforms at once, counts visible (Wickens 9). Costs: a new component (gap report)." }
-  - { id: "D4", mode: "auto-applied", decision: "Facet counts apply the other facet's selection, not their own.", tradeoff: "Standard faceted search; avoids a misleading 0 next to a second platform." }
-  - { id: "D5", mode: "auto-applied", decision: "'Most active' = sessions in the last 30 days, placed on /games; the count line says so.", tradeoff: "Interpretation of 'sessions … sorted by most responses' — open question 4." }
-  - { id: "D6", mode: "auto-applied", decision: "Studio is shown (panel + meta) only when the caller can see 2+ studios.", tradeoff: "Viewers are studio-scoped; one option filters nothing." }
-  - { id: "D7", mode: "auto-applied", decision: "List view drops build pills and admin controls.", tradeoff: "Gains: scannable rows, no per-game builds reads. Costs: managing builds needs card view." }
+  - { id: "D1", mode: "inherited", decision: "URL state + router.replace + dimmed grid (CH-606)." }
+  - { id: "D2", mode: "human-approved", decision: "Phone: slide-in drawer (modal dialog) instead of the round-1 inline panel.", tradeoff: "Author: 'whatever is most functional'. With a full tree in the sidebar, inline would push the list a screen down.", revises: "design-1 D2" }
+  - { id: "D5", mode: "human-approved", decision: "'Most active' = sessions in 30 days, on /games.", source: "author answer" }
+  - { id: "D8", mode: "human-approved", decision: "Option A: Title (franchise) above games.", source: "author answer" }
+  - { id: "D9", mode: "human-approved", decision: "Platforms compare case-insensitively.", source: "author answer" }
+  - { id: "D10", mode: "human-approved", decision: "Sidebar layout, sort row and tree follow Andreas Beijer's design.", source: "author-supplied reference" }
+  - { id: "D11", mode: "auto-applied", decision: "Critical = latest sentiment report >= 40% negative over >= 5 reviews; reviewers only.", tradeoff: "Reuses the dashboard's existing sentiment (no new AI call). Needs an enrichment run to have data. Threshold is a tunable constant; confirm 40%/5." }
+  - { id: "D12", mode: "auto-applied", decision: "Stars are per game, per user (as in the reference tree).", tradeoff: "Brief says 'game builds'; open question to confirm." }
+  - { id: "D13", mode: "auto-applied", decision: "Sort buttons show icon + word, not icons alone.", tradeoff: "Deviates from the sketch's bare icons for Wickens 5/11." }
+  - { id: "D14", mode: "auto-applied", decision: "Collapsed title group = one card slot; expanded = full row.", tradeoff: "A permanently full-row group left empty cells." }
 
-glanceTest:
-  breakpoint: "sm (390px)"
-  firstThings: ["'Games' heading", "Search field", "Sort / view pills + 'Filters' toggle"]
-  pass: true
-  note: "Primary action per card (Continue) unchanged; the page's purpose line is unchanged."
+glanceTest: { breakpoint: "sm", firstThings: ["'Games' heading", "Browse & filter", "first game card"], pass: true }
 
 taskPaths:
-  - { task: "T1", clicks: 2, path: "Filters → MSN (phone); 1 on desktop (panel open)", minutes: 0.3, pass: true }
-  - { task: "T2", clicks: 1, path: "List", minutes: 0.1, pass: true }
-  - { task: "T3", clicks: 1, path: "Platform dropdown → MSN (/sessions)", minutes: 0.3, pass: true }
+  # Click counts match user-flow.yaml steps exactly (audit round 1).
+  - { task: "T1", clicks: 3, path: "Browse & filter → MSN → a game (phone); 2 on desktop", pass: true }
+  - { task: "T2", clicks: 1, path: "List", pass: true }
+  - { task: "T3", clicks: 1, path: "Platform dropdown → MSN", pass: true }
+  - { task: "T4", clicks: 1, path: "Active (desktop); 2 on phone via the drawer", pass: true }
+  - { task: "T5", clicks: 2, path: "star → Starred", pass: true }
+  - { task: "T6", clicks: 2, path: "Critical → the game", pass: true }
+  - { task: "T7", clicks: 1, path: "a game in the tree (desktop); 2 on phone", pass: true }
 
 mobileCheck:
   designedPhoneFirst: true
-  reflowAtMinViewport: { pass: true, evidence: "scrollWidth - innerWidth = 0 at 320, 390 and 1440 in all 10 screenshots" }
-  textScale200: { pass: "unverified", note: "Rows use break-words and flex-wrap; not measured at 200% in this run." }
+  reflowAtMinViewport: { pass: true, evidence: "scrollWidth - innerWidth = 0 on /games (cards, list), /sessions, drawer open, at 320/390/1440 (measured)" }
+  textScale200: { pass: "unverified", note: "Not measured; rows use min-heights and wrapping only." }
   noHoverOnly: true
-  touchTargets: { pass: "partial", note: "All NEW controls ≥44px. Inherited Button size sm (≈28px) on card/list actions is a Fuji-wide issue, not introduced here." }
-  thumbReach: "Filters toggle sits in the top third on phones; reason: it precedes the list it filters, same as the search field."
-  safeAreasKeyboard: "No fixed/bottom elements added."
-  orientations: "Landscape = same layout, scrolls."
+  touchTargets: { pass: true, note: "All new controls >= 44px incl. list-row actions (audit fix). Card-view Button sm is pre-existing GameCard." }
+  thumbReach: "Drawer button top of list; reason: precedes what it filters."
+  orientations: "Landscape = same layout."
 
 acceptanceResults:
-  - { id: "AC1", met: true, where: "GameFilterPanel + phone toggle; test game-filter-panel.test.tsx" }
-  - { id: "AC2", met: true, where: "View pills, ?view=list; games-page-filters.test.tsx" }
-  - { id: "AC3", met: true, where: "backend _apply_game_filters; test_platform_filter_is_applied_before_pagination" }
-  - { id: "AC4", met: true, where: "GET /api/games/facets (DISTINCT platform)" }
-  - { id: "AC5", met: true, where: "Active filters chips + Clear filters" }
-  - { id: "AC6", met: true, where: "sort=activity; test_activity_sort_counts_recent_non_deleted_sessions" }
-  - { id: "AC7", met: true, where: "SessionsFilters Platform + /api/sessions?platform=; test_sessions_platform_filter_narrows_items_and_total" }
-  - { id: "AC8", met: true, where: "Screenshots phone320-*; new controls min-h 44px; panel collapsed by default" }
-  - { id: "AC9", met: true, where: "NoMatchState with filters (screenshot desktop-04-no-match)" }
-  - { id: "AC10", met: true, where: "FacetsState error branch + shape guard; games-page-filters.test.tsx" }
+  - { id: "AC1", met: true }
+  - { id: "AC2", met: true }
+  - { id: "AC3", met: true }
+  - { id: "AC4", met: true }
+  - { id: "AC5", met: true }
+  - { id: "AC6", met: true }
+  - { id: "AC7", met: true }
+  - { id: "AC8", met: true }
+  - { id: "AC9", met: true }
+  - { id: "AC10", met: true }
+  - { id: "AC11", met: true, where: "StarButton; test_star_is_private_idempotent_and_drives_the_starred_sort" }
+  - { id: "AC12", met: true, where: "has_critical; test_critical_means_overly_negative_reviews; test_critical_is_hidden_from_non_reviewers" }
+  - { id: "AC13", met: true, where: "TitleGroup + tree; screenshots desktop-00/01" }
+  - { id: "AC14", met: true, where: "CatalogShell on /games + dashboard; screenshot desktop-04" }
 
-componentsUsed:
-  - { name: "GameCard", status: "approved" }
-  - { name: "SortPillGroup", status: "approved" }
-  - { name: "NativeSelect", status: "approved" }
-  - { name: "EmptyState", status: "approved" }
-  - { name: "InlineError", status: "approved" }
-  - { name: "Badge", status: "approved" }
-  - { name: "Button (buttonClasses)", status: "approved" }
-  - { name: "GameFilterPanel", status: "proposed" }
-  - { name: "GameListRow", status: "proposed" }
 gapReports: ["component-gap-report.yaml"]
+verificationReports: ["component-verification-reports.yaml"]

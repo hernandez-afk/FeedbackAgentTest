@@ -14,12 +14,12 @@ projects:
     artifacts: []
   - id: "GFE-SORT"
     title: "Browse, filter and sort games and sessions"
-    status: "in-audit"  # latest audit: blocker (audit-report.md)
+    status: "in-audit"  # latest audit: blocker (audit-report-round1.md)
     scopeSummary: "Platform and studio filters, card/list view and a 'Most active' sort on /games; a platform filter on /sessions."
     scopeTerms: ["game catalogue", "platform filter", "studio filter", "sort order", "list view", "session sort"]
-    surfaces: ["games", "games/filters", "sessions", "sessions/filters"]
+    surfaces: ["games", "games/filters", "sessions", "sessions/filters", "catalog-sidebar"]
     priorities: ["P1", "P2", "P3"]
-    componentsUsed: ["GameCard", "SortPillGroup", "NativeSelect", "EmptyState", "InlineError", "Badge", "Card", "Button", "GameFilterPanel (proposed)", "GameListRow (proposed)"]
+    componentsUsed: ["GameCard", "SortPillGroup", "NativeSelect", "EmptyState", "InlineError", "Badge", "Card", "Button", "GameFilterPanel (proposed)", "GameListRow (proposed)", "CatalogShell (proposed)", "CatalogTree (proposed)", "SortButtons (proposed)", "StarButton (proposed)", "CriticalFlag (proposed)", "TitleGroup (proposed)", "GroupingFields (proposed)"]
     codePaths:
       - "frontend/app/games/page.tsx"
       - "frontend/components/GamesCatalogBrowser.tsx"
@@ -28,9 +28,15 @@ projects:
       - "frontend/components/SessionsFilters.tsx"
       - "frontend/app/sessions/page.tsx"
       - "frontend/lib/game-search.ts"
-    artifacts: ["game-sort/ticket-brief.yaml", "game-sort/brief-optimization-report.yaml", "game-sort/scope-overlap-report.yaml", "game-sort/user-flow.yaml", "game-sort/component-gap-report.yaml", "game-sort/design-output.yaml", "game-sort/audit-report.md"]
+      - "frontend/components/catalog/**"
+      - "frontend/lib/title-groups.ts"
+      - "frontend/lib/game-meta.ts"
+      - "backend/games.py"
+    artifacts: ["game-sort/ticket-brief.yaml", "game-sort/brief-optimization-report.yaml", "game-sort/scope-overlap-report.yaml", "game-sort/user-flow.yaml", "game-sort/component-gap-report.yaml", "game-sort/design-output.yaml", "game-sort/audit-report-round1.md"]
 navigation:
   - { from: "nav", to: "games", via: "'Games' header link", status: "live" }
   - { from: "nav", to: "sessions", via: "'Sessions' header link", status: "live" }
   - { from: "games", to: "game", via: "card title / list row", status: "live" }
   - { from: "sessions", to: "sessions/detail", via: "'View' button", status: "live" }
+  - { from: "catalog-sidebar", to: "games/dashboard", via: "sidebar tree (reviewers)", status: "live" }
+  - { from: "games/dashboard", to: "catalog-sidebar", via: "sidebar beside every dashboard", status: "live" }

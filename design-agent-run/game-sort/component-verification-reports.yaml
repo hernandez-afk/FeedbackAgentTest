@@ -1,0 +1,44 @@
+# Operational verification for every proposed GFE-SORT component
+# (registryPolicy.requireOperationalVerification). Filled by the design lead;
+# verdict stays "awaiting-reviewer" until the human designer
+# (registryPolicy.verificationReviewer) signs. Evidence = tests + screenshots.
+reviewer: "human-designer"
+reports:
+  - component: "GameFilterPanel"
+    operationalSpec: { states: [default, selected, hover, focus, overflow ("Show all"), stale-selection (count 0), empty, unavailable], props: [facets, filters, onToggle, groups, visibleOptions, emptyText, unavailableText] }
+    dynamicBehavior: { sizing: "fluid, fills its container", narrowest: "320px drawer: rows wrap labels (break-words), count stays right", longContent: "labels wrap, never truncate", text200: "rows grow (min-h 44px, no fixed height)", input: "touch/pointer/keyboard via native buttons", dataDriven: "groups passed in (audit round 1)" }
+    verification: { allStatesImplemented: true, accessibility: "aria-pressed rows, fieldset/legend, check mark + pressed = 2 cues", tokenCompliant: true, tests: "__tests__/game-filter-panel.test.tsx" }
+    verdict: "awaiting-reviewer"
+  - component: "GameListRow"
+    operationalSpec: { states: [default, hover, focus, no-slug, no-actions, negative-reviews, starred], props: [game, canReview, canManage, highlightTerm, showStudio] }
+    dynamicBehavior: { narrowest: "320px: stacks, actions wrap (screenshot phone320-04-list)", touch: "actions min-h 44px (audit round 1)", longContent: "title + meta wrap" }
+    verification: { allStatesImplemented: true, tests: "__tests__/game-list-row.test.tsx" }
+    verdict: "awaiting-reviewer"
+  - component: "CatalogShell"
+    operationalSpec: { states: [desktop-column, phone-closed, phone-open (dialog), route-change closes], props: [sidebar, children, activeCount] }
+    dynamicBehavior: { lg: "columns 1-3 of 12, sticky", phone: "drawer min(22rem, 88vw), focus trapped, Escape/backdrop/Close, body scroll locked, focus returns", reducedMotion: "adp-reveal honours the global rule" }
+    verification: { allStatesImplemented: true, tests: "__tests__/game-filter-panel.test.tsx (drawer)", screenshots: [phone-02-drawer-open, phone320-05-drawer] }
+    verdict: "awaiting-reviewer"
+  - component: "CatalogTree"
+    operationalSpec: { states: [expanded, collapsed project/platform, active game, filtered, no-match, empty, truncated, critical, starred], props: [items, truncated, activeGameId, canReview, filterText] }
+    dynamicBehavior: { longContent: "names wrap", scale: "1,000-game cap with note", grouping: "case-insensitive platforms, titles with 2+ versions nest" }
+    verification: { allStatesImplemented: true, tests: "__tests__/catalog-tree.test.tsx" }
+    verdict: "awaiting-reviewer"
+  - component: "StarButton"
+    operationalSpec: { states: [off, on, busy, failed (reverts + live status)], props: [gameId, gameTitle, starred] }
+    dynamicBehavior: { size: "44x44 fixed (touch-target minimum)", a11y: "aria-pressed + named label; filled vs outline + color" }
+    verification: { allStatesImplemented: true, tests: "__tests__/catalog-tree.test.tsx" }
+    verdict: "awaiting-reviewer"
+  - component: "CriticalFlag"
+    operationalSpec: { variants: [compact "!", full "! Negative reviews"], a11y: "accessible name 'Reviews overly negative'; sidebar legend explains the glyph" }
+    verification: { contrast: "accent-ink on coral ~5.0:1", allStatesImplemented: true }
+    verdict: "awaiting-reviewer"
+  - component: "TitleGroup"
+    operationalSpec: { states: [collapsed (1 card slot), expanded (full row, inner grid), list variant, negative-reviews], props: [name, games, view, children, defaultOpen] }
+    dynamicBehavior: { grid: "collapsed spans the 7 card row tracks so no empty cells (screenshot desktop-00)" }
+    verification: { allStatesImplemented: true, tests: "__tests__/catalog-tree.test.tsx (groupByTitle)" }
+    verdict: "awaiting-reviewer"
+  - component: "GroupingFields"
+    operationalSpec: { states: [empty, typed, suggestions, suggestions-failed], props: [idPrefix, labelClass, optionalHint, project, onProjectChange, franchise, onFranchiseChange] }
+    verification: { allStatesImplemented: true, tests: "__tests__/edit-game-form.test.tsx (mounts it)" }
+    verdict: "awaiting-reviewer"
