@@ -10,16 +10,17 @@ projects:
     surfaces: ["nav", "game", "sessions/detail", "games/dashboard", "admin"]
     priorities: []
     componentsUsed: []
-    codePaths: ["frontend/components/NavClient.tsx", "frontend/app/game/**", "frontend/app/sessions/[id]/**"]
+    codePaths: ["frontend/components/NavClient.tsx", "frontend/app/game/**", "frontend/app/games/[gameId]/dashboard/**", "frontend/app/sessions/[id]/**"]
+    flags: ["GFE-SORT wraps games/dashboard in the catalogue sidebar (scope-2)", "Header nav overflows at 200% text size at 320px (found in the GFE-SORT audit round 3 measurements)"]
     artifacts: []
   - id: "GFE-SORT"
     title: "Browse, filter and sort games and sessions"
-    status: "in-audit"  # latest audit: blocker (audit-report-round2.md)
-    scopeSummary: "Platform and studio filters, card/list view and a 'Most active' sort on /games; a platform filter on /sessions."
-    scopeTerms: ["game catalogue", "platform filter", "studio filter", "sort order", "list view", "session sort"]
+    status: "in-audit"  # round 3 in audit (audit-report-round3.md)
+    scopeSummary: "The catalogue sidebar (search, sort, Platform/Project/Studio filters, Project → Platform → Title tree) on /games and every game dashboard; card/list view; title groups; build stars pinned first on /games and /sessions; the negative-reviews warning; a platform filter on /sessions."
+    scopeTerms: ["game catalogue", "platform filter", "studio filter", "sort order", "list view", "session sort", "project", "title", "favourite", "critical warning", "sidebar tree"]
     surfaces: ["games", "games/filters", "sessions", "sessions/filters", "catalog-sidebar"]
     priorities: ["P1", "P2", "P3"]
-    componentsUsed: ["GameCard", "SortPillGroup", "NativeSelect", "EmptyState", "InlineError", "Badge", "Card", "Button", "GameFilterPanel (proposed)", "GameListRow (proposed)", "CatalogShell (proposed)", "CatalogTree (proposed)", "SortButtons (proposed)", "StarButton (proposed)", "CriticalFlag (proposed)", "TitleGroup (proposed)", "GroupingFields (proposed)"]
+    componentsUsed: ["GameCard", "SortPillGroup", "NativeSelect", "EmptyState", "InlineError", "Badge", "Card", "Button", "GameFilterPanel (proposed)", "GameListRow (proposed)", "CatalogShell (proposed)", "CatalogTree (proposed)", "SortButtons (proposed)", "StarButton (proposed)", "CriticalFlag (proposed)", "TitleGroup (proposed)", "GroupingFields (proposed)", "DashboardSidebar (proposed)", "BuildPills"]
     codePaths:
       - "frontend/app/games/page.tsx"
       - "frontend/components/GamesCatalogBrowser.tsx"
@@ -31,8 +32,23 @@ projects:
       - "frontend/components/catalog/**"
       - "frontend/lib/title-groups.ts"
       - "frontend/lib/game-meta.ts"
+      - "frontend/components/BuildPills.tsx"
+      - "frontend/lib/pill-classes.ts"
       - "backend/games.py"
-    artifacts: ["game-sort/ticket-brief.yaml", "game-sort/brief-optimization-report.yaml", "game-sort/scope-overlap-report.yaml", "game-sort/user-flow.yaml", "game-sort/component-gap-report.yaml", "game-sort/design-output.yaml", "game-sort/audit-report-round1.md"]
+      - "backend/sessions.py"
+      - "backend/models.py"
+    artifacts:
+      - { id: "GFE-SORT-page-brief", type: "page-brief", path: "game-sort/page-brief.md", version: 3, reviewStatus: "current" }
+      - { id: "GFE-SORT-brief", type: "ticket-brief", path: "game-sort/ticket-brief.yaml", version: 3, reviewStatus: "current" }
+      - { id: "GFE-SORT-brief-report", type: "brief-optimization-report", path: "game-sort/brief-optimization-report.yaml", version: 3, reviewStatus: "current" }
+      - { id: "GFE-SORT-scope-2", type: "scope-overlap-report", path: "game-sort/scope-overlap-report.yaml", version: 2, reviewStatus: "current" }
+      - { id: "GFE-SORT-flow-3", type: "user-flow", path: "game-sort/user-flow.yaml", version: 3, reviewStatus: "current" }
+      - { id: "GFE-SORT-gap-3", type: "component-gap-report", path: "game-sort/component-gap-report.yaml", version: 3, reviewStatus: "current" }
+      - { id: "GFE-SORT-verification", type: "component-verification-report", path: "game-sort/component-verification-reports.yaml", version: 2, reviewStatus: "current" }
+      - { id: "GFE-SORT-design-3", type: "design-output", path: "game-sort/design-output.yaml", version: 3, reviewStatus: "current" }
+      - { id: "audit-report-GFE-SORT-round1", type: "audit-report", path: "game-sort/audit-report-round1.md", version: 1, reviewStatus: "current" }
+      - { id: "audit-report-GFE-SORT-round2", type: "audit-report", path: "game-sort/audit-report-round2.md", version: 2, reviewStatus: "current" }
+      - { id: "audit-report-GFE-SORT-round3", type: "audit-report", path: "game-sort/audit-report-round3.md", version: 3, reviewStatus: "current" }
 navigation:
   - { from: "nav", to: "games", via: "'Games' header link", status: "live" }
   - { from: "nav", to: "sessions", via: "'Sessions' header link", status: "live" }

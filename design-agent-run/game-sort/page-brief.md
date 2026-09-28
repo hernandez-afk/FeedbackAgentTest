@@ -88,3 +88,12 @@ verbatim in meaning; the reference design is in `reference-andreas-beijer/`.*
 - Sessions can be suggested to be sorted based on what recently got the most responses
 - Want to be able to "star" favorite game builds
 - Critical warning: when reviews become overly negative
+
+### Answers (round 3)
+
+*From the author in conversation, after the second design and audit.*
+
+- Stars: **"to star whatever builds you want, that will be shown first in games
+  and game sessions."** Stars go on builds. A game with a starred build is
+  listed first on /games. A session on a starred build is listed first on /sessions.
+- Critical threshold: **"yes 40 is ok"**. A game is flagged when at least 40% of its reviews are negative, across at least 5 reviews.

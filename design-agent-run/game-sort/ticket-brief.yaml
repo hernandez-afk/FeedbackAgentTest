@@ -9,7 +9,7 @@ sourceRef: "design-agent-run/game-sort/page-brief.md"
 
 scopeTerms: ["game catalogue", "platform filter", "studio filter", "sort order", "list view", "session sort", "project", "title", "favourite", "critical warning", "sidebar tree"]
 nonEntityTerms: ["sort order", "list view", "session sort", "platform filter", "studio filter", "critical warning", "sidebar tree"]
-surfaces: ["games", "games/filters", "sessions", "sessions/filters"]
+surfaces: ["games", "games/filters", "sessions", "sessions/filters", "catalog-sidebar", "games/dashboard"]
 
 connections:
   arrivesFrom: ["the header nav 'Games' link", "the header nav 'Sessions' link (reviewers)", "a shared /games?platform=… link"]
@@ -26,7 +26,7 @@ coreTasks:
   - { id: "T2", statement: "Switch the games between a card view and a compact list view.", linkedPriority: "P1", entryPoint: "/games" }
   - { id: "T3", statement: "Narrow the sessions list to one platform.", linkedPriority: "P1", entryPoint: "/sessions" }
   - { id: "T4", statement: "See the games that recently got the most responses first.", linkedPriority: "P1", entryPoint: "/games" }
-  - { id: "T5", statement: "Star a game and find it again first.", linkedPriority: "P3", entryPoint: "/games" }
+  - { id: "T5", statement: "Star the builds I care about and see them first on /games and /sessions.", linkedPriority: "P3", entryPoint: "/games" }
   - { id: "T6", statement: "Spot games whose reviews have turned overly negative.", linkedPriority: "P1", entryPoint: "/games" }
   - { id: "T7", statement: "Move from one game's dashboard to another without going back to the list.", linkedPriority: "P3", entryPoint: "a game's dashboard" }
 
@@ -50,7 +50,7 @@ acceptanceCriteria:
   - { id: "AC7", statement: "/sessions can be filtered by platform, and the filter composes with the existing game/build/status/severity filters.", linkedTask: "T3", source: "rewritten" }
   - { id: "AC8", statement: "At 320px nothing scrolls sideways, every filter control is at least 44px tall, and the filter panel is collapsed by default.", linkedPriority: "P3", source: "inferred" }
   - { id: "AC9", statement: "When filters match nothing, the page says which filters matched nothing and offers one action to clear them.", linkedPriority: "P3", source: "inferred" }
-  - { id: "AC11", statement: "Any signed-in user can star a game in 1 tap from the sidebar, its card or its row; 'Starred' puts their starred games first; stars are private to them.", linkedTask: "T5", source: "explicit" }
+  - { id: "AC11", statement: "Any signed-in user can star any build in 1 tap beside its Continue button. Games with a starred build always come first on /games, whatever the sort. Sessions on a starred build always come first on /sessions. The sidebar lists starred builds. Stars are private to the user.", linkedTask: "T5", source: "explicit" }
   - { id: "AC12", statement: "A reviewer sees a red '!' (sidebar) and 'Negative reviews' (card/row) on a game whose latest sentiment report is >= 40% negative over >= 5 reviews; 'Critical' puts those games first. Testers never see it.", linkedTask: "T6", source: "rewritten" }
   - { id: "AC13", statement: "Games sharing a title show as one entry naming its versions, expanding to them in 1 tap.", linkedPriority: "P2", source: "explicit" }
   - { id: "AC14", statement: "The sidebar (search, sort, Project -> Platform -> game tree) is on /games and on every game dashboard; on phones it opens as a drawer.", linkedTask: "T7", source: "explicit" }
@@ -93,11 +93,11 @@ entities:
       create:  { handledBy: "this-project", note: "Exists: Manage builds panel / build upload. Unchanged." }
       source:  { handledBy: "this-project", note: "Shown as the build count and build pills on the card; list view shows the count." }
   - name: "favourite"
-    description: "A user's starred game (AC11)."
+    description: "A user's starred build (AC11)."
     operations:
-      create:  { handledBy: "this-project", note: "The star button (sidebar, card, row): PUT /api/games/{id}/favorite." }
-      source:  { handledBy: "this-project", note: "game_favorite(user_id, game_id); private to the user." }
-      delete:  { handledBy: "this-project", note: "Unstar: DELETE; removed with the user or the game (cascade)." }
+      create:  { handledBy: "this-project", note: "The star beside a build's Continue: PUT /api/games/{game_id}/builds/{build_id}/favorite." }
+      source:  { handledBy: "this-project", note: "build_favorite(user_id, build_id); private to the user." }
+      delete:  { handledBy: "this-project", note: "Unstar: DELETE; removed with the user or the build (cascade). An archived build's star is ignored." }
   - name: "session"
     operations:
       create:  { handledBy: "this-project", note: "Created by testers through the capture flow. Unchanged; sessions feed the 'Most active' sort." }

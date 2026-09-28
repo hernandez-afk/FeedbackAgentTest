@@ -1,20 +1,39 @@
-# Step 2b — scope placement for GFE-SORT against the design index.
-id: "GFE-SORT-scope-1"
+# Step 2b — scope placement for GFE-SORT, re-run for round 3 against the
+# current design index (GFE-SHELL + GFE-SORT). Supersedes GFE-SORT-scope-1,
+# which ran against an empty index.
+id: "GFE-SORT-scope-2"
 briefRef: "GFE-SORT"
-designIndexVersion: "empty"
-candidates: []
+generatedAt: "2026-09-28T12:30:00Z"
+supersedes: "GFE-SORT-scope-1"
+designIndexVersion: "GFE-SHELL, GFE-SORT (self, excluded from scoring)"
+candidates:
+  - projectId: "GFE-SHELL"
+    termOverlap: 0.0      # brief scopeTerms share nothing with ["nav", "game page", "session detail", "dashboard"]
+    surfaceOverlap: 0.22  # 2 / 9: games/dashboard (exact), sessions ⊃ sessions/detail (parent match)
+    priorityOverlap: 0.0  # GFE-SHELL records no priorities
+    score: 0.08           # 0.4*0 + 0.35*0.22 + 0.25*0
+    classification: "unrelated"   # below relatedThreshold 0.3
+    evidence:
+      - "Surface games/dashboard: the dashboard page is GFE-SHELL's. GFE-SORT wraps it in the catalogue sidebar (CatalogShell + DashboardSidebar) and leaves its content unchanged."
+      - "Surface sessions/detail: a child of sessions. GFE-SORT changes the /sessions list only, not session detail."
+      - "Code path: frontend/app/games/[gameId]/dashboard/page.tsx was in no project's codePaths. It is GFE-SHELL's page, so it goes into GFE-SHELL's codePaths. GFE-SORT's only edit to it wraps it in the sidebar, which user-flow IC3 records as an integration change owned by GFE-SHELL. GFE-SHELL is flagged (changePropagation.flagSharedPatternProjects)."
 elementRouting:
   - { element: "Filter by platform, with a count per platform", route: "this-project" }
-  - { element: "Filter by studio", route: "this-project" }
+  - { element: "Filter by studio / project", route: "this-project" }
   - { element: "The filter panel", route: "this-project" }
   - { element: "Active filters", route: "this-project" }
-  - { element: "Sort: newest, A to Z, most active", route: "reuse-pattern-from", ref: "CH-606 /games search + sort (shipped before the harness; backfill)", note: "Inherit: URL state, router.replace, 300ms debounce, dimmed-grid pending treatment, aria-pressed pills." }
+  - { element: "Sort: A to Z, newest, most active, critical", route: "reuse-pattern-from", ref: "CH-606 /games search + sort (shipped before the harness; backfill)", note: "Inherit: URL state, router.replace, 300ms debounce, dimmed-grid pending treatment, aria-pressed pills." }
   - { element: "Card view and list view", route: "this-project" }
   - { element: "Game header", route: "reuse-pattern-from", ref: "GameCard row subgrid (DESIGN_SYSTEM §3.10)" }
   - { element: "Platform filter on /sessions", route: "reuse-pattern-from", ref: "CH-479 SessionsFilters (native select, URL ids)" }
+  - { element: "Build stars, pinned first on /games and /sessions", route: "this-project", note: "Round 3. Touches BuildPills (the per-game build picker) and the /sessions rows; no other project owns either." }
+  - { element: "Sidebar beside a game's dashboard", route: "this-project", ref: "GFE-SHELL games/dashboard", note: "Wraps the GFE-SHELL page; its content is unchanged." }
 recommendation: "new-project-with-shared-patterns"
 reusedDecisions:
   - "CH-606: search/sort state lives in the URL; router.replace not push; the grid stays mounted and dims while pending."
   - "CH-479: /sessions filters are native <select> dropdowns carrying values in the URL; changing a filter resets to page 1."
   - "DESIGN_SYSTEM §3.10: card grids are row subgrids with a fixed slot count."
-humanDecision: null   # no overlap requiring a decision (index empty)
+humanDecision:
+  decision: "Put the sidebar beside every game dashboard."
+  by: "the brief's author"
+  source: "Andreas Beijer's reference design, supplied by the author in round 2 ('shown beside both the games list and a game's dashboard'). It is recorded in page-brief.md."

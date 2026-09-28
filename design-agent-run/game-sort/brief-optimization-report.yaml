@@ -118,7 +118,12 @@ answers:
   - { question: "Related design", answer: "Andreas Beijer's sidebar design (reference-andreas-beijer/)." }
   - { question: "Nested games", answer: "Option A: a Title above games." }
   - { question: "Phone filters", answer: "Whatever is most functional (drawer chosen, D2 revised)." }
-newCriteria: ["Star favourite games (AC11)", "Critical warning when reviews become overly negative (AC12)"]
-openQuestions:
-  - "The author wrote 'star favorite game BUILDS'. Stars are on games (as in Andreas Beijer's tree). Confirm games, not individual builds."
-readiness: "ready"   # approved by the author's answers in conversation; one wording confirmation outstanding
+newCriteria: ["Star favourite builds, pinned first on games and sessions (AC11)", "Critical warning when reviews become overly negative (AC12)"]
+openQuestions: []
+resolvedQuestions:
+  - question: "Stars on games or on builds?"
+    answer: "Builds. 'to star whatever builds you want, that will be shown first in games and game sessions.'"
+  - question: "Is 40% negative the right critical threshold?"
+    answer: "'yes 40 is ok'"
+readiness: "ready"
+approvedBy: "the brief's author, in conversation (rounds 2 and 3 answers, page-brief.md)"

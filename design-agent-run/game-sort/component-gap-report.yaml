@@ -1,10 +1,13 @@
-# Step 3 — reuse check for GFE-SORT (round 2). Every new component is
+# Step 3 — reuse check for GFE-SORT (round 3). Every new component is
 # status "proposed" until a human designer signs its verification report.
-id: "GFE-SORT-gap-2"
+id: "GFE-SORT-gap-3"
+supersedes: "GFE-SORT-gap-2"
 briefRef: "GFE-SORT"
 manifestVersion: "1.0.0"
 reuse:
-  - { element: "Sort (A to Z, Newest, Active, Starred, Critical)", component: "SortPillGroup", score: 0.74, route: "extend", note: "Same aria-pressed toggle; icon + word, button radius (Andreas's icon row)." }
+  - { element: "Sort (A to Z, Newest, Active, Critical)", component: "SortPillGroup", score: 0.74, route: "extend", note: "Same aria-pressed toggle and the shared pillClass/pillStyle (lib/pill-classes.ts); icon + word (Andreas's icon row). Implemented as SortButtons, below." }
+  - { element: "Build star toggle (BuildPills, /sessions rows)", component: "StarButton", score: 0.9, route: "reuse", note: "Same component as round 2, now keyed by build." }
+  - { element: "Dashboard sidebar search", component: "GamesCatalogBrowser search box", score: 0.85, route: "reuse", note: "Same input style and label (audit round 2 consistency fix)." }
   - { element: "View switch", component: "SortPillGroup", score: 0.92, route: "reuse" }
   - { element: "Active filter chips", component: "SortPillGroup", score: 0.78, route: "reuse", note: "pillClass(false) (audit round 1)." }
   - { element: "Game header (card)", component: "GameCard", score: 0.9, route: "reuse" }
@@ -20,3 +23,5 @@ gaps:
   - { name: "CriticalFlag (compact)", gapType: "missing-variant", recommendation: "extend-existing-variant", nearest: "Badge/negative (0.6)", path: "frontend/components/catalog/CriticalFlag.tsx", status: "proposed" }
   - { name: "TitleGroup", gapType: "missing-component", recommendation: "create-new", nearest: "Collapsible (0.5)", path: "frontend/components/catalog/TitleGroup.tsx", status: "proposed" }
   - { name: "GroupingFields", gapType: "missing-variant", recommendation: "reuse-nearest-approved", nearest: "Input (0.8) + native datalist", path: "frontend/components/catalog/GroupingFields.tsx", status: "proposed" }
+  - { name: "SortButtons", gapType: "missing-variant", recommendation: "extend-existing-variant", nearest: "SortPillGroup (0.74)", why: "icon + word pills with an options prop and a reviewer-only Critical", path: "frontend/components/catalog/SortButtons.tsx", status: "proposed" }
+  - { name: "DashboardSidebar", gapType: "missing-component", recommendation: "create-new", nearest: "GamesCatalogBrowser sidebar (0.6)", why: "the same search + tree, without filters, for the dashboard route", path: "frontend/components/catalog/DashboardSidebar.tsx", status: "proposed" }

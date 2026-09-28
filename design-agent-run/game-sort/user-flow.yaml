@@ -1,6 +1,6 @@
 # Step 2c — user flow for GFE-SORT.
 # Check: python3 tools/flow_check.py user-flow.yaml --index ../design-system/design-index.yaml --brief ticket-brief.yaml
-id: "GFE-SORT-flow-2"
+id: "GFE-SORT-flow-3"
 projectId: "GFE-SORT"
 briefRef: "GFE-SORT"
 generatedAt: "2026-09-28T09:30:00Z"
@@ -66,11 +66,10 @@ flows:
   - taskId: "T5"
     entryPoint: "E1"
     steps:
-      - { screen: "S1", action: "Tap the star on a card, row or sidebar entry", isClick: true, async: true }
-      - { screen: "S1", action: "Tap 'Starred' in Sort", isClick: true, async: true }
-    done: "The star fills (aria-pressed) at once; Starred puts it first."
+      - { screen: "S1", action: "Tap the star beside a build's Continue (card or row; also on each /sessions row)", isClick: true, async: true }
+    done: "The star fills (aria-pressed) at once. On the next load the game is first on /games under any sort, its sessions are first on /sessions, and the build is listed under 'Starred builds' in the sidebar."
     alternatePaths:
-      - { kind: "error", when: "Saving the star fails", then: "The star flips back and a polite status says it couldn't be saved." }
+      - { kind: "error", when: "Saving the star fails", then: "The star flips back and a visible 'Not saved' message appears beside it (also announced politely)." }
       - { kind: "permission", when: "The caller has no user account row", then: "403; the star flips back with the same message." }
   - taskId: "T6"
     entryPoint: "E1"

@@ -1,7 +1,7 @@
 From 2942459ab515213d3ca8fd8a2b7df5240ff599fd Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Mon, 28 Sep 2026 08:17:38 +0000
-Subject: [PATCH 1/3] feat(games): platform/studio filters, list view and Most
+Subject: [PATCH 1/5] feat(games): platform/studio filters, list view and Most
  active sort (GFE-SORT)
 
 Designed through the Design System Agent harness (brief -> scope -> flow ->
@@ -3403,11 +3403,10 @@ index 0000000..34a2edc
 -- 
 2.43.0
 
-
 From 6586e5f567d74c0cfa88fdf88d963cd857e316d2 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Mon, 28 Sep 2026 08:34:25 +0000
-Subject: [PATCH 2/3] fix(games): keep the filter panel's padded card on
+Subject: [PATCH 2/5] fix(games): keep the filter panel's padded card on
  desktop
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
@@ -3440,11 +3439,10 @@ index 1ba400d..29ff84c 100644
 -- 
 2.43.0
 
-
 From fa3c26c6980baaf081c28a3aa4d5643b05294182 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Mon, 28 Sep 2026 11:15:20 +0000
-Subject: [PATCH 3/3] feat(games): sidebar tree, titles, projects, stars and
+Subject: [PATCH 3/5] feat(games): sidebar tree, titles, projects, stars and
  negative-review warning (GFE-SORT round 2)
 
 After the brief author's answers and Andreas Beijer's design:
@@ -8322,6 +8320,2230 @@ index 0000000..b789d6c
 +        "id", "title", "slug", "platform", "project_id", "project_name",
 +        "franchise_id", "franchise_name", "is_favorite", "has_critical",
 +    }
+-- 
+2.43.0
+
+From 4b0ff66526fa97a13d717b82559e1065044c4041 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 28 Sep 2026 11:55:52 +0000
+Subject: [PATCH 4/5] feat(games): star builds (pinned first on games and
+ sessions) + audit round 2 fixes
+
+Author: star whatever builds you want; starred builds are shown first in
+games and game sessions. Negative-review threshold 40% confirmed.
+
+- build_favorite replaces game_favorite (unreleased migration edited):
+  PUT/DELETE /api/games/{id}/builds/{build_id}/favorite; BuildOut and
+  session rows carry the caller's star; games with a starred build and
+  sessions on a starred build are pinned first under every sort. The
+  separate Starred sort is gone. Sidebar tree opens with Starred builds.
+- Card: starred builds listed first and pre-selected; star beside Continue.
+- Audit round 2: 44px card/archive actions, 15px tree text, 8px target
+  spacing, sort row reuses the shared pill, options as props, sidebar
+  scrolls on its own, Button styles in the shell, visible star errors,
+  tree-unavailable text, search visible on phones, dashboard search
+  matches /games, pagination on /games, neutral build badges.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ ...8_gfe_sort_project_franchise_title_and_.py |  15 +-
+ backend/games.py                              | 143 +++++++++++++-----
+ backend/models.py                             |  15 +-
+ backend/sessions.py                           |  29 +++-
+ frontend/__tests__/build-pills.test.tsx       |  25 ++-
+ frontend/__tests__/catalog-tree.test.tsx      |  26 ++--
+ frontend/__tests__/game-filter-panel.test.tsx |   8 +
+ .../__tests__/games-page-filters.test.tsx     |  26 ++++
+ frontend/app/games/page.tsx                   |  74 ++++++++-
+ frontend/app/sessions/page.tsx                |  22 ++-
+ frontend/components/ArchiveGameControl.tsx    |   4 +
+ frontend/components/BuildPills.tsx            |  58 +++++--
+ frontend/components/GameCard.tsx              |  38 +++--
+ frontend/components/GameFilterPanel.tsx       |   2 +-
+ frontend/components/GameListRow.tsx           |  15 +-
+ frontend/components/GamesCatalogBrowser.tsx   |  57 +++----
+ frontend/components/catalog/CatalogShell.tsx  |  15 +-
+ frontend/components/catalog/CatalogTree.tsx   |  65 +++++++-
+ .../components/catalog/DashboardSidebar.tsx   |  47 ++++--
+ .../catalog/SortButtons.stories.tsx           |   2 +-
+ frontend/components/catalog/SortButtons.tsx   |  52 ++++---
+ .../components/catalog/StarButton.stories.tsx |   4 +-
+ frontend/components/catalog/StarButton.tsx    |  84 +++++-----
+ frontend/lib/game-search.ts                   |  26 +++-
+ frontend/lib/pill-classes.ts                  |  31 ++++
+ frontend/lib/types.ts                         |  11 +-
+ tests/test_ch174_games_builds.py              |   2 +
+ tests/test_ch179_reviewer.py                  |   5 +
+ tests/test_gfe_sort_groupings.py              |  72 +++++++--
+ 29 files changed, 733 insertions(+), 240 deletions(-)
+ create mode 100644 frontend/lib/pill-classes.ts
+
+diff --git a/alembic/versions/67b72caa7238_gfe_sort_project_franchise_title_and_.py b/alembic/versions/67b72caa7238_gfe_sort_project_franchise_title_and_.py
+index afc57bf..9657f9c 100644
+--- a/alembic/versions/67b72caa7238_gfe_sort_project_franchise_title_and_.py
++++ b/alembic/versions/67b72caa7238_gfe_sort_project_franchise_title_and_.py
+@@ -1,10 +1,11 @@
+-"""GFE-SORT project, franchise (title) and game_favorite
++"""GFE-SORT project, franchise (title) and build_favorite
+ 
+ Adds the catalogue groupings the /games sidebar is built on:
+   * ``project``   - what a game is for ("Andreas Sketches"); game.project_id
+   * ``franchise`` - the TITLE games are versions of ("Asteroids"); UI "Title";
+                     game.franchise_id
+-  * ``game_favorite`` - per-user starred games
++  * ``build_favorite`` - per-user starred builds (pinned first on /games and
++                        /sessions)
+ 
+ All additive and nullable: every existing game has no project and no title and
+ renders exactly as before (its own title card, the "No project" group).
+@@ -65,7 +66,7 @@ def upgrade() -> None:
+     op.create_index("ix_game_project_id", "game", ["project_id"])
+     op.create_index("ix_game_franchise_id", "game", ["franchise_id"])
+     op.create_table(
+-        "game_favorite",
++        "build_favorite",
+         sa.Column(
+             "user_id",
+             postgresql.UUID(as_uuid=True),
+@@ -73,9 +74,9 @@ def upgrade() -> None:
+             primary_key=True,
+         ),
+         sa.Column(
+-            "game_id",
++            "build_id",
+             postgresql.UUID(as_uuid=True),
+-            sa.ForeignKey("game.id", ondelete="CASCADE"),
++            sa.ForeignKey("build.id", ondelete="CASCADE"),
+             primary_key=True,
+         ),
+         sa.Column(
+@@ -94,13 +95,13 @@ def downgrade() -> None:
+             "SELECT count(*) FROM game WHERE project_id IS NOT NULL OR franchise_id IS NOT NULL"
+         )
+     ).scalar()
+-    starred = bind.execute(sa.text("SELECT count(*) FROM game_favorite")).scalar()
++    starred = bind.execute(sa.text("SELECT count(*) FROM build_favorite")).scalar()
+     if grouped or starred:
+         raise RuntimeError(
+             f"Refusing to downgrade: {grouped} game(s) have a project/title and "
+             f"{starred} favourite(s) exist - clear them before dropping the tables."
+         )
+-    op.drop_table("game_favorite")
++    op.drop_table("build_favorite")
+     op.drop_index("ix_game_franchise_id", table_name="game")
+     op.drop_index("ix_game_project_id", table_name="game")
+     op.drop_column("game", "franchise_id")
+diff --git a/backend/games.py b/backend/games.py
+index 950f0fa..5cf43b3 100644
+--- a/backend/games.py
++++ b/backend/games.py
+@@ -162,7 +162,7 @@ from backend.models import (
+     EnrichmentStatus,
+     Franchise,
+     Game,
+-    GameFavorite,
++    BuildFavorite,
+     Project,
+     Session,
+     Studio,
+@@ -218,10 +218,11 @@ GAME_FACET_NO_PLATFORM = "__none__"
+ GAME_FILTER_MAX_VALUES = 20
+ # "Most active" = sessions submitted in this many days, most first.
+ GAME_ACTIVITY_WINDOW_DAYS = 30
+-# Every catalogue ordering (list + sidebar tree). "starred" = the caller's
+-# favourites first; "critical" = games with an open critical issue first
+-# (reviewers only; title order for everyone else).
+-GAME_SORT_PATTERN = "^(title|newest|activity|starred|critical)$"
++# Every catalogue ordering (list + sidebar tree). "critical" = games whose
++# reviews turned overly negative first (reviewers only; title order for
++# everyone else). There is no "starred" ordering: a game with a starred build
++# is ALWAYS pinned first, whatever the sort (the author's rule).
++GAME_SORT_PATTERN = "^(title|newest|activity|critical)$"
+ # The sidebar tree reads the whole visible catalogue, up to this many games.
+ GAME_NAVIGATION_CAP = 1000
+ # Starring is a quick toggle; a looser budget than the catalogue writes.
+@@ -319,18 +320,35 @@ def _apply_game_filters(
+ 
+ 
+ def _is_favorite_expr(user: CurrentUser) -> Any:
+-    """Correlated EXISTS: has THIS caller starred the game row? False for a
+-    caller with no persisted app_user row (they cannot star)."""
++    """Correlated EXISTS: has THIS caller starred any ACTIVE build of the game
++    row? False for a caller with no persisted app_user row (they cannot star).
++    Archived builds don't count: a pin must point at something playable."""
+     if user.id is None:
+         return false()
+     return (
+         select(literal(1))
+-        .where(GameFavorite.game_id == Game.id, GameFavorite.user_id == uuid.UUID(user.id))
++        .select_from(BuildFavorite)
++        .join(Build, Build.id == BuildFavorite.build_id)
++        .where(
++            Build.game_id == Game.id,
++            Build.archived_at.is_(None),
++            BuildFavorite.user_id == uuid.UUID(user.id),
++        )
+         .correlate(Game)
+         .exists()
+     )
+ 
+ 
++async def _starred_build_ids(db: AsyncSession, user: CurrentUser) -> set[uuid.UUID]:
++    """The caller's starred build ids (empty for a caller who cannot star)."""
++    if user.id is None:
++        return set()
++    rows = await db.execute(
++        select(BuildFavorite.build_id).where(BuildFavorite.user_id == uuid.UUID(user.id))
++    )
++    return set(rows.scalars().all())
++
++
+ # Critical = "reviews have become overly negative" (the author's acceptance
+ # criterion): the game's LATEST COMPLETE enrichment report scored at least
+ # CRITICAL_NEGATIVE_PCT of its feedback negative, over at least
+@@ -386,19 +404,22 @@ def _recent_sessions_expr() -> Any:
+ def _order_games(stmt: Any, sort: str, user: CurrentUser) -> Any:
+     """The catalogue orderings, shared by the list and the sidebar tree.
+ 
++    Every ordering is prefixed by the caller's PIN: games with a starred build
++    come first, in the chosen order among themselves, then everything else in
++    the chosen order ("that will be shown first", the author's rule).
++
+     ``critical`` needs reviewer rights: the flag is derived from feedback,
+     which a plain tester may not read (CH-179), so for them it falls back to
+     title order rather than leaking which games are reviewed badly.
+     """
++    pinned = _is_favorite_expr(user).desc()
+     if sort == "newest":
+-        return stmt.order_by(Game.created_at.desc(), Game.title)
++        return stmt.order_by(pinned, Game.created_at.desc(), Game.title)
+     if sort == "activity":
+-        return stmt.order_by(_recent_sessions_expr().desc(), Game.title)
+-    if sort == "starred":
+-        return stmt.order_by(_is_favorite_expr(user).desc(), Game.title)
++        return stmt.order_by(pinned, _recent_sessions_expr().desc(), Game.title)
+     if sort == "critical" and user.can_review:
+-        return stmt.order_by(_has_critical_expr().desc(), Game.title)
+-    return stmt.order_by(Game.title)
++        return stmt.order_by(pinned, _has_critical_expr().desc(), Game.title)
++    return stmt.order_by(pinned, Game.title)
+ 
+ 
+ _NAME_MAX_CHARS = 128
+@@ -523,7 +544,8 @@ class GameOut(BaseModel):
+     project_name: str | None = None
+     franchise_id: uuid.UUID | None = None
+     franchise_name: str | None = None
+-    # GFE-SORT: has THIS caller starred it. Private to the caller.
++    # GFE-SORT: has THIS caller starred one of its active builds (the game is
++    # then pinned first). Private to the caller.
+     is_favorite: bool = False
+     # GFE-SORT: reviews have turned overly negative (_has_critical_expr). None
+     # for a caller who may not read feedback (not a reviewer) - "unknown to
+@@ -574,6 +596,15 @@ class GameFacetsOut(BaseModel):
+     projects: list[NamedFacetOut] = []
+ 
+ 
++class StarredBuildOut(BaseModel):
++    """One of the caller's starred builds, in the sidebar's Starred section."""
++
++    model_config = ConfigDict(extra="forbid")
++
++    id: uuid.UUID
++    label: str
++
++
+ class NavGameOut(BaseModel):
+     """One game in GET /api/games/navigation - the sidebar tree (GFE-SORT).
+ 
+@@ -593,6 +624,8 @@ class NavGameOut(BaseModel):
+     franchise_name: str | None
+     is_favorite: bool
+     has_critical: bool | None
++    # GFE-SORT: the caller's starred ACTIVE builds of this game, by label.
++    starred_builds: list[StarredBuildOut] = []
+ 
+ 
+ class GameNavigationOut(BaseModel):
+@@ -640,6 +673,9 @@ class BuildOut(BaseModel):
+     has_uploaded_bundle: bool
+     entry_url: str | None
+     renders_to_canvas: bool | None
++    # GFE-SORT: THIS caller starred this build. Private to the caller; the
++    # starred builds of a game are listed first.
++    is_favorite: bool = False
+     # CH-553: True when ``entry_url`` points at someone else's origin rather
+     # than this app's /api/game-assets/ path. The frontend MUST branch on this
+     # rather than sniffing the URL: a same-origin entry_url is validated by
+@@ -1179,7 +1215,7 @@ _GAME_NOT_EMPTY = {
+ }
+ 
+ 
+-def _build_out(build: Build) -> BuildOut:
++def _build_out(build: Build, *, is_favorite: bool = False) -> BuildOut:
+     """Build a ``BuildOut`` including the CH-452 bundle fields, in one place
+     so every construction site (list/rename/archive/unarchive) derives
+     ``has_uploaded_bundle``/``entry_url`` from ``storage_prefix`` identically
+@@ -1201,6 +1237,7 @@ def _build_out(build: Build) -> BuildOut:
+         ),
+         renders_to_canvas=build.renders_to_canvas,
+         is_external_embed=is_embed,
++        is_favorite=is_favorite,
+     )
+ 
+ 
+@@ -1428,9 +1465,10 @@ def make_games_router(
+         GFE-SORT, second round (author's answers + Andreas Beijer's design):
+         ``platform`` now matches case-insensitively ("MSN" = "msn");
+         ``project`` and ``title`` (repeatable ids, ``__none__`` = none) filter
+-        by the new groupings; ``sort=starred`` puts the caller's starred games
+-        first and ``sort=critical`` (reviewers) games with an open critical
+-        issue first. Rows gain project/title ids + names, ``is_favorite`` and
++        by the new groupings; games with one of the caller's starred builds are
++        ALWAYS pinned first (whatever ``sort``); ``sort=critical`` (reviewers)
++        puts games whose reviews turned overly negative first. Rows gain
++        project/title ids + names, ``is_favorite`` (has a starred build) and
+         ``has_critical``.
+         """
+         # Correlated subquery: count ACTIVE (non-archived) builds for each
+@@ -1691,6 +1729,24 @@ def make_games_router(
+         )
+         stmt = _order_games(stmt, sort, user).limit(GAME_NAVIGATION_CAP + 1)
+         rows = (await db.execute(stmt)).all()
++
++        # The caller's starred active builds, grouped by game (one query).
++        starred_by_game: dict[uuid.UUID, list[StarredBuildOut]] = {}
++        if user.id is not None:
++            starred_rows = await db.execute(
++                select(Build.game_id, Build.id, Build.label)
++                .join(BuildFavorite, BuildFavorite.build_id == Build.id)
++                .where(
++                    BuildFavorite.user_id == uuid.UUID(user.id),
++                    Build.archived_at.is_(None),
++                    Build.game_id.in_(scoped_ids),
++                )
++                .order_by(Build.label)
++            )
++            for game_id, build_id, label in starred_rows.all():
++                starred_by_game.setdefault(game_id, []).append(
++                    StarredBuildOut(id=build_id, label=label)
++                )
+         items = [
+             NavGameOut(
+                 id=r[0],
+@@ -1703,16 +1759,21 @@ def make_games_router(
+                 franchise_name=r[7],
+                 is_favorite=bool(r[8]),
+                 has_critical=None if r[9] is None else bool(r[9]),
++                starred_builds=starred_by_game.get(r[0], []),
+             )
+             for r in rows[:GAME_NAVIGATION_CAP]
+         ]
+         return GameNavigationOut(items=items, truncated=len(rows) > GAME_NAVIGATION_CAP)
+ 
+     # -----------------------------------------------------------------------
+-    # PUT / DELETE /api/games/{id}/favorite — star a game (GFE-SORT)
++    # PUT / DELETE /api/games/{id}/builds/{build_id}/favorite — star a build
++    # (GFE-SORT). Any signed-in member who can SEE the game may star its
++    # builds; stars are private to them.
+     # -----------------------------------------------------------------------
+ 
+-    async def _favorite_target(game_id: uuid.UUID, user: CurrentUser, db: AsyncSession) -> uuid.UUID:
++    async def _favorite_target(
++        game_id: uuid.UUID, build_id: uuid.UUID, user: CurrentUser, db: AsyncSession
++    ) -> uuid.UUID:
+         if user.id is None:
+             # No persisted app_user row (env break-glass / domain-only viewer):
+             # there is nothing to key a favourite on.
+@@ -1724,41 +1785,48 @@ def make_games_router(
+                 .where(Game.id == game_id)
+             )
+         ).scalar_one_or_none()
+-        if visible is None:
+-            # 404, not 403: never confirm a game outside the caller's scope.
+-            raise HTTPException(status_code=404, detail="Game not found.")
++        build = (
++            await db.execute(
++                select(Build.id).where(Build.id == build_id, Build.game_id == game_id)
++            )
++        ).scalar_one_or_none()
++        if visible is None or build is None:
++            # 404, not 403: never confirm a game or build outside the caller's
++            # scope, and a build id under the wrong game is simply not found.
++            raise HTTPException(status_code=404, detail="Build not found.")
+         return uuid.UUID(user.id)
+ 
+-    @router.put("/games/{game_id}/favorite", status_code=204)
++    @router.put("/games/{game_id}/builds/{build_id}/favorite", status_code=204)
+     @limiter.limit(_FAVORITE_WRITE_LIMIT)  # type: ignore[untyped-decorator]  # slowapi has no stubs
+-    async def star_game(
++    async def star_build(
+         request: Request,
+         game_id: uuid.UUID,
++        build_id: uuid.UUID,
+         user: CurrentUser = Depends(require_user),
+         db: AsyncSession = Depends(get_async_db),
+     ) -> None:
+-        """Star a game for the caller. Idempotent."""
+-        user_id = await _favorite_target(game_id, user, db)
+-        exists_already = await db.get(GameFavorite, (user_id, game_id))
+-        if exists_already is None:
+-            db.add(GameFavorite(user_id=user_id, game_id=game_id))
++        """Star a build for the caller. Idempotent."""
++        user_id = await _favorite_target(game_id, build_id, user, db)
++        if await db.get(BuildFavorite, (user_id, build_id)) is None:
++            db.add(BuildFavorite(user_id=user_id, build_id=build_id))
+             try:
+                 await db.commit()
+             except IntegrityError:
+                 # A concurrent star won; the end state is the same.
+                 await db.rollback()
+ 
+-    @router.delete("/games/{game_id}/favorite", status_code=204)
++    @router.delete("/games/{game_id}/builds/{build_id}/favorite", status_code=204)
+     @limiter.limit(_FAVORITE_WRITE_LIMIT)  # type: ignore[untyped-decorator]  # slowapi has no stubs
+-    async def unstar_game(
++    async def unstar_build(
+         request: Request,
+         game_id: uuid.UUID,
++        build_id: uuid.UUID,
+         user: CurrentUser = Depends(require_user),
+         db: AsyncSession = Depends(get_async_db),
+     ) -> None:
+         """Remove the caller's star. Idempotent."""
+-        user_id = await _favorite_target(game_id, user, db)
+-        row = await db.get(GameFavorite, (user_id, game_id))
++        user_id = await _favorite_target(game_id, build_id, user, db)
++        row = await db.get(BuildFavorite, (user_id, build_id))
+         if row is not None:
+             await db.delete(row)
+             await db.commit()
+@@ -1849,7 +1917,10 @@ def make_games_router(
+                 builds_stmt.order_by(Build.label).limit(page_size).offset((page - 1) * page_size)
+             )
+         builds = (await db.execute(builds_stmt)).scalars().all()
+-        return [_build_out(b) for b in builds]
++        # GFE-SORT: flag the caller's starred builds. Order is unchanged here
++        # (the page slice must stay stable); the card lists starred first.
++        starred = await _starred_build_ids(db, user)
++        return [_build_out(b, is_favorite=b.id in starred) for b in builds]
+ 
+     # -----------------------------------------------------------------------
+     # GET /api/games/by-slug/{slug} - per-game entry resolution (CH-351)
+diff --git a/backend/models.py b/backend/models.py
+index 258208f..7a8d50f 100644
+--- a/backend/models.py
++++ b/backend/models.py
+@@ -657,21 +657,24 @@ class Franchise(Base):
+     )
+ 
+ 
+-class GameFavorite(Base):
+-    """GFE-SORT: a user's starred game (the sidebar star, "Starred" sort).
++class BuildFavorite(Base):
++    """GFE-SORT: a user's starred BUILD (the author: "star whatever builds you
++    want, that will be shown first in games and game sessions").
+ 
+     Per user, private: only the caller's own rows are ever read. Keyed on
+     app_user.id, so a caller with no persisted app_user row (env super-admin
+-    break-glass, domain-allowed-no-row viewer) simply cannot star.
++    break-glass, domain-allowed-no-row viewer) simply cannot star. A game with
++    any starred (active) build is pinned first on /games; a session on a
++    starred build is pinned first on /sessions.
+     """
+ 
+-    __tablename__ = "game_favorite"
++    __tablename__ = "build_favorite"
+ 
+     user_id: Mapped[uuid.UUID] = mapped_column(
+         UUID(as_uuid=True), ForeignKey("app_user.id", ondelete="CASCADE"), primary_key=True
+     )
+-    game_id: Mapped[uuid.UUID] = mapped_column(
+-        UUID(as_uuid=True), ForeignKey("game.id", ondelete="CASCADE"), primary_key=True
++    build_id: Mapped[uuid.UUID] = mapped_column(
++        UUID(as_uuid=True), ForeignKey("build.id", ondelete="CASCADE"), primary_key=True
+     )
+     created_at: Mapped[datetime] = mapped_column(
+         DateTime(timezone=True), nullable=False, server_default=func.now()
+diff --git a/backend/sessions.py b/backend/sessions.py
+index a99b3e5..789272c 100644
+--- a/backend/sessions.py
++++ b/backend/sessions.py
+@@ -78,7 +78,7 @@ from typing import Annotated, Any
+ 
+ from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+ from pydantic import BaseModel, ConfigDict
+-from sqlalchemy import ColumnElement, ScalarSelect, Select, func, or_, select
++from sqlalchemy import ColumnElement, ScalarSelect, Select, false, func, literal, or_, select
+ from sqlalchemy.exc import IntegrityError
+ from sqlalchemy.ext.asyncio import AsyncSession
+ 
+@@ -88,6 +88,7 @@ from backend.games import GAME_FACET_NO_PLATFORM, GAME_FILTER_MAX_VALUES
+ from backend.models import (
+     Answer,
+     Build,
++    BuildFavorite,
+     CaptureOutcome,
+     FeedbackEntry,
+     FeedbackSeverity,
+@@ -202,6 +203,12 @@ class SessionListRow(BaseModel):
+     # session never masquerades as a played one. None for every session
+     # with no reported outcome, exactly like the detail read.
+     capture_outcome: CaptureOutcome | None = None
++    # GFE-SORT, additive: the build's id (so a row can star its build) and
++    # whether THIS caller starred it. Sessions on starred builds are pinned
++    # first (the author's rule).
++    game_id: uuid.UUID | None = None
++    build_id: uuid.UUID | None = None
++    build_starred: bool = False
+ 
+ 
+ class SessionListResponse(BaseModel):
+@@ -725,6 +732,18 @@ def make_sessions_router(
+             Session.id
+         )
+ 
++        # GFE-SORT: pin sessions on the caller's starred builds first.
++        starred_expr = (
++            select(literal(1))
++            .where(
++                BuildFavorite.build_id == Session.build_id,
++                BuildFavorite.user_id == uuid.UUID(user.id),
++            )
++            .correlate(Session)
++            .exists()
++            if user.id is not None
++            else false()
++        )
+         stmt = (
+             select(
+                 Session.id,
+@@ -736,6 +755,9 @@ def make_sessions_router(
+                 FeedbackEntry.status,
+                 FeedbackEntry.severity,
+                 Session.capture_outcome,
++                Session.build_id,
++                starred_expr.label("build_starred"),
++                Session.game_id,
+             )
+             .join(Game, Session.game_id == Game.id)
+             .join(Build, Session.build_id == Build.id)
+@@ -750,7 +772,7 @@ def make_sessions_router(
+             platform=platform,
+         )
+         stmt = (
+-            stmt.order_by(Session.created_at.desc(), Session.id)
++            stmt.order_by(starred_expr.desc(), Session.created_at.desc(), Session.id)
+             .limit(page_size)
+             .offset((page - 1) * page_size)
+         )
+@@ -791,6 +813,9 @@ def make_sessions_router(
+                 feedback_status=row[6],
+                 feedback_severity=row[7],
+                 capture_outcome=row[8],
++                build_id=row[9],
++                build_starred=bool(row[10]),
++                game_id=row[11],
+             )
+             for row in rows
+         ]
+diff --git a/frontend/__tests__/build-pills.test.tsx b/frontend/__tests__/build-pills.test.tsx
+index f2c232f..851368b 100644
+--- a/frontend/__tests__/build-pills.test.tsx
++++ b/frontend/__tests__/build-pills.test.tsx
+@@ -323,10 +323,33 @@ describe('BuildPills — shared-baseline classes (CH-633)', () => {
+       (b.textContent ?? '').includes('Continue'),
+     );
+     expect(continueBtn).toBeTruthy();
+-    const wrapper = continueBtn!.parentElement!;
++    // GFE-SORT: Continue now shares a row with the selected build's star,
++    // so the mt-auto block is the row's parent. Same mechanism, one level up.
++    const wrapper = continueBtn!.parentElement!.parentElement!;
+     expect(wrapper.classList.contains('mt-auto')).toBe(true);
+     // The regression this replaced: a fixed top margin on the same wrapper
+     // (mt-3) put Continue at a different height in every card of the row.
+     expect(wrapper.classList.contains('mt-3')).toBe(false);
+   });
+ });
++
++// GFE-SORT: starred builds come first and are pre-selected; the star beside
++// Continue targets the selected build.
++describe('BuildPills — starred builds (GFE-SORT)', () => {
++  it('lists starred builds first, pre-selects one, and marks it for screen readers', () => {
++    const builds = [
++      { id: 'b1', label: 'v1' },
++      { id: 'b2', label: 'v2', is_favorite: true },
++      { id: 'b3', label: 'v3' },
++    ];
++    const host = document.createElement('div');
++    host.innerHTML = render(<BuildPills game={GAME} builds={builds} />);
++    const options = Array.from(host.querySelectorAll('[role="option"]'));
++    expect(options.map((o) => o.textContent)).toEqual(['v2', 'v1', 'v3']);
++    expect(options[0]!.getAttribute('aria-selected')).toBe('true');
++    expect(options[0]!.getAttribute('aria-label')).toBe('v2, starred');
++    const star = host.querySelector('button[aria-pressed]')!;
++    expect(star.getAttribute('aria-label')).toContain('build v2');
++    expect(star.getAttribute('aria-pressed')).toBe('true');
++  });
++});
+diff --git a/frontend/__tests__/catalog-tree.test.tsx b/frontend/__tests__/catalog-tree.test.tsx
+index a6d3cf2..7682746 100644
+--- a/frontend/__tests__/catalog-tree.test.tsx
++++ b/frontend/__tests__/catalog-tree.test.tsx
+@@ -40,7 +40,7 @@ const ITEMS: NavGame[] = [
+   nav({ title: 'PopopoP', platform: 'ALAN - 9', project_id: 'p1', project_name: 'Andreas Sketches', has_critical: true }),
+   nav({ title: 'Asteroids Arezion (MSN)', platform: 'MSN', project_id: 'p2', project_name: 'Azerion H5 games', franchise_id: 'f1', franchise_name: 'Asteroids' }),
+   nav({ title: 'Asteroids Classic Azerion (MSN)', platform: 'msn', project_id: 'p2', project_name: 'Azerion H5 games', franchise_id: 'f1', franchise_name: 'Asteroids' }),
+-  nav({ title: 'Lunar Taxi', platform: 'ALAN - 9', project_id: 'p1', project_name: 'Andreas Sketches', is_favorite: true }),
++  nav({ title: 'Lunar Taxi', platform: 'ALAN - 9', project_id: 'p1', project_name: 'Andreas Sketches', is_favorite: true, starred_builds: [{ id: 'b-lt-2', label: 'v2' }] }),
+   nav({ title: 'Loose game' }),
+ ];
+ 
+@@ -79,11 +79,17 @@ describe('buildTree', () => {
+ describe('CatalogTree', () => {
+   it('links reviewers to dashboards, marks the open game, shows critical and stars', () => {
+     const c = mount(<CatalogTree items={ITEMS} canReview activeGameId="Lunar Taxi" />);
+-    const current = c.querySelector('[aria-current="page"]')!;
+-    expect(current.textContent).toBe('Lunar Taxi');
++    // The open game is marked in the tree AND in the Starred builds section.
++    const currents = Array.from(c.querySelectorAll('[aria-current="page"]'));
++    expect(currents.map((el) => el.textContent)).toEqual(['Lunar Taxi · v2', 'Lunar Taxi']);
++    const current = currents[1]!;
+     expect(current.getAttribute('href')).toBe('/games/Lunar%20Taxi/dashboard');
+     expect(c.querySelectorAll('[data-testid="critical-flag"]').length).toBe(2); // PopopoP + legend
+-    expect(c.querySelector('[aria-label="Unstar Lunar Taxi"]')?.getAttribute('aria-pressed')).toBe('true');
++    // Stars are on builds: a Starred builds section, and a static star on the game.
++    const starred = c.querySelector('[data-testid="tree-starred"]')!;
++    expect(starred.textContent).toContain('Lunar Taxi · v2');
++    expect(starred.querySelector('[aria-label="Unstar Lunar Taxi, build v2"]')?.getAttribute('aria-pressed')).toBe('true');
++    expect(c.querySelector('[aria-label="Has a starred build"]')).not.toBeNull();
+     expect(c.textContent).toContain('Asteroids · 2 versions');
+   });
+ 
+@@ -103,16 +109,16 @@ describe('CatalogTree', () => {
+   });
+ });
+ 
+-describe('StarButton', () => {
++describe('StarButton (builds)', () => {
+   it('stars optimistically, calls PUT, and refreshes', async () => {
+     const fetchMock = vi.fn(async () => new Response(null, { status: 204 }));
+     vi.stubGlobal('fetch', fetchMock);
+-    const c = mount(<StarButton gameId="g1" gameTitle="Pong" starred={false} />);
++    const c = mount(<StarButton gameId="g1" buildId="b1" label="Pong, build v1" starred={false} />);
+     const btn = c.querySelector('button')!;
+     await act(async () => {
+       btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+     });
+-    expect(fetchMock).toHaveBeenCalledWith('/api/games/g1/favorite', { method: 'PUT' });
++    expect(fetchMock).toHaveBeenCalledWith('/api/games/g1/builds/b1/favorite', { method: 'PUT' });
+     expect(btn.getAttribute('aria-pressed')).toBe('true');
+     expect(refreshMock).toHaveBeenCalled();
+     vi.unstubAllGlobals();
+@@ -120,13 +126,15 @@ describe('StarButton', () => {
+ 
+   it('reverts and announces when the request fails', async () => {
+     vi.stubGlobal('fetch', vi.fn(async () => new Response(null, { status: 500 })));
+-    const c = mount(<StarButton gameId="g1" gameTitle="Pong" starred />);
++    const c = mount(<StarButton gameId="g1" buildId="b1" label="Pong, build v1" starred />);
+     const btn = c.querySelector('button')!;
+     await act(async () => {
+       btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+     });
+     expect(btn.getAttribute('aria-pressed')).toBe('true');
+-    expect(c.querySelector('[role="status"]')?.textContent).toContain("Couldn't unstar Pong");
++    const status = c.querySelector('[role="status"]')!;
++    expect(status.textContent).toContain('Not saved'); // visible, not sr-only
++    expect(status.textContent).toContain("Couldn't unstar Pong, build v1");
+     vi.unstubAllGlobals();
+   });
+ });
+diff --git a/frontend/__tests__/game-filter-panel.test.tsx b/frontend/__tests__/game-filter-panel.test.tsx
+index 985ca2e..d32041e 100644
+--- a/frontend/__tests__/game-filter-panel.test.tsx
++++ b/frontend/__tests__/game-filter-panel.test.tsx
+@@ -239,6 +239,14 @@ describe('GamesCatalogBrowser with filters (GFE-SORT)', () => {
+     expect(toggle.getAttribute('aria-expanded')).toBe('false');
+   });
+ 
++  it('keeps search on the page on phones and says when the tree is unavailable', () => {
++    renderBrowser({ platforms: [], studios: [], projects: [], titles: [] });
++    // Phone copy (lg:hidden) in the results, desktop copy in the sidebar.
++    expect(container.querySelector('#games-search-phone')?.closest('.lg\\:hidden')).not.toBeNull();
++    expect(container.querySelector('#games-search')?.closest('.hidden.lg\\:block')).not.toBeNull();
++    expect(container.querySelector('[data-testid="tree-unavailable"]')).not.toBeNull();
++  });
++
+   it('renders no panel, no view switch for a caller that passes no facets', () => {
+     act(() =>
+       root.render(
+diff --git a/frontend/__tests__/games-page-filters.test.tsx b/frontend/__tests__/games-page-filters.test.tsx
+index 42e8ff8..bb1ff6d 100644
+--- a/frontend/__tests__/games-page-filters.test.tsx
++++ b/frontend/__tests__/games-page-filters.test.tsx
+@@ -181,3 +181,29 @@ describe('failure and empty states', () => {
+     expect(html).toContain('Clear filters');
+   });
+ });
++
++describe('pagination (audit round 2)', () => {
++  it('asks the backend for ?page= and offers Previous/Next', async () => {
++    mockBackendFetch.mockImplementation(async (path: string) => {
++      if (path.startsWith('/api/games/facets')) return json(FACETS);
++      if (path.startsWith('/api/games?sort=newest&page_size=50&page=2')) return json(new Array(50).fill(GAMES[0]).map((g, i) => ({ ...g, id: `p${i}` })));
++      if (path.startsWith('/api/games?')) return json(GAMES);
++      return json([]);
++    });
++    const html = await render({ page: '2', view: 'list' });
++    expect(paths()).toContain('/api/games?sort=newest&page_size=50&page=2');
++    expect(html).toContain('href="/games?view=list"'); // Previous -> page 1 (no page param)
++    expect(html).toContain('href="/games?view=list&amp;page=3"'); // Next (page was full)
++  });
++
++  it('says a page past the end is empty and links page 1', async () => {
++    mockBackendFetch.mockImplementation(async (path: string) => {
++      if (path.includes('page=9')) return json([]);
++      if (path.startsWith('/api/games/facets')) return json(FACETS);
++      return json(GAMES);
++    });
++    const html = await render({ page: '9' });
++    expect(html).toContain('There is no page 9');
++    expect(html).toContain('Go to page 1');
++  });
++});
+diff --git a/frontend/app/games/page.tsx b/frontend/app/games/page.tsx
+index 2301030..779bc29 100644
+--- a/frontend/app/games/page.tsx
++++ b/frontend/app/games/page.tsx
+@@ -31,6 +31,7 @@ import {
+   normalizeGamesQuery,
+   normalizeGamesSort,
+   normalizeGamesView,
++  normalizeGamesPage,
+   navigationRequestPath,
+   totalFromCappedRead,
+   type GameNavigation,
+@@ -189,6 +190,9 @@ export default async function GamesPage({
+   const query = normalizeGamesQuery(params.q);
+   const sort = normalizeGamesSort(params.sort);
+   const view = normalizeGamesView(params.view);
++  // GFE-SORT (audit round 2): pages of GAMES_PAGE_SIZE, so the whole
++  // catalogue is reachable, not only its first 50 games.
++  const page = normalizeGamesPage(params.page);
+   const filters = normalizeGameFilters(params.platform, params.studio, params.project, params.title);
+   const searchActive = isSearchActive(query);
+   const filtersActive = hasGameFilters(filters);
+@@ -231,7 +235,7 @@ export default async function GamesPage({
+   // One list read for what is shown, plus (only while searching) a term-less
+   // read whose only job is to size the catalogue for the "N of M" label.
+   const [gamesResult, catalogueResult, facetsResult, navigation] = await Promise.all([
+-    fetchGames(email, gamesRequestPath(query, sort, GAMES_PAGE_SIZE, filters)),
++    fetchGames(email, gamesRequestPath(query, sort, GAMES_PAGE_SIZE, filters, page)),
+     narrowed
+       ? fetchGames(email, gamesRequestPath('', sort, GAMES_COUNT_PAGE_SIZE))
+       : Promise.resolve(null),
+@@ -270,6 +274,25 @@ export default async function GamesPage({
+   // The genuinely empty catalogue (CH-183's state, unchanged). Distinct from
+   // the no-match state below: there is nothing to search here, so the search
+   // controls are not rendered at all.
++  // A page past the end (a stale link after games were archived): say so and
++  // offer page 1, never "No games yet".
++  if (games.length === 0 && page > 1) {
++    return (
++      <div>
++        <PageHeader isAdmin={isAdmin} />
++        <EmptyState
++          title={`There is no page ${page}`}
++          body="The catalogue has fewer pages than this link expects."
++          action={
++            <Link href={gamesHref(query, sort, filters, view)} className={buttonClasses({ variant: 'secondary' })}>
++              Go to page 1
++            </Link>
++          }
++        />
++      </div>
++    );
++  }
++
+   if (games.length === 0 && !narrowed) {
+     return (
+       <div>
+@@ -388,6 +411,13 @@ export default async function GamesPage({
+         </div>
+       </Suspense>
+         )}
++        {(page > 1 || resultCountCapped) && (
++          <GamesPager
++            page={page}
++            hasNext={resultCountCapped}
++            href={(p) => gamesHref(query, sort, filters, view, p)}
++          />
++        )}
+       </GamesCatalogBrowser>
+ 
+       {/* CH-516: the hidden tail of the catalogue. Same gate as the per-card
+@@ -467,6 +497,48 @@ function NoMatchState({
+   );
+ }
+ 
++/**
++ * Previous / Next through the catalogue (audit round 2: /games read one page
++ * of 50 with no way on). Plain links, the /sessions Pagination pattern, so it
++ * works before JS loads and every page is a shareable URL. There is no total
++ * count endpoint, so "Next" shows while a page comes back full.
++ */
++function GamesPager({
++  page,
++  hasNext,
++  href,
++}: {
++  page: number;
++  hasNext: boolean;
++  href: (page: number) => string;
++}): React.JSX.Element {
++  return (
++    <nav className="mt-6 flex items-center justify-between gap-3" aria-label="Pagination">
++      <p className="adp-mono" style={{ color: 'var(--color-ink-faint)' }}>
++        Page {page}
++      </p>
++      <div className="flex items-center gap-2">
++        {page > 1 && (
++          <Link
++            href={href(page - 1)}
++            className={`${buttonClasses({ variant: 'secondary', size: 'sm' })} inline-flex min-h-[44px] items-center`}
++          >
++            Previous
++          </Link>
++        )}
++        {hasNext && (
++          <Link
++            href={href(page + 1)}
++            className={`${buttonClasses({ variant: 'secondary', size: 'sm' })} inline-flex min-h-[44px] items-center`}
++          >
++            Next
++          </Link>
++        )}
++      </div>
++    </nav>
++  );
++}
++
+ function PageHeader({ isAdmin }: { isAdmin: boolean }): React.JSX.Element {
+   return (
+     <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+diff --git a/frontend/app/sessions/page.tsx b/frontend/app/sessions/page.tsx
+index 6312337..8d482e8 100644
+--- a/frontend/app/sessions/page.tsx
++++ b/frontend/app/sessions/page.tsx
+@@ -9,6 +9,7 @@ import Badge from '@/components/primitives/Badge';
+ import StatusDot from '@/components/primitives/StatusDot';
+ import SessionsFilters from '@/components/SessionsFilters';
+ import DeleteSessionControl from '@/components/DeleteSessionControl';
++import StarButton from '@/components/catalog/StarButton';
+ import { buttonClasses } from '@/components/primitives/buttonClasses';
+ import { SEVERITY_BADGE } from '@/lib/severity-badge';
+ import { GAMES_NO_PLATFORM, NO_PLATFORM_LABEL } from '@/lib/game-search';
+@@ -139,12 +140,24 @@ function SessionRow({
+         {session.game}
+       </td>
+ 
+-      {/* Build */}
++      {/* Build + its star (GFE-SORT: sessions on starred builds are pinned
++          first, server-side). The star is a 44px client island in this
++          Server Component row. */}
+       <td
+-        className="px-4 py-3 adp-mono whitespace-nowrap"
++        className="px-4 py-1 adp-mono whitespace-nowrap"
+         style={{ color: 'var(--color-ink-sub)' }}
+       >
+-        {session.build}
++        <span className="inline-flex items-center gap-1">
++          {session.game_id && session.build_id ? (
++            <StarButton
++              gameId={session.game_id}
++              buildId={session.build_id}
++              label={`${session.game}, build ${session.build}`}
++              starred={session.build_starred ?? false}
++            />
++          ) : null}
++          {session.build}
++        </span>
+       </td>
+ 
+       {/* Submitter */}
+@@ -409,7 +422,8 @@ export default async function SessionsPage({
+           Sessions
+         </h1>
+         <p className="adp-body mt-1" style={{ color: 'var(--color-ink-sub)' }}>
+-          Playtest sessions submitted across all games and builds.
++          Playtest sessions submitted across all games and builds. Sessions on
++          builds you starred come first.
+         </p>
+       </div>
+ 
+diff --git a/frontend/components/ArchiveGameControl.tsx b/frontend/components/ArchiveGameControl.tsx
+index 5d3c1bf..4ee8c22 100644
+--- a/frontend/components/ArchiveGameControl.tsx
++++ b/frontend/components/ArchiveGameControl.tsx
+@@ -94,6 +94,7 @@ export default function ArchiveGameControl({
+             <Button
+               variant="destructive"
+               size="sm"
++              className="min-h-[44px]"
+               disabled={busy}
+               aria-busy={busy}
+               aria-describedby={error ? `${uid}-err` : undefined}
+@@ -105,6 +106,7 @@ export default function ArchiveGameControl({
+             <Button
+               variant="secondary"
+               size="sm"
++              className="min-h-[44px]"
+               disabled={busy}
+               aria-label={`Cancel archive ${gameTitle}`}
+               onClick={cancel}
+@@ -117,6 +119,8 @@ export default function ArchiveGameControl({
+         <Button
+           variant="secondary"
+           size="sm"
++          // GFE-SORT audit round 2: 44px touch target on the game card.
++          className="min-h-[44px]"
+           aria-label={`Archive ${gameTitle}`}
+           onClick={() => setConfirming(true)}
+         >
+diff --git a/frontend/components/BuildPills.tsx b/frontend/components/BuildPills.tsx
+index 1dcd4d5..b871334 100644
+--- a/frontend/components/BuildPills.tsx
++++ b/frontend/components/BuildPills.tsx
+@@ -50,6 +50,7 @@ import { slugify } from '@/lib/slug';
+ import Button from '@/components/primitives/Button';
+ import InlineError from '@/components/primitives/InlineError';
+ import type { Build, Game } from '@/lib/types';
++import StarButton, { StarIcon } from '@/components/catalog/StarButton';
+ 
+ type BuildPillsProps = {
+   game: Game;
+@@ -75,12 +76,22 @@ function pickLatestBuild(builds: Build[]): Build | null {
+   return sorted[0] ?? null;
+ }
+ 
++/**
++ * GFE-SORT: the caller's starred builds come first ("shown first", the
++ * author's rule), each group keeping the endpoint's order; the default
++ * selection is the first starred build, else the latest (unchanged).
++ */
++function starredFirst(builds: Build[]): Build[] {
++  return [...builds.filter((b) => b.is_favorite), ...builds.filter((b) => !b.is_favorite)];
++}
++
+ export default function BuildPills({
+   game,
+-  builds,
++  builds: rawBuilds,
+ }: BuildPillsProps): React.JSX.Element {
+   const { setSelection } = useSelection();
+-  const latestBuild = pickLatestBuild(builds);
++  const builds = starredFirst(rawBuilds);
++  const latestBuild = builds.find((b) => b.is_favorite) ?? pickLatestBuild(builds);
+   const [activeBuildId, setActiveBuildId] = useState<string | null>(
+     latestBuild?.id ?? null,
+   );
+@@ -129,6 +140,9 @@ export default function BuildPills({
+     // Don't setIsCreating(false) on success — the component unmounts on navigate.
+   }
+ 
++  // The live build object (props refresh after a star), not the state copy.
++  const selectedBuild = builds.find((b) => b.id === activeBuildId) ?? activeBuild;
++
+   if (builds.length === 0) {
+     return (
+       <p
+@@ -191,7 +205,13 @@ export default function BuildPills({
+                     }
+                   : { background: 'transparent' }
+               }
++              aria-label={build.is_favorite ? `${build.label}, starred` : undefined}
+             >
++              {build.is_favorite && (
++                <span className="mr-2 inline-flex" style={{ color: isActive ? 'var(--color-accent-ink)' : 'var(--color-mixed)' }}>
++                  <StarIcon filled />
++                </span>
++              )}
+               {build.label}
+             </button>
+           );
+@@ -201,15 +221,31 @@ export default function BuildPills({
+       {/* Continue CTA — visible after a build is selected */}
+       {activeBuildId !== null && (
+         <div className="mt-auto flex flex-col gap-2 pt-3">
+-          <Button
+-            variant="primary"
+-            size="md"
+-            onClick={() => void handleContinue()}
+-            disabled={isCreating}
+-            aria-busy={isCreating}
+-          >
+-            {isCreating ? 'Starting session…' : 'Continue'}
+-          </Button>
++          <div className="flex items-center gap-2">
++            <Button
++              variant="primary"
++              size="md"
++              onClick={() => void handleContinue()}
++              disabled={isCreating}
++              aria-busy={isCreating}
++              className="flex-1"
++            >
++              {isCreating ? 'Starting session…' : 'Continue'}
++            </Button>
++            {/* GFE-SORT: star the SELECTED build (pinned first on /games
++                and /sessions). Beside Continue rather than inside each pill,
++                so the pills stay a single-select listbox. */}
++            {selectedBuild && (
++              <StarButton
++                key={selectedBuild.id}
++                gameId={game.id}
++                buildId={selectedBuild.id}
++                label={`${game.title}, build ${selectedBuild.label}`}
++                starred={selectedBuild.is_favorite ?? false}
++                className="border border-[var(--color-hair)]"
++              />
++            )}
++          </div>
+           {createError !== null && (
+             <InlineError id={`session-err-${game.id}`}>{createError}</InlineError>
+           )}
+diff --git a/frontend/components/GameCard.tsx b/frontend/components/GameCard.tsx
+index 3094f85..14bbce5 100644
+--- a/frontend/components/GameCard.tsx
++++ b/frontend/components/GameCard.tsx
+@@ -125,11 +125,15 @@ import ArchiveGameControl from '@/components/ArchiveGameControl';
+ import DeleteGameControl from '@/components/DeleteGameControl';
+ import { slugify } from '@/lib/slug';
+ import { gameMetaParts } from '@/lib/game-meta';
+-import StarButton from '@/components/catalog/StarButton';
++import { StarIcon } from '@/components/catalog/StarButton';
+ import CriticalFlag from '@/components/catalog/CriticalFlag';
+ import type { Game } from '@/lib/types';
+ import type { ReactNode } from 'react';
+ 
++// Audit round 2 (blocker): Button size sm is ~28px tall; the card's actions
++// get the 44px minimum (accessibility.minTouchTargetPx), same as GameListRow.
++const ACTION_CLASS = `${buttonClasses({ variant: 'secondary', size: 'sm' })} inline-flex min-h-[44px] items-center`;
++
+ type GameCardProps = {
+   game: Game;
+   /** Build pill section — rendered by the parent so it can be a Client
+@@ -239,7 +243,9 @@ export default function GameCard({
+         </h2>
+         <div className="flex shrink-0 items-start gap-1">
+           <Badge
+-            variant={game.build_count > 0 ? 'info' : 'neutral'}
++            // Neutral, not info-blue (audit round 2): one badge per card in the
++            // secondary accent broke maxSimultaneousSecondaryAccents (1).
++            variant="neutral"
+             size="sm"
+             pill={false}
+             className="shrink-0 mt-1"
+@@ -247,15 +253,19 @@ export default function GameCard({
+           >
+             {buildLabel}
+           </Badge>
+-          {/* GFE-SORT: star (acceptance criterion). Above the stretched
+-              card link (`relative z-10`), 44px target, pulled into the
+-              card's top-right corner so it doesn't add height. */}
+-          <StarButton
+-            gameId={game.id}
+-            gameTitle={game.title}
+-            starred={game.is_favorite ?? false}
+-            className="relative z-10 -mr-2 -mt-2"
+-          />
++          {/* GFE-SORT: this game is pinned first because the caller starred
++              one of its builds (the star itself is on the build, beside
++              Continue). Static cue, named for screen readers. */}
++          {game.is_favorite && (
++            <span
++              className="mt-1 inline-flex"
++              style={{ color: 'var(--color-mixed)' }}
++              role="img"
++              aria-label="You starred a build of this game"
++            >
++              <StarIcon filled />
++            </span>
++          )}
+         </div>
+       </div>
+ 
+@@ -323,7 +333,7 @@ export default function GameCard({
+         {canReview && (
+           <Link
+             href={`/games/${encodeURIComponent(game.id)}/dashboard`}
+-            className={buttonClasses({ variant: 'secondary', size: 'sm' })}
++            className={ACTION_CLASS}
+             aria-label={`View dashboard for ${game.title}`}
+           >
+             View dashboard
+@@ -336,7 +346,7 @@ export default function GameCard({
+         {canReview && (
+           <Link
+             href={`/imports?game=${encodeURIComponent(game.id)}`}
+-            className={buttonClasses({ variant: 'secondary', size: 'sm' })}
++            className={ACTION_CLASS}
+             aria-label={`Import documents onto ${game.title}`}
+           >
+             Import documents
+@@ -345,7 +355,7 @@ export default function GameCard({
+         {canManageBuilds && (
+           <Link
+             href={`/games/${encodeURIComponent(game.id)}/edit`}
+-            className={buttonClasses({ variant: 'secondary', size: 'sm' })}
++            className={ACTION_CLASS}
+             aria-label={`Edit ${game.title}`}
+           >
+             Edit
+diff --git a/frontend/components/GameFilterPanel.tsx b/frontend/components/GameFilterPanel.tsx
+index 8524e75..43f33ef 100644
+--- a/frontend/components/GameFilterPanel.tsx
++++ b/frontend/components/GameFilterPanel.tsx
+@@ -187,7 +187,7 @@ function FacetGroupView({
+   return (
+     <fieldset className="min-w-0">
+       <legend className="adp-kicker mb-2">{group.legend}</legend>
+-      <ul id={`${id}-options`} className="flex flex-col gap-1">
++      <ul id={`${id}-options`} className="flex flex-col gap-2">
+         {visible.map((option) => {
+           const isSelected = selected.includes(option.value);
+           return (
+diff --git a/frontend/components/GameListRow.tsx b/frontend/components/GameListRow.tsx
+index 3f6b40d..c24a7a5 100644
+--- a/frontend/components/GameListRow.tsx
++++ b/frontend/components/GameListRow.tsx
+@@ -28,7 +28,7 @@ import HighlightedText from '@/components/HighlightedText';
+ import { buttonClasses } from '@/components/primitives/buttonClasses';
+ import { gameMetaParts } from '@/lib/game-meta';
+ import { slugify } from '@/lib/slug';
+-import StarButton from '@/components/catalog/StarButton';
++import { StarIcon } from '@/components/catalog/StarButton';
+ import CriticalFlag from '@/components/catalog/CriticalFlag';
+ import type { Game } from '@/lib/types';
+ 
+@@ -76,7 +76,7 @@ export default function GameListRow({
+         style={{ background: 'var(--color-surface)' }}
+       >
+         <div className="min-w-0 flex-1">
+-          <div className="flex items-start justify-between gap-3 sm:justify-start">
++          <div className="flex flex-wrap items-start justify-between gap-3 sm:justify-start">
+             <h2 className="adp-h2 min-w-0 break-words" style={{ color: 'var(--color-ink)' }}>
+               {playHref !== null ? (
+                 <Link
+@@ -92,7 +92,9 @@ export default function GameListRow({
+               )}
+             </h2>
+             <Badge
+-              variant={game.build_count > 0 ? 'info' : 'neutral'}
++              // Neutral, not info-blue (audit round 2): one badge per card in the
++            // secondary accent broke maxSimultaneousSecondaryAccents (1).
++            variant="neutral"
+               size="sm"
+               pill={false}
+               className="shrink-0 mt-1"
+@@ -101,6 +103,12 @@ export default function GameListRow({
+               {buildLabel}
+             </Badge>
+             {game.has_critical === true && <CriticalFlag variant="full" />}
++            {/* Pinned because the caller starred one of its builds. */}
++            {game.is_favorite && (
++              <span className="mt-1 inline-flex" style={{ color: 'var(--color-mixed)' }} role="img" aria-label="You starred a build of this game">
++                <StarIcon filled />
++              </span>
++            )}
+           </div>
+           {metaParts.length > 0 && (
+             <p
+@@ -114,7 +122,6 @@ export default function GameListRow({
+         </div>
+ 
+         <div className="relative z-10 flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
+-          <StarButton gameId={game.id} gameTitle={game.title} starred={game.is_favorite ?? false} />
+           {hasActions && (
+             <>
+             {canReview && (
+diff --git a/frontend/components/GamesCatalogBrowser.tsx b/frontend/components/GamesCatalogBrowser.tsx
+index 637e303..d90245e 100644
+--- a/frontend/components/GamesCatalogBrowser.tsx
++++ b/frontend/components/GamesCatalogBrowser.tsx
+@@ -83,6 +83,7 @@ import GameFilterPanel, {
+ import CatalogShell from '@/components/catalog/CatalogShell';
+ import CatalogTree from '@/components/catalog/CatalogTree';
+ import SortButtons from '@/components/catalog/SortButtons';
++import { pillClass, pillStyle } from '@/lib/pill-classes';
+ import {
+   GAME_SEARCH_MAX_CHARS,
+   GAMES_ACTIVITY_WINDOW_DAYS,
+@@ -107,28 +108,6 @@ const VIEW_OPTIONS: { value: GamesView; label: string }[] = [
+   { value: 'list', label: 'List' },
+ ];
+ 
+-/** The shared pressed-pill look (sort + view): one pattern, not two. */
+-function pillClass(isActive: boolean): string {
+-  return [
+-    'inline-flex min-h-[44px] items-center rounded-full px-4 adp-mono text-[0.75rem]',
+-    'border transition-all focus:outline-none',
+-    'focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2',
+-    'focus-visible:ring-offset-[var(--color-bg)]',
+-    isActive
+-      ? 'border-[var(--color-accent)] font-semibold'
+-      : 'border-[var(--color-hair)] text-[var(--color-ink-sub)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent-text)]',
+-  ].join(' ');
+-}
+-
+-function pillStyle(isActive: boolean): React.CSSProperties {
+-  // Inline color beats `.adp-mono`'s semi-transparent --color-ink-sub, which
+-  // would blend to a WCAG AA failure on the accent fill. Same reasoning (and
+-  // same tokens) as BuildPills' active pill.
+-  return isActive
+-    ? { background: 'var(--color-accent)', color: 'var(--color-accent-ink)' }
+-    : { background: 'transparent' };
+-}
+-
+ export type GamesCatalogBrowserProps = {
+   /** Current `?q=` (already normalized by the page). */
+   query: string;
+@@ -287,7 +266,6 @@ export default function GamesCatalogBrowser({
+   // (nothing hover-only; Wickens 11).
+   const sortNote: Partial<Record<GamesSort, string>> = {
+     activity: `most sessions in the last ${GAMES_ACTIVITY_WINDOW_DAYS} days first`,
+-    starred: 'your starred games first',
+     critical: 'games with overly negative reviews first',
+   };
+   const countLabel = sortNote[sort] ? `${baseCountLabel} · ${sortNote[sort]}` : baseCountLabel;
+@@ -316,7 +294,7 @@ export default function GamesCatalogBrowser({
+     ...filters.studios.map((v) => ({ facet: 'studios' as const, value: v, kind: 'Studio' })),
+   ];
+ 
+-  const searchForm = (
++  const searchForm = (inputId: string) => (
+     <form
+       role="search"
+       className="relative w-full"
+@@ -326,7 +304,7 @@ export default function GamesCatalogBrowser({
+         pushSearch(input, sort);
+       }}
+     >
+-      <label htmlFor="games-search" className="sr-only">
++      <label htmlFor={inputId} className="sr-only">
+         Search games by title
+       </label>
+       <span
+@@ -336,7 +314,7 @@ export default function GamesCatalogBrowser({
+         <MagnifierIcon />
+       </span>
+       <Input
+-        id="games-search"
++        id={inputId}
+         type="search"
+         name="q"
+         value={input}
+@@ -387,6 +365,10 @@ export default function GamesCatalogBrowser({
+ 
+   const results = (
+     <div className="flex min-w-0 flex-col gap-4">
++      {/* Phones: search stays on the page, not behind the drawer (audit
++          round 2, Wickens 8: typing a name is the brief's main task). The
++          sidebar copy is desktop-only; both edit the same state. */}
++      {facets !== undefined && <div className="lg:hidden">{searchForm('games-search-phone')}</div>}
+       <div className="flex flex-wrap items-center justify-between gap-3">
+         <p
+           className="adp-mono"
+@@ -454,7 +436,7 @@ export default function GamesCatalogBrowser({
+     return (
+       <div className="flex flex-col gap-4">
+         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+-          <div className="w-full lg:max-w-sm">{searchForm}</div>
++          <div className="w-full lg:max-w-sm">{searchForm('games-search')}</div>
+           <SortButtons sort={sort} onChange={(next) => pushSearch(input, next)} canReview={canReview} />
+         </div>
+         {results}
+@@ -464,7 +446,7 @@ export default function GamesCatalogBrowser({
+ 
+   const sidebar = (
+     <>
+-      {searchForm}
++      <div className="hidden lg:block">{searchForm('games-search')}</div>
+       <SortButtons sort={sort} onChange={(next) => pushSearch(input, next)} canReview={canReview} />
+       <section aria-labelledby="games-filters-heading" className="flex flex-col gap-3">
+         <h2 id="games-filters-heading" className="adp-kicker">
+@@ -477,19 +459,24 @@ export default function GamesCatalogBrowser({
+           <GameFilterPanel facets={facets} filters={filters} onToggle={toggleFilter} />
+         </div>
+       </section>
+-      {navigation && (
+-        <section aria-labelledby="games-browse-heading" className="flex flex-col gap-3">
+-          <h2 id="games-browse-heading" className="adp-kicker">
+-            Browse
+-          </h2>
++      <section aria-labelledby="games-browse-heading" className="flex flex-col gap-3">
++        <h2 id="games-browse-heading" className="adp-kicker">
++          Browse
++        </h2>
++        {navigation ? (
+           <CatalogTree
+             items={navigation.items}
+             truncated={navigation.truncated}
+             canReview={canReview}
+             filterText={input}
+           />
+-        </section>
+-      )}
++        ) : (
++          // Audit round 2: a failed tree read must say so, not vanish.
++          <p className="adp-body" style={{ color: 'var(--color-ink-sub)' }} data-testid="tree-unavailable">
++            The game list is unavailable right now.
++          </p>
++        )}
++      </section>
+     </>
+   );
+ 
+diff --git a/frontend/components/catalog/CatalogShell.tsx b/frontend/components/catalog/CatalogShell.tsx
+index 956c5a7..7f7d1fe 100644
+--- a/frontend/components/catalog/CatalogShell.tsx
++++ b/frontend/components/catalog/CatalogShell.tsx
+@@ -16,13 +16,15 @@
+  *    focus moves in, Tab is trapped, Escape / the backdrop / Close shut it,
+  *    focus returns to the button, and the page behind does not scroll.
+  *  - from `lg:` it is columns 1-3 of the 12-column grid (manifest
+- *    layout.gridColumns, audit round 1), sticky, scrolling on its own.
++ *    layout.gridColumns, audit round 1), sticky, and scrolls on its own
++ *    (max-height of the viewport, audit round 2).
+  *
+  * The sidebar is rendered ONCE and restyled by breakpoint (no duplicate ids,
+  * one set of state), and closes itself when the route changes.
+  */
+ import { useEffect, useRef, useState, type ReactNode } from 'react';
+ import { usePathname, useSearchParams } from 'next/navigation';
++import { buttonClasses } from '@/components/primitives/buttonClasses';
+ 
+ export type CatalogShellProps = {
+   sidebar: ReactNode;
+@@ -105,8 +107,8 @@ export default function CatalogShell({
+           aria-expanded={open}
+           aria-controls="catalog-sidebar"
+           onClick={() => setOpen(true)}
+-          className="adp-mono inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-button)] border border-[var(--color-hair)] bg-(--color-surface) px-4 text-[0.75rem] transition-colors hover:border-[var(--color-accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+-          style={{ color: 'var(--color-ink)' }}
++          // Button/secondary (audit round 2: not a hand-rolled copy of it).
++          className={`${buttonClasses({ variant: 'secondary', size: 'md' })} inline-flex min-h-[44px] items-center gap-2`}
+         >
+           <MenuIcon />
+           {activeCount > 0 ? `Browse & filter (${activeCount})` : 'Browse & filter'}
+@@ -130,7 +132,9 @@ export default function CatalogShell({
+           open
+             ? 'adp-reveal fixed inset-y-0 left-0 z-50 block w-[min(22rem,88vw)] overflow-y-auto p-4 shadow-(--shadow-hi)'
+             : 'hidden',
+-          'lg:static lg:z-auto lg:col-span-3 lg:block lg:w-auto lg:overflow-visible lg:p-0 lg:shadow-none',
++          // Scrolls on its own from lg: (audit round 2): a long tree must not
++          // push its lower entries to the page's end. 3rem = top-6 above + below.
++          'lg:static lg:z-auto lg:col-span-3 lg:block lg:w-auto lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto lg:p-0 lg:pr-1 lg:shadow-none',
+           'lg:sticky lg:top-6',
+         ].join(' ')}
+         style={open ? { background: 'var(--color-bg)' } : undefined}
+@@ -149,8 +153,7 @@ export default function CatalogShell({
+                 type="button"
+                 data-drawer-close
+                 onClick={() => setOpen(false)}
+-                className="adp-mono min-h-[44px] rounded-[var(--radius-button)] border border-[var(--color-hair)] px-4 text-[0.75rem] transition-colors hover:border-[var(--color-accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+-                style={{ color: 'var(--color-ink)' }}
++                className={`${buttonClasses({ variant: 'secondary', size: 'md' })} min-h-[44px]`}
+               >
+                 Close
+               </button>
+diff --git a/frontend/components/catalog/CatalogTree.tsx b/frontend/components/catalog/CatalogTree.tsx
+index c5f1edc..cf93e96 100644
+--- a/frontend/components/catalog/CatalogTree.tsx
++++ b/frontend/components/catalog/CatalogTree.tsx
+@@ -16,8 +16,11 @@
+  *   3. Games in the server's sort order. Two or more games sharing a TITLE
+  *      (franchise) under the same platform nest under that title, so
+  *      versions read as versions (option A, approved by the author).
+- * Each game carries its star (StarButton) and, for reviewers, the red "!"
+- * when its reviews have turned overly negative (CriticalFlag).
++ * Stars are on BUILDS (the author's rule), so the tree opens with a
++ * "Starred builds" section - each starred build as "Game · build", with its
++ * star to unstar it - and a game with a starred build shows a static star.
++ * Reviewers also see the red "!" when a game's reviews have turned overly
++ * negative (CriticalFlag).
+  *
+  * Project and platform headers collapse (button + aria-expanded). The
+  * current game (the dashboard being viewed) is marked aria-current="page"
+@@ -29,7 +32,7 @@
+  */
+ import Link from 'next/link';
+ import { useState } from 'react';
+-import StarButton from '@/components/catalog/StarButton';
++import StarButton, { StarIcon } from '@/components/catalog/StarButton';
+ import CriticalFlag from '@/components/catalog/CriticalFlag';
+ import {
+   NO_PLATFORM_LABEL,
+@@ -153,12 +156,12 @@ function GameLeaf({
+   const href = gameHref(game, canReview);
+   const text = label ?? game.title;
+   const linkClass = [
+-    'flex min-h-[44px] min-w-0 flex-1 items-center rounded-[var(--radius-button)] px-2 py-1 adp-body text-[0.875rem] break-words',
++    'flex min-h-[44px] min-w-0 flex-1 items-center rounded-[var(--radius-button)] px-2 py-1 adp-body break-words',
+     'transition-colors hover:bg-[var(--color-accent-08)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
+     active ? 'bg-[var(--color-accent-15)] font-bold' : '',
+   ].join(' ');
+   return (
+-    <li className="flex items-center gap-1" data-testid="tree-game">
++    <li className="flex items-center gap-2" data-testid="tree-game">
+       {href ? (
+         <Link
+           href={href}
+@@ -174,7 +177,11 @@ function GameLeaf({
+         </span>
+       )}
+       {game.has_critical === true && <CriticalFlag />}
+-      <StarButton gameId={game.id} gameTitle={game.title} starred={game.is_favorite} />
++      {game.is_favorite && (
++        <span className="inline-flex shrink-0 pr-2" style={{ color: 'var(--color-mixed)' }} role="img" aria-label="Has a starred build">
++          <StarIcon filled />
++        </span>
++      )}
+     </li>
+   );
+ }
+@@ -242,8 +249,50 @@ export default function CatalogTree({
+     );
+   }
+ 
++  // Starred builds, in the tree's order (the whole catalogue, not filtered by
++  // the search box: pins are the quick way back).
++  const starred = items.flatMap((g) => (g.starred_builds ?? []).map((b) => ({ game: g, build: b })));
++
+   return (
+     <nav aria-label="Browse games" className="flex flex-col gap-4">
++      {starred.length > 0 && (
++        <section
++          className="rounded-[var(--radius-lg)] border border-[var(--color-hair)] px-2 pb-2"
++          style={{ background: 'var(--color-surface)' }}
++          aria-labelledby="tree-starred-heading"
++          data-testid="tree-starred"
++        >
++          <h3 id="tree-starred-heading" className="flex min-h-[44px] items-center gap-2 px-2 adp-h2">
++            <span style={{ color: 'var(--color-mixed)' }}>
++              <StarIcon filled />
++            </span>
++            Starred builds
++          </h3>
++          <ul className="flex flex-col gap-2">
++            {starred.map(({ game, build }) => {
++              const href = gameHref(game, canReview);
++              const text = `${game.title} · ${build.label}`;
++              return (
++                <li key={build.id} className="flex items-center gap-2">
++                  {href ? (
++                    <Link
++                      href={href}
++                      className="flex min-h-[44px] min-w-0 flex-1 items-center rounded-[var(--radius-button)] px-2 py-1 adp-body break-words transition-colors hover:bg-[var(--color-accent-08)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
++                      style={{ color: 'var(--color-ink)' }}
++                      aria-current={game.id === activeGameId ? 'page' : undefined}
++                    >
++                      {text}
++                    </Link>
++                  ) : (
++                    <span className="flex-1 px-2 adp-body">{text}</span>
++                  )}
++                  <StarButton gameId={game.id} buildId={build.id} label={`${game.title}, build ${build.label}`} starred />
++                </li>
++              );
++            })}
++          </ul>
++        </section>
++      )}
+       {tree.map((project, pi) => (
+         <section
+           key={project.key}
+@@ -270,7 +319,7 @@ export default function CatalogTree({
+                       </span>
+                     }
+                   >
+-                    <ul className="ml-4 flex flex-col border-l border-[var(--color-hair)] pb-1 pl-2">
++                    <ul className="ml-4 flex flex-col gap-2 border-l border-[var(--color-hair)] pb-1 pl-2">
+                       {platform.entries.map((entry) =>
+                         entry.kind === 'game' ? (
+                           <GameLeaf
+@@ -287,7 +336,7 @@ export default function CatalogTree({
+                             >
+                               {entry.name} · {entry.games.length} versions
+                             </p>
+-                            <ul className="ml-2 flex flex-col border-l border-[var(--color-hair)] pl-2">
++                            <ul className="ml-2 flex flex-col gap-2 border-l border-[var(--color-hair)] pl-2">
+                               {entry.games.map((g) => (
+                                 <GameLeaf
+                                   key={g.id}
+diff --git a/frontend/components/catalog/DashboardSidebar.tsx b/frontend/components/catalog/DashboardSidebar.tsx
+index a47baf2..c5087ad 100644
+--- a/frontend/components/catalog/DashboardSidebar.tsx
++++ b/frontend/components/catalog/DashboardSidebar.tsx
+@@ -67,16 +67,43 @@ export default function DashboardSidebar({
+         <label htmlFor="dashboard-game-search" className="sr-only">
+           Search games by title
+         </label>
+-        <Input
+-          id="dashboard-game-search"
+-          type="search"
+-          value={text}
+-          maxLength={GAME_SEARCH_MAX_CHARS}
+-          autoComplete="off"
+-          placeholder="Search games"
+-          onChange={(e) => setText(e.target.value)}
+-          className="h-11 w-full"
+-        />
++        {/* Same look and behaviour as the /games box (audit round 2,
++            Wickens 13): magnifier, clear button, the tree narrows live as
++            you type. Enter additionally opens /games with that search. */}
++        <div className="relative">
++          <span
++            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"
++            style={{ color: 'var(--color-ink-faint)' }}
++          >
++            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" focusable="false">
++              <circle cx="7" cy="7" r="4.5" />
++              <path d="M10.5 10.5 L14 14" strokeLinecap="round" />
++            </svg>
++          </span>
++          <Input
++            id="dashboard-game-search"
++            type="search"
++            value={text}
++            maxLength={GAME_SEARCH_MAX_CHARS}
++            autoComplete="off"
++            placeholder="Search games"
++            onChange={(e) => setText(e.target.value)}
++            className="h-11 w-full pl-9 pr-12 [&::-webkit-search-cancel-button]:hidden"
++          />
++          {text.length > 0 && (
++            <button
++              type="button"
++              onClick={() => setText('')}
++              aria-label="Clear search"
++              className="absolute right-0 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-[var(--radius-button)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
++              style={{ color: 'var(--color-ink-sub)' }}
++            >
++              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true" focusable="false">
++                <path d="M4 4 L12 12 M12 4 L4 12" strokeLinecap="round" />
++              </svg>
++            </button>
++          )}
++        </div>
+       </form>
+       <SortButtons sort={sort} onChange={setSort} canReview={canReview} />
+       <section aria-labelledby="dashboard-browse-heading" className="flex flex-col gap-3">
+diff --git a/frontend/components/catalog/SortButtons.stories.tsx b/frontend/components/catalog/SortButtons.stories.tsx
+index c38d0ac..81210df 100644
+--- a/frontend/components/catalog/SortButtons.stories.tsx
++++ b/frontend/components/catalog/SortButtons.stories.tsx
+@@ -5,5 +5,5 @@ const meta: Meta<typeof SortButtons> = { title: 'Catalog/SortButtons', component
+ export default meta;
+ type Story = StoryObj<typeof SortButtons>;
+ 
+-export const Default: Story = { render: () => <SortButtons sort="starred" onChange={() => {}} canReview /> };
++export const Reviewer: Story = { render: () => <SortButtons sort="critical" onChange={() => {}} canReview /> };
+ export const Tester: Story = { render: () => <SortButtons sort="title" onChange={() => {}} canReview={false} /> };
+diff --git a/frontend/components/catalog/SortButtons.tsx b/frontend/components/catalog/SortButtons.tsx
+index 13b0f9a..4759c26 100644
+--- a/frontend/components/catalog/SortButtons.tsx
++++ b/frontend/components/catalog/SortButtons.tsx
+@@ -5,17 +5,25 @@
+  * "sorting icons: alphabetical, date, starred, critical" row, plus the
+  * brief's "Most active").
+  *
+- * Each option is icon + visible word, 44px tall, aria-pressed: icons alone
+- * were the sketch, but an unlabelled icon row fails discriminability and
+- * "knowledge in the world" (Wickens 5, 11), so the word stays. The group has
+- * a visible "Sort" kicker so it can never be mistaken for the View switch
+- * (audit round 1, Wickens 5). "Critical" is offered to reviewers only: for
+- * anyone else the backend orders it by title, so the button would lie.
++ * It IS SortPillGroup (the reuse check scored it 0.74, above the 0.7 reuse
++ * threshold, audit round 2): the same shared pill (lib/pill-classes.ts),
++ * aria-pressed, 44px, plus an icon before each word. Icons alone were the
++ * sketch; the word stays for discriminability and knowledge in the world
++ * (Wickens 5, 11). A visible "Sort" kicker keeps it distinct from the View
++ * switch.
++ *
++ * There is no "Starred" option: starred builds are ALWAYS pinned first (the
++ * author's rule), so a starred ordering would be a no-op. "Critical" is for
++ * reviewers only: for anyone else the backend orders it by title.
++ *
++ * Data-driven (dynamic-component rule): options come in through props, with
++ * the standard set as the default.
+  */
++import type { ReactNode } from 'react';
+ import type { GamesSort } from '@/lib/game-search';
+-import { StarIcon } from '@/components/catalog/StarButton';
++import { pillClass, pillStyle } from '@/lib/pill-classes';
+ 
+-type Option = { value: GamesSort; label: string; icon: React.ReactNode };
++export type SortOption = { value: GamesSort; label: string; icon: ReactNode; reviewerOnly?: boolean };
+ 
+ function Icon({ d }: { d: string }): React.JSX.Element {
+   return (
+@@ -25,31 +33,32 @@ function Icon({ d }: { d: string }): React.JSX.Element {
+   );
+ }
+ 
+-const OPTIONS: Option[] = [
++export const DEFAULT_SORT_OPTIONS: SortOption[] = [
+   { value: 'title', label: 'A to Z', icon: <Icon d="M2.5 12.5 L5 4 L7.5 12.5 M3.3 10 H6.7 M10 4.5 H13.5 L10 11.5 H13.5" /> },
+   { value: 'newest', label: 'Newest', icon: <Icon d="M8 2.5 A5.5 5.5 0 1 0 8 13.5 A5.5 5.5 0 1 0 8 2.5 M8 5 V8 L10 9.5" /> },
+   { value: 'activity', label: 'Active', icon: <Icon d="M1.5 8.5 H4.5 L6.5 3.5 L9.5 12.5 L11.5 8.5 H14.5" /> },
+-  { value: 'starred', label: 'Starred', icon: <StarIcon filled={false} /> },
+-  { value: 'critical', label: 'Critical', icon: <Icon d="M8 2 L14.5 13.5 H1.5 Z M8 6.5 V9.5 M8 11.5 V11.6" /> },
++  { value: 'critical', label: 'Critical', reviewerOnly: true, icon: <Icon d="M8 2 L14.5 13.5 H1.5 Z M8 6.5 V9.5 M8 11.5 V11.6" /> },
+ ];
+ 
+ export default function SortButtons({
+   sort,
+   onChange,
+   canReview,
++  options = DEFAULT_SORT_OPTIONS,
+ }: {
+   sort: GamesSort;
+   onChange: (sort: GamesSort) => void;
+   canReview: boolean;
++  options?: SortOption[];
+ }): React.JSX.Element {
+-  const options = OPTIONS.filter((o) => o.value !== 'critical' || canReview);
++  const shown = options.filter((o) => !o.reviewerOnly || canReview);
+   return (
+     <div>
+       <p className="adp-kicker mb-2" aria-hidden="true">
+         Sort
+       </p>
+       <div role="group" aria-label="Sort games" className="flex flex-wrap gap-2">
+-        {options.map((option) => {
++        {shown.map((option) => {
+           const active = option.value === sort;
+           return (
+             <button
+@@ -57,18 +66,8 @@ export default function SortButtons({
+               type="button"
+               aria-pressed={active}
+               onClick={() => onChange(option.value)}
+-              className={[
+-                'inline-flex min-h-[44px] items-center gap-1.5 rounded-[var(--radius-button)] border px-3 adp-mono text-[0.75rem] transition-colors',
+-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
+-                active
+-                  ? 'border-[var(--color-accent)] font-semibold'
+-                  : 'border-[var(--color-hair)] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-08)]',
+-              ].join(' ')}
+-              style={
+-                active
+-                  ? { background: 'var(--color-accent)', color: 'var(--color-accent-ink)' }
+-                  : { background: 'var(--color-surface)', color: 'var(--color-ink-sub)' }
+-              }
++              className={pillClass(active)}
++              style={pillStyle(active)}
+             >
+               {option.icon}
+               {option.label}
+@@ -76,6 +75,9 @@ export default function SortButtons({
+           );
+         })}
+       </div>
++      <p className="adp-mono mt-2" style={{ color: 'var(--color-ink-faint)' }}>
++        Starred builds always come first.
++      </p>
+     </div>
+   );
+ }
+diff --git a/frontend/components/catalog/StarButton.stories.tsx b/frontend/components/catalog/StarButton.stories.tsx
+index c0eb95c..4a71ad8 100644
+--- a/frontend/components/catalog/StarButton.stories.tsx
++++ b/frontend/components/catalog/StarButton.stories.tsx
+@@ -8,8 +8,8 @@ type Story = StoryObj<typeof StarButton>;
+ export const States: Story = {
+   render: () => (
+     <div style={{ display: 'flex', gap: 12 }}>
+-      <StarButton gameId="g1" gameTitle="Pong" starred={false} />
+-      <StarButton gameId="g2" gameTitle="Asteroids" starred />
++      <StarButton gameId="g1" buildId="b1" label="Pong, build v1" starred={false} />
++      <StarButton gameId="g2" buildId="b2" label="Asteroids, build Release candidate" starred />
+     </div>
+   ),
+ };
+diff --git a/frontend/components/catalog/StarButton.tsx b/frontend/components/catalog/StarButton.tsx
+index e36fb5d..170cd5f 100644
+--- a/frontend/components/catalog/StarButton.tsx
++++ b/frontend/components/catalog/StarButton.tsx
+@@ -1,28 +1,32 @@
+ 'use client';
+ 
+ /**
+- * StarButton - star / unstar a game for the signed-in user (GFE-SORT).
++ * StarButton - star / unstar a BUILD for the signed-in user (GFE-SORT).
+  *
+- * Acceptance criterion: "Want to be able to star favorite games". The star
+- * sits beside the game in the sidebar tree (Andreas Beijer's design) and on
+- * its card/row, and drives the "Starred" sort.
++ * The author's rule: "star whatever builds you want, that will be shown first
++ * in games and game sessions". So a star belongs to a build: beside each build
++ * pill on a game card, in the sidebar's Starred section, and on each /sessions
++ * row. A game with a starred build is pinned first on /games; sessions on a
++ * starred build are pinned first on /sessions (both ordered server-side).
+  *
+- * Optimistic: the star flips at once and PUT/DELETE /api/games/{id}/favorite
+- * runs behind it (both idempotent server-side). On failure it flips back and
+- * says so in a polite live region beside the star (no Toast dependency, so
+- * the button works anywhere it is rendered). Then router.refresh() so a
+- * "Starred" ordering re-sorts.
++ * Optimistic: the star flips at once and PUT/DELETE
++ * /api/games/{game}/builds/{build}/favorite runs behind it (idempotent). On
++ * failure it flips back and says so VISIBLY beside the star and in a polite
++ * live region (audit round 2: a silent revert looked like a mis-tap). Then
++ * router.refresh() so the pinned order updates.
+  *
+- * 44x44 target (manifest accessibility.minTouchTargetPx), aria-pressed, and
+- * a label naming the game, so a screen reader hears "Star Asteroids", not a
+- * bare "button". Filled vs outline is the second cue beside color.
++ * 44x44 target (manifest accessibility.minTouchTargetPx), aria-pressed, and a
++ * label naming game AND build, so a screen reader hears "Star Asteroids
++ * Arezion, build Release candidate". Filled vs outline is the second cue.
+  */
+ import { useState, useTransition } from 'react';
+ import { useRouter } from 'next/navigation';
+ 
+ export type StarButtonProps = {
+   gameId: string;
+-  gameTitle: string;
++  buildId: string;
++  /** Spoken name of what is starred, e.g. "Asteroids, build v2". */
++  label: string;
+   starred: boolean;
+   className?: string;
+ };
+@@ -45,18 +49,23 @@ export function StarIcon({ filled }: { filled: boolean }): React.JSX.Element {
+   );
+ }
+ 
++export function favoritePath(gameId: string, buildId: string): string {
++  return `/api/games/${encodeURIComponent(gameId)}/builds/${encodeURIComponent(buildId)}/favorite`;
++}
++
+ export default function StarButton({
+   gameId,
+-  gameTitle,
++  buildId,
++  label,
+   starred: initial,
+   className = '',
+ }: StarButtonProps): React.JSX.Element {
+   const router = useRouter();
+-  const [error, setError] = useState<string | null>(null);
+   const [starred, setStarred] = useState(initial);
+   const [lastInitial, setLastInitial] = useState(initial);
+   const [, startTransition] = useTransition();
+   const [busy, setBusy] = useState(false);
++  const [error, setError] = useState<string | null>(null);
+ 
+   // Follow the server's value after a refresh (render-time adjust, not an effect).
+   if (initial !== lastInitial) {
+@@ -71,39 +80,38 @@ export default function StarButton({
+     setBusy(true);
+     setError(null);
+     try {
+-      const res = await fetch(`/api/games/${encodeURIComponent(gameId)}/favorite`, {
+-        method: next ? 'PUT' : 'DELETE',
+-      });
++      const res = await fetch(favoritePath(gameId, buildId), { method: next ? 'PUT' : 'DELETE' });
+       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+       startTransition(() => router.refresh());
+     } catch {
+       setStarred(!next);
+-      setError(`Couldn't ${next ? 'star' : 'unstar'} ${gameTitle}. Try again.`);
++      setError(`Couldn't ${next ? 'star' : 'unstar'} ${label}. Try again.`);
+     } finally {
+       setBusy(false);
+     }
+   }
+ 
+   return (
+-    <>
+-    <button
+-      type="button"
+-      aria-pressed={starred}
+-      aria-label={`${starred ? 'Unstar' : 'Star'} ${gameTitle}`}
+-      onClick={toggle}
+-      className={[
+-        'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-button)]',
+-        'transition-colors hover:bg-[var(--color-accent-08)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
+-        className,
+-      ].join(' ')}
+-      style={{ color: starred ? 'var(--color-mixed)' : 'var(--color-ink-faint)' }}
+-      data-starred={starred || undefined}
+-    >
+-      <StarIcon filled={starred} />
+-    </button>
+-    <span className="sr-only" role="status" aria-live="polite">
+-      {error ?? ''}
++    <span className="inline-flex shrink-0 items-center">
++      <button
++        type="button"
++        aria-pressed={starred}
++        aria-label={`${starred ? 'Unstar' : 'Star'} ${label}`}
++        onClick={toggle}
++        className={[
++          'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-button)]',
++          'transition-colors hover:bg-[var(--color-accent-08)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]',
++          className,
++        ].join(' ')}
++        style={{ color: starred ? 'var(--color-mixed)' : 'var(--color-ink-faint)' }}
++        data-starred={starred || undefined}
++      >
++        <StarIcon filled={starred} />
++      </button>
++      <span role="status" aria-live="polite" className="adp-mono" style={{ color: 'var(--color-negative-text)' }}>
++        {error ? 'Not saved' : ''}
++        {error && <span className="sr-only"> {error}</span>}
++      </span>
+     </span>
+-    </>
+   );
+ }
+diff --git a/frontend/lib/game-search.ts b/frontend/lib/game-search.ts
+index 60e78b8..bfe2277 100644
+--- a/frontend/lib/game-search.ts
++++ b/frontend/lib/game-search.ts
+@@ -26,11 +26,12 @@
+ /**
+  * The catalogue's orderings. Mirrors the backend's `sort` pattern.
+  * `activity` (GFE-SORT) = most sessions submitted in the last
+- * GAMES_ACTIVITY_WINDOW_DAYS days first. `starred` = the caller's starred
+- * games first; `critical` = games whose reviews have turned overly negative
+- * first (reviewers; everyone else gets title order from the backend).
++ * GAMES_ACTIVITY_WINDOW_DAYS days first. `critical` = games whose reviews
++ * have turned overly negative first (reviewers; everyone else gets title
++ * order from the backend). There is no "starred" sort: games with a starred
++ * build are always pinned first, whatever the sort (the author's rule).
+  */
+-export type GamesSort = 'newest' | 'title' | 'activity' | 'starred' | 'critical';
++export type GamesSort = 'newest' | 'title' | 'activity' | 'critical';
+ 
+ /** Mirrors backend/games.py GAME_ACTIVITY_WINDOW_DAYS; used in UI copy only. */
+ export const GAMES_ACTIVITY_WINDOW_DAYS = 30;
+@@ -90,8 +91,11 @@ export type NavGame = {
+   project_name: string | null;
+   franchise_id: string | null;
+   franchise_name: string | null;
++  /** The caller has a starred build of this game (the game is pinned). */
+   is_favorite: boolean;
+   has_critical: boolean | null;
++  /** The caller's starred active builds of this game (may be absent). */
++  starred_builds?: { id: string; label: string }[];
+ };
+ export type GameNavigation = { items: NavGame[]; truncated: boolean };
+ 
+@@ -163,7 +167,7 @@ function firstValue(raw: string | string[] | undefined): string {
+  */
+ export function normalizeGamesSort(raw: string | string[] | undefined): GamesSort {
+   const value = firstValue(raw);
+-  if (value === 'title' || value === 'activity' || value === 'starred' || value === 'critical') {
++  if (value === 'title' || value === 'activity' || value === 'critical') {
+     return value;
+   }
+   return GAMES_SORT_DEFAULT;
+@@ -241,6 +245,12 @@ function appendFilters(params: URLSearchParams, filters: GameFilters): void {
+   for (const t of filters.titles) params.append('title', t);
+ }
+ 
++/** Resolve `?page=`: a positive integer, else 1. */
++export function normalizeGamesPage(raw: string | string[] | undefined): number {
++  const n = Number.parseInt(firstValue(raw), 10);
++  return Number.isFinite(n) && n > 0 ? n : 1;
++}
++
+ /** Backend path for the sidebar tree (every visible game, in `sort` order). */
+ export function navigationRequestPath(sort: GamesSort): string {
+   return `/api/games/navigation?sort=${sort}`;
+@@ -271,8 +281,10 @@ export function gamesRequestPath(
+   sort: GamesSort,
+   pageSize: number = GAMES_PAGE_SIZE,
+   filters: GameFilters = NO_GAME_FILTERS,
++  page: number = 1,
+ ): string {
+   const params = new URLSearchParams({ sort, page_size: String(pageSize) });
++  if (page > 1) params.set('page', String(page));
+   if (isSearchActive(query)) params.set('q', query.trim());
+   appendFilters(params, filters);
+   return `/api/games?${params.toString()}`;
+@@ -302,12 +314,16 @@ export function gamesHref(
+   sort: GamesSort,
+   filters: GameFilters = NO_GAME_FILTERS,
+   view: GamesView = GAMES_VIEW_DEFAULT,
++  page: number = 1,
+ ): string {
+   const params = new URLSearchParams();
+   if (isSearchActive(query)) params.set('q', query.trim());
+   if (sort !== GAMES_SORT_DEFAULT) params.set('sort', sort);
+   appendFilters(params, filters);
+   if (view !== GAMES_VIEW_DEFAULT) params.set('view', view);
++  // Any change of search/sort/filter/view resets to page 1 (callers pass no
++  // page); only the pager passes one.
++  if (page > 1) params.set('page', String(page));
+   const qs = params.toString();
+   return qs.length > 0 ? `/games?${qs}` : '/games';
+ }
+diff --git a/frontend/lib/pill-classes.ts b/frontend/lib/pill-classes.ts
+new file mode 100644
+index 0000000..7bd788b
+--- /dev/null
++++ b/frontend/lib/pill-classes.ts
+@@ -0,0 +1,31 @@
++/**
++ * pill-classes - the SortPillGroup look as a class composer (GFE-SORT).
++ *
++ * The /games View switch, the active-filter chips and the sidebar Sort row
++ * are all SortPillGroup (manifest components; CH-606's pill): radius-pill,
++ * 44px, accent fill when pressed. One composer so they can't drift (audit
++ * round 2: the sort row had grown its own radius and weight).
++ *
++ * Plain module (no 'use client'), like buttonClasses.
++ */
++import type { CSSProperties } from 'react';
++
++export function pillClass(isActive: boolean): string {
++  return [
++    'inline-flex min-h-[44px] items-center gap-2 rounded-full px-4 adp-mono text-[0.75rem]',
++    'border transition-all focus:outline-none',
++    'focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2',
++    'focus-visible:ring-offset-[var(--color-bg)]',
++    isActive
++      ? 'border-[var(--color-accent)] font-bold'
++      : 'border-[var(--color-hair)] text-[var(--color-ink-sub)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent-text)]',
++  ].join(' ');
++}
++
++/** Inline colours for the pressed state: `.adp-mono`'s semi-transparent ink
++ *  would otherwise blend to an AA failure on the accent fill (BuildPills). */
++export function pillStyle(isActive: boolean): CSSProperties {
++  return isActive
++    ? { background: 'var(--color-accent)', color: 'var(--color-accent-ink)' }
++    : { background: 'transparent' };
++}
+diff --git a/frontend/lib/types.ts b/frontend/lib/types.ts
+index a45229d..b835e00 100644
+--- a/frontend/lib/types.ts
++++ b/frontend/lib/types.ts
+@@ -186,7 +186,8 @@ export interface Game {
+   created_at?: string | null;
+   /**
+    * GFE-SORT round 2: the project (intended use) and TITLE (franchise) the
+-   * game belongs to, whether the caller starred it, and whether its reviews
++   * game belongs to, whether the caller starred one of its builds (the game
++   * is then pinned first), and whether its reviews
+    * have turned overly negative (null = the caller may not read feedback).
+    * Optional for the same predates-this-field fixture reason as above.
+    */
+@@ -364,6 +365,8 @@ export interface BuildAddResponse {
+ export interface Build {
+   id: string;
+   label: string;
++  /** GFE-SORT: the caller starred this build (GET /api/games/{id}/builds). */
++  is_favorite?: boolean;
+ }
+ 
+ /** Shape stored in SelectionContext — the active game/build selection. */
+@@ -407,6 +410,8 @@ export interface ActiveSelection {
+ export interface BuildOut {
+   id: string;
+   label: string;
++  /** GFE-SORT: the caller starred this build. */
++  is_favorite?: boolean;
+   archived_at: string | null;
+   has_uploaded_bundle: boolean;
+   entry_url: string | null;
+@@ -592,6 +597,10 @@ export interface SessionListItem {
+   id: string;
+   game: string;
+   build: string;
++  /** GFE-SORT: ids for starring the row's build, and the caller's star. */
++  game_id?: string | null;
++  build_id?: string | null;
++  build_starred?: boolean;
+   submitter_email: string;
+   created_at: string;
+   /**
+diff --git a/tests/test_ch174_games_builds.py b/tests/test_ch174_games_builds.py
+index ef4625f..d6b32f0 100644
+--- a/tests/test_ch174_games_builds.py
++++ b/tests/test_ch174_games_builds.py
+@@ -416,6 +416,8 @@ async def test_list_builds_response_shape(two_studio_app):
+     assert set(row.keys()) == {
+         "id", "label", "archived_at", "has_uploaded_bundle", "entry_url",
+         "renders_to_canvas", "is_external_embed",
++        # GFE-SORT: the caller's star on this build (private to them).
++        "is_favorite",
+     }
+     assert row["has_uploaded_bundle"] is False
+     assert row["entry_url"] is None
+diff --git a/tests/test_ch179_reviewer.py b/tests/test_ch179_reviewer.py
+index eec9da4..206fac0 100644
+--- a/tests/test_ch179_reviewer.py
++++ b/tests/test_ch179_reviewer.py
+@@ -324,6 +324,11 @@ async def test_list_row_shape_and_joined_fields(reviewer_app):
+         # non-null list rendering path. Extended deliberately, never
+         # loosened: an unintended extra field must still fail this set.
+         "capture_outcome",
++        # GFE-SORT, additive: the build id (so a row can star it) and whether
++        # the caller starred it (starred-build sessions are pinned first).
++        "game_id",
++        "build_id",
++        "build_starred",
+     }
+     a1 = rows[str(ids["sess_a1"])]
+     assert set(a1.keys()) == expected_keys
+diff --git a/tests/test_gfe_sort_groupings.py b/tests/test_gfe_sort_groupings.py
+index b789d6c..d180d86 100644
+--- a/tests/test_gfe_sort_groupings.py
++++ b/tests/test_gfe_sort_groupings.py
+@@ -7,8 +7,10 @@ Pinned, and why:
+   * project and title are set by NAME on create/edit, get-or-create,
+     case-insensitively (no duplicate "Andreas Sketches" rows), and cleared by
+     null;
+-  * a star is private to its user, idempotent, and cannot target a game the
+-    caller cannot see (404, not 403);
++  * a star is on a BUILD, private to its user, idempotent, and cannot target
++    a build the caller cannot see (404, not 403); a game with a starred build
++    is pinned first on /games whatever the sort, and sessions on a starred
++    build are pinned first on /sessions (the author's rule);
+   * critical = latest complete report >= 40% negative over >= 5 entries, and
+     is hidden (None) from non-reviewers, whose "critical" sort falls back to
+     title order;
+@@ -46,6 +48,8 @@ async def app(db_engine):
+     from backend.models import (
+         AiEnrichmentReport,
+         AppUser,
++        Build,
++        Session,
+         EnrichmentStatus,
+         Game,
+         Studio,
+@@ -73,6 +77,25 @@ async def app(db_engine):
+         s.add_all(games.values())
+         await s.flush()
+         ids.update({k: str(g.id) for k, g in games.items()})
++        import datetime as _dt
++
++        builds = {
++            "spaced_v1": Build(game_id=games["spaced"].id, label="v1"),
++            "spaced_v2": Build(game_id=games["spaced"].id, label="v2"),
++            "upper_v1": Build(game_id=games["upper"].id, label="v1"),
++            "other_v1": Build(game_id=games["other"].id, label="v1"),
++        }
++        s.add_all(builds.values())
++        await s.flush()
++        ids.update({k: str(b.id) for k, b in builds.items()})
++        now = _dt.datetime.now(_dt.timezone.utc)
++        # Oldest session is on spaced_v2; newest on upper_v1.
++        s.add_all(
++            [
++                Session(game_id=games["spaced"].id, build_id=builds["spaced_v2"].id, submitter_email="t@atari.com", created_at=now - _dt.timedelta(days=5)),
++                Session(game_id=games["upper"].id, build_id=builds["upper_v1"].id, submitter_email="t@atari.com", created_at=now - _dt.timedelta(days=1)),
++            ]
++        )
+ 
+         def report(game, negative: float, n: int) -> AiEnrichmentReport:
+             import datetime as dt
+@@ -164,28 +187,51 @@ async def test_bad_project_id_is_rejected_not_ignored(app):
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_star_is_private_idempotent_and_drives_the_starred_sort(app):
++async def test_build_star_is_private_idempotent_and_pins_the_game_first(app):
+     client, ids = app
++    fav = f"/api/games/{ids['spaced']}/builds/{ids['spaced_v2']}/favorite"
+     async with client() as c:
+         hv = _headers(VIEWER_EMAIL)
+         for _ in range(2):
+-            assert (await c.put(f"/api/games/{ids['spaced']}/favorite", headers=hv)).status_code == 204
+-        mine = await _get(c, "/api/games", VIEWER_EMAIL, sort="starred")
+-        assert mine[0]["title"] == "Spaced" and mine[0]["is_favorite"] is True
+-        theirs = await _get(c, "/api/games", SEED_ADMIN_EMAIL, sort="starred")
++            assert (await c.put(fav, headers=hv)).status_code == 204
++        for sort in ("title", "newest", "activity"):
++            mine = await _get(c, "/api/games", VIEWER_EMAIL, sort=sort)
++            assert mine[0]["title"] == "Spaced" and mine[0]["is_favorite"] is True, sort
++        builds = await _get(c, f"/api/games/{ids['spaced']}/builds", VIEWER_EMAIL)
++        assert {b["label"]: b["is_favorite"] for b in builds} == {"v1": False, "v2": True}
++        theirs = await _get(c, "/api/games", SEED_ADMIN_EMAIL)
+         assert not any(g["is_favorite"] for g in theirs)
+-        assert (await c.delete(f"/api/games/{ids['spaced']}/favorite", headers=hv)).status_code == 204
+-        assert (await c.delete(f"/api/games/{ids['spaced']}/favorite", headers=hv)).status_code == 204
++        nav = await _get(c, "/api/games/navigation", VIEWER_EMAIL)
++        spaced = next(g for g in nav["items"] if g["title"] == "Spaced")
++        assert spaced["starred_builds"] == [{"id": ids["spaced_v2"], "label": "v2"}]
++        for _ in range(2):
++            assert (await c.delete(fav, headers=hv)).status_code == 204
+         after = await _get(c, "/api/games", VIEWER_EMAIL)
+         assert not any(g["is_favorite"] for g in after)
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_cannot_star_a_game_outside_scope(app):
++async def test_sessions_on_starred_builds_are_pinned_first(app):
+     client, ids = app
+     async with client() as c:
+-        r = await c.put(f"/api/games/{ids['other']}/favorite", headers=_headers(VIEWER_EMAIL))
+-    assert r.status_code == 404
++        he = _headers(EDITOR_EMAIL)
++        before = (await c.get("/api/sessions", headers=he)).json()["items"]
++        assert [r["build"] for r in before][:1] == ["v1"]  # newest first
++        assert (await c.put(f"/api/games/{ids['spaced']}/builds/{ids['spaced_v2']}/favorite", headers=he)).status_code == 204
++        after = (await c.get("/api/sessions", headers=he)).json()["items"]
++    assert after[0]["build_id"] == ids["spaced_v2"] and after[0]["build_starred"] is True
++    assert after[1]["build_starred"] is False
++
++
++@pytest.mark.asyncio
++async def test_cannot_star_a_build_outside_scope_or_under_the_wrong_game(app):
++    client, ids = app
++    async with client() as c:
++        hv = _headers(VIEWER_EMAIL)
++        other = await c.put(f"/api/games/{ids['other']}/builds/{ids['other_v1']}/favorite", headers=hv)
++        wrong_game = await c.put(f"/api/games/{ids['upper']}/builds/{ids['spaced_v1']}/favorite", headers=hv)
++    assert other.status_code == 404
++    assert wrong_game.status_code == 404
+ 
+ 
+ @pytest.mark.asyncio
+@@ -218,5 +264,5 @@ async def test_navigation_is_scoped_and_complete(app):
+     assert len(admin["items"]) == 8
+     assert set(viewer["items"][0]) == {
+         "id", "title", "slug", "platform", "project_id", "project_name",
+-        "franchise_id", "franchise_name", "is_favorite", "has_critical",
++        "franchise_id", "franchise_name", "is_favorite", "has_critical", "starred_builds",
+     }
+-- 
+2.43.0
+
+From 63a5ade504df8249dfea6374d126d1f040f852f9 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 28 Sep 2026 12:02:57 +0000
+Subject: [PATCH 5/5] fix(games): let catalogue actions and badges wrap at 200%
+ text size (GFE-SORT audit round 2)
+
+At 320px with text zoomed to 200%, card actions, the drawer button,
+the critical badge and Continue overflowed the viewport. They now wrap,
+and the card column is minmax(0,1fr), so nothing inside main overflows.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ frontend/components/BuildPills.tsx           |  2 +-
+ frontend/components/GameCard.tsx             | 14 ++++++++++----
+ frontend/components/GameListRow.tsx          |  4 +++-
+ frontend/components/catalog/CatalogShell.tsx |  2 +-
+ frontend/components/catalog/CriticalFlag.tsx |  8 ++++----
+ 5 files changed, 19 insertions(+), 11 deletions(-)
+
+diff --git a/frontend/components/BuildPills.tsx b/frontend/components/BuildPills.tsx
+index b871334..5d8f076 100644
+--- a/frontend/components/BuildPills.tsx
++++ b/frontend/components/BuildPills.tsx
+@@ -228,7 +228,7 @@ export default function BuildPills({
+               onClick={() => void handleContinue()}
+               disabled={isCreating}
+               aria-busy={isCreating}
+-              className="flex-1"
++              className="min-w-0 flex-1 whitespace-normal!"
+             >
+               {isCreating ? 'Starting session…' : 'Continue'}
+             </Button>
+diff --git a/frontend/components/GameCard.tsx b/frontend/components/GameCard.tsx
+index 14bbce5..6fd5853 100644
+--- a/frontend/components/GameCard.tsx
++++ b/frontend/components/GameCard.tsx
+@@ -132,7 +132,9 @@ import type { ReactNode } from 'react';
+ 
+ // Audit round 2 (blocker): Button size sm is ~28px tall; the card's actions
+ // get the 44px minimum (accessibility.minTouchTargetPx), same as GameListRow.
+-const ACTION_CLASS = `${buttonClasses({ variant: 'secondary', size: 'sm' })} inline-flex min-h-[44px] items-center`;
++// max-w-full + wrapping: at 200% text a nowrap "Import documents" was 265px
++// and pushed the card past a 320px screen (measured).
++const ACTION_CLASS = `${buttonClasses({ variant: 'secondary', size: 'sm' })} inline-flex min-h-[44px] max-w-full items-center whitespace-normal! text-center`;
+ 
+ type GameCardProps = {
+   game: Game;
+@@ -211,14 +213,18 @@ export default function GameCard({
+         // interpolated class name). Below `sm:` the grid is one column, every
+         // card is its own row band, and a plain auto-row grid is both
+         // identical in output and tighter (see the file header).
+-        'grid gap-y-0 sm:grid-rows-subgrid sm:row-span-7',
++        // grid-cols-[minmax(0,1fr)]: the card's one column may shrink below
++        // its content's natural width, so text wraps inside the card instead
++        // of spilling past it (measured: 200% text at 320px, GFE-SORT).
++        'grid grid-cols-[minmax(0,1fr)] gap-y-0 sm:grid-rows-subgrid sm:row-span-7',
+         playHref !== null ? 'relative transition-shadow hover:shadow-md' : '',
+       ]
+         .filter(Boolean)
+         .join(' ')}
+     >
+-      {/* Slot 1 — title + build-count badge */}
+-      <div className="flex items-start justify-between gap-3">
++      {/* Slot 1 — title + build-count badge. Wraps (measured at 200% text,
++          320px: the badge pushed the card 78px wide). */}
++      <div className="flex flex-wrap items-start justify-between gap-3">
+         <h2
+           className="adp-h2 min-w-0 break-words"
+           style={{ color: 'var(--color-ink)' }}
+diff --git a/frontend/components/GameListRow.tsx b/frontend/components/GameListRow.tsx
+index c24a7a5..48fb4fb 100644
+--- a/frontend/components/GameListRow.tsx
++++ b/frontend/components/GameListRow.tsx
+@@ -35,7 +35,9 @@ import type { Game } from '@/lib/types';
+ // Audit round 1 (blocker): Button size sm is ~28px tall. These are the row's
+ // only touch targets, so they get the 44px minimum
+ // (accessibility.minTouchTargetPx) while keeping the sm type and padding.
+-const ACTION_CLASS = `${buttonClasses({ variant: 'secondary', size: 'sm' })} inline-flex min-h-[44px] items-center`;
++// max-w-full + wrapping: at 200% text a nowrap "Import documents" was 265px
++// and pushed the card past a 320px screen (measured).
++const ACTION_CLASS = `${buttonClasses({ variant: 'secondary', size: 'sm' })} inline-flex min-h-[44px] max-w-full items-center whitespace-normal! text-center`;
+ 
+ export type GameListRowProps = {
+   game: Game;
+diff --git a/frontend/components/catalog/CatalogShell.tsx b/frontend/components/catalog/CatalogShell.tsx
+index 7f7d1fe..22aa0e7 100644
+--- a/frontend/components/catalog/CatalogShell.tsx
++++ b/frontend/components/catalog/CatalogShell.tsx
+@@ -108,7 +108,7 @@ export default function CatalogShell({
+           aria-controls="catalog-sidebar"
+           onClick={() => setOpen(true)}
+           // Button/secondary (audit round 2: not a hand-rolled copy of it).
+-          className={`${buttonClasses({ variant: 'secondary', size: 'md' })} inline-flex min-h-[44px] items-center gap-2`}
++          className={`${buttonClasses({ variant: 'secondary', size: 'md' })} inline-flex min-h-[44px] max-w-full items-center gap-2 whitespace-normal! text-left`}
+         >
+           <MenuIcon />
+           {activeCount > 0 ? `Browse & filter (${activeCount})` : 'Browse & filter'}
+diff --git a/frontend/components/catalog/CriticalFlag.tsx b/frontend/components/catalog/CriticalFlag.tsx
+index ce1b3d3..139d081 100644
+--- a/frontend/components/catalog/CriticalFlag.tsx
++++ b/frontend/components/catalog/CriticalFlag.tsx
+@@ -22,10 +22,10 @@ export default function CriticalFlag({
+ }): React.JSX.Element {
+   if (variant === 'full') {
+     return (
+-      // Short visible words: Badge text never wraps (whitespace-nowrap), and
+-      // the full phrase overflowed a 320px row by 33px. The full phrase is
+-      // still the accessible name.
+-      <Badge variant="negative" size="sm" pill={false} className="shrink-0" aria-label={CRITICAL_LABEL}>
++      // Short visible words (the full phrase overflowed a 320px row), and
++      // allowed to wrap: at 200% text even these did not fit (measured).
++      // The full phrase is still the accessible name.
++      <Badge variant="negative" size="sm" pill={false} className="max-w-full whitespace-normal!" aria-label={CRITICAL_LABEL}>
+         ! Negative reviews
+       </Badge>
+     );
 -- 
 2.43.0
 
