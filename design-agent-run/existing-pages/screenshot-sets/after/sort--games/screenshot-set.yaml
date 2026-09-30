@@ -1,0 +1,2054 @@
+id: sort--games
+source: rendered
+target: http://localhost:3000/games
+capturedAt: '2026-09-30T12:41:17Z'
+manifestVersion: 1.0.0
+shots:
+- file: narrow-320.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: narrow-320-text200.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: phone-390.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: phone-390-text200.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: md-768.png
+  viewport:
+    name: md
+    w: 768
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 128
+- file: lg-1024.png
+  viewport:
+    name: lg
+    w: 1024
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: desktop-1440.png
+  viewport:
+    name: desktop
+    w: 1440
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+computedInventory:
+  spacing:
+  - element: button.adp-mono
+    property: gap
+    found:
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (3)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - px: 6
+      where: button.adp-mono "Archived games" @ narrow-320.png
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (3)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - px: 8
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - px: 6
+      where: button.adp-mono "Archived games" @ desktop-1440.png
+    consistent: false
+  - element: button.adp-mono
+    property: padding-x
+    found:
+    - px: 12
+      where: button.adp-mono "Show all 9 platforms" @ desktop-1440.png
+    consistent: true
+  - element: button.adp-mono
+    property: padding-y
+    found:
+    - px: 0
+      where: button.adp-mono "Show all 9 platforms" @ desktop-1440.png
+    consistent: true
+  - element: button.flex
+    property: gap
+    found:
+    - px: 12
+      where: button.flex "Asteroids3 versions! Negative reviewsAst" @ narrow-320.png
+    - px: 12
+      where: button.flex "Breakout4 versionsAtari Breakout · Break" @ narrow-320.png
+    - px: 12
+      where: button.flex "Pong4 versionsAtari Pong · PONG Classics" @ narrow-320.png
+    - px: 12
+      where: button.flex "Atari Classics, HTML55" @ desktop-1440.png
+    - px: 12
+      where: button.flex "MSN5" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Atari Recharged3" @ desktop-1440.png
+    - px: 12
+      where: button.flex "HTML53" @ desktop-1440.png
+    - px: 12
+      where: button.flex "ALAN - 92" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Nintendo Switch2" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Web2" @ desktop-1440.png
+    - px: 12
+      where: button.flex "ATARI - 78001" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Andreas Sketches6" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Atari Recharged3" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Azerion H5 games3" @ desktop-1440.png
+    - px: 12
+      where: button.flex "No project14" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Atari21" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Coatsink5" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Andreas Sketches" @ desktop-1440.png
+    - px: 8
+      where: button.flex "ALAN - 9" @ desktop-1440.png
+    - px: 8
+      where: button.flex "ATARI - 7800" @ desktop-1440.png
+    - px: 8
+      where: button.flex "HTML5" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Azerion H5 games" @ desktop-1440.png
+    - px: 8
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 8
+      where: button.flex "No project" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Classics, HTML5" @ desktop-1440.png
+    - px: 8
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Nintendo Switch" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Web" @ desktop-1440.png
+    - px: 8
+      where: button.flex "No platform" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Asteroids3 versions! Negative reviewsAst" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Breakout4 versionsAtari Breakout · Break" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Pong4 versionsAtari Pong · PONG Classics" @ desktop-1440.png
+    consistent: false
+  - element: button.flex
+    property: padding-x
+    found:
+    - px: 12
+      where: button.flex "Atari Classics, HTML55" @ desktop-1440.png
+    - px: 12
+      where: button.flex "MSN5" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Atari Recharged3" @ desktop-1440.png
+    - px: 12
+      where: button.flex "HTML53" @ desktop-1440.png
+    - px: 12
+      where: button.flex "ALAN - 92" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Nintendo Switch2" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Web2" @ desktop-1440.png
+    - px: 12
+      where: button.flex "ATARI - 78001" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Andreas Sketches6" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Atari Recharged3" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Azerion H5 games3" @ desktop-1440.png
+    - px: 12
+      where: button.flex "No project14" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Atari21" @ desktop-1440.png
+    - px: 12
+      where: button.flex "Coatsink5" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Andreas Sketches" @ desktop-1440.png
+    - px: 8
+      where: button.flex "ALAN - 9" @ desktop-1440.png
+    - px: 8
+      where: button.flex "ATARI - 7800" @ desktop-1440.png
+    - px: 8
+      where: button.flex "HTML5" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Azerion H5 games" @ desktop-1440.png
+    - px: 8
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 8
+      where: button.flex "No project" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Classics, HTML5" @ desktop-1440.png
+    - px: 8
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Nintendo Switch" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Web" @ desktop-1440.png
+    - px: 8
+      where: button.flex "No platform" @ desktop-1440.png
+    consistent: false
+  - element: button.flex
+    property: padding-y
+    found:
+    - px: 8
+      where: button.flex "Atari Classics, HTML55" @ desktop-1440.png
+    - px: 8
+      where: button.flex "MSN5" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Recharged3" @ desktop-1440.png
+    - px: 8
+      where: button.flex "HTML53" @ desktop-1440.png
+    - px: 8
+      where: button.flex "ALAN - 92" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Nintendo Switch2" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Web2" @ desktop-1440.png
+    - px: 8
+      where: button.flex "ATARI - 78001" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Andreas Sketches6" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Recharged3" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Azerion H5 games3" @ desktop-1440.png
+    - px: 8
+      where: button.flex "No project14" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari21" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Coatsink5" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Andreas Sketches" @ desktop-1440.png
+    - px: 0
+      where: button.flex "ALAN - 9" @ desktop-1440.png
+    - px: 0
+      where: button.flex "ATARI - 7800" @ desktop-1440.png
+    - px: 0
+      where: button.flex "HTML5" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Azerion H5 games" @ desktop-1440.png
+    - px: 0
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 0
+      where: button.flex "No project" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Atari Classics, HTML5" @ desktop-1440.png
+    - px: 0
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Nintendo Switch" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Web" @ desktop-1440.png
+    - px: 0
+      where: button.flex "No platform" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    property: gap
+    found:
+    - px: 8
+      where: button.inline-flex "Browse & filter" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Cards" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "List" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "A to Z" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Newest" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Active" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Critical" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Cards" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "List" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-x
+    found:
+    - px: 16
+      where: button.inline-flex "Browse & filter" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Cards" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "List" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "HTML5 build" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "HTML5 build" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "demo-2026-06" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "v1" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "v1" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "v1" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "v1" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "A to Z" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Newest" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Active" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Critical" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Cards" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "List" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "HTML5 build" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "HTML5 build" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "demo-2026-06" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    property: padding-y
+    found:
+    - px: 8
+      where: button.inline-flex "Browse & filter" @ narrow-320.png
+    - px: 0
+      where: button.inline-flex "Cards" @ narrow-320.png
+    - px: 0
+      where: button.inline-flex "List" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "HTML5 build" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "HTML5 build" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "demo-2026-06" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "v1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "v1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "v1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "v1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 0
+      where: button.inline-flex "A to Z" @ desktop-1440.png
+    - px: 0
+      where: button.inline-flex "Newest" @ desktop-1440.png
+    - px: 0
+      where: button.inline-flex "Active" @ desktop-1440.png
+    - px: 0
+      where: button.inline-flex "Critical" @ desktop-1440.png
+    - px: 0
+      where: button.inline-flex "Cards" @ desktop-1440.png
+    - px: 0
+      where: button.inline-flex "List" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "HTML5 build" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "HTML5 build" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "demo-2026-06" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    property: gap
+    found:
+    - px: 6
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: h3.flex
+    property: gap
+    found:
+    - px: 8
+      where: h3.flex#tree-starred-heading "Starred builds" @ desktop-1440.png
+    consistent: true
+  - element: h3.flex
+    property: padding-x
+    found:
+    - px: 8
+      where: h3.flex#tree-starred-heading "Starred builds" @ desktop-1440.png
+    consistent: true
+  - element: h3.flex
+    property: padding-y
+    found:
+    - px: 0
+      where: h3.flex#tree-starred-heading "Starred builds" @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    property: padding-x
+    found:
+    - px: 36
+      where: input.w-full#games-search-phone @ narrow-320.png
+    - px: 36
+      where: input.w-full#games-search @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    property: padding-y
+    found:
+    - px: 8
+      where: input.w-full#games-search-phone @ narrow-320.png
+    - px: 8
+      where: input.w-full#games-search @ desktop-1440.png
+    consistent: true
+  - element: p.adp-mono
+    property: gap
+    found:
+    - px: 8
+      where: p.adp-mono "! = reviews overly negative" @ desktop-1440.png
+    consistent: true
+  typography:
+  - element: button.adp-mono
+    found:
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (3)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Archived games" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono "Show all 9 platforms" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (3)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (2)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Manage builds (1)" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono "Archived games" @ desktop-1440.png
+    consistent: true
+  - element: button.flex
+    found:
+    - value: 16px / 400
+      where: button.flex "Asteroids3 versions! Negative reviewsAst" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "Breakout4 versionsAtari Breakout · Break" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "Pong4 versionsAtari Pong · PONG Classics" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "Atari Classics, HTML55" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "MSN5" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "Atari Recharged3" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "HTML53" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "ALAN - 92" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "Nintendo Switch2" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "Web2" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "ATARI - 78001" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "Andreas Sketches6" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "Atari Recharged3" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "Azerion H5 games3" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "No project14" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "Atari21" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "Coatsink5" @ desktop-1440.png
+    - value: 20px / 800
+      where: button.flex "Andreas Sketches" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "ALAN - 9" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "ATARI - 7800" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "HTML5" @ desktop-1440.png
+    - value: 20px / 800
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - value: 20px / 800
+      where: button.flex "Azerion H5 games" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "MSN" @ desktop-1440.png
+    - value: 20px / 800
+      where: button.flex "No project" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "Atari Classics, HTML5" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "MSN" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "Nintendo Switch" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "Web" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "No platform" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "Asteroids3 versions! Negative reviewsAst" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "Breakout4 versionsAtari Breakout · Break" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "Pong4 versionsAtari Pong · PONG Classics" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    found:
+    - value: 13px / 600
+      where: button.inline-flex "Browse & filter" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "Cards" @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex "List" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "HTML5 build" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "HTML5 build" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex "demo-2026-06" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "v1" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "v1" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "v1" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "v1" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "Release candidate" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 700
+      where: button.inline-flex "Checkpoint 1" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ narrow-320.png
+    - value: 16px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "A to Z" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Newest" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "Active" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "Critical" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Cards" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "List" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "HTML5 build" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "HTML5 build" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "demo-2026-06" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "v1" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Release candidate" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Checkpoint 1" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Archive" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    found:
+    - value: 16px / 400
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: button.relative
+    found:
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    consistent: true
+  - element: h1.adp-h1
+    found:
+    - value: 28px / 800
+      where: h1.adp-h1 "Games" @ narrow-320.png
+    - value: 34px / 800
+      where: h1.adp-h1 "Games" @ desktop-1440.png
+    consistent: false
+  - element: h2.adp-h2
+    found:
+    - value: 18px / 800
+      where: h2.adp-h2 "Missile Command Recharged" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "Atari Missile Command" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "Atari Centipede" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "Guess the Game (Reddit)" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "Haunted House" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "Lunar Taxi" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "PopopoP" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "Centipede Recharged" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "Ninja Soccer" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "Qomp2" @ narrow-320.png
+    - value: 18px / 800
+      where: 'h2.adp-h2 "Swordquest: Earthworld" @ narrow-320.png'
+    - value: 18px / 800
+      where: h2.adp-h2 "Yars Rising" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "Tempest 4000" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "Adventure Remastered" @ narrow-320.png
+    - value: 18px / 800
+      where: h2.adp-h2 "Warlords" @ narrow-320.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Missile Command Recharged" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Atari Missile Command" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Atari Centipede" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Guess the Game (Reddit)" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Haunted House" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Lunar Taxi" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "PopopoP" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Centipede Recharged" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Ninja Soccer" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Qomp2" @ desktop-1440.png
+    - value: 20px / 800
+      where: 'h2.adp-h2 "Swordquest: Earthworld" @ desktop-1440.png'
+    - value: 20px / 800
+      where: h2.adp-h2 "Yars Rising" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Tempest 4000" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Adventure Remastered" @ desktop-1440.png
+    - value: 20px / 800
+      where: h2.adp-h2 "Warlords" @ desktop-1440.png
+    consistent: false
+  - element: h2.adp-kicker
+    found:
+    - value: 11px / 500
+      where: h2.adp-kicker#games-filters-heading "Filters" @ desktop-1440.png
+    - value: 11px / 500
+      where: h2.adp-kicker#games-browse-heading "Browse" @ desktop-1440.png
+    consistent: true
+  - element: h3.flex
+    found:
+    - value: 20px / 800
+      where: h3.flex#tree-starred-heading "Starred builds" @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    found:
+    - value: 15px / 500
+      where: input.w-full#games-search-phone @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#games-search @ desktop-1440.png
+    consistent: true
+  - element: label.sr-only
+    found:
+    - value: 16px / 400
+      where: label.sr-only "Search games by title" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Search games by title" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-body
+    found:
+    - value: 15px / 500
+      where: p.adp-body "Select a game and build to start a feedb" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Select a game and build to start a feedb" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    found:
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Sort" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "How to play & give feedback →" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-mono
+    found:
+    - value: 12px / 400
+      where: p.adp-mono "26 games" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Atari Recharged · Atari · Added 19 Sep 2" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-045d2542-0151-4683-9d87-fd8e8b0a582f "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Atari Classics, HTML5 · Atari · Added 28" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-9e7b1a20-3c4d-4f5a-8b6c-000000000009 "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Atari Classics, HTML5 · Atari · Added 28" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-9e7b1a20-3c4d-4f5a-8b6c-000000000005 "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Coatsink · Added 28 Sep 2026" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-97fd7158-a35f-4699-9a6e-ee3d5af4c5ce "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Nintendo Switch · Coatsink · Added 25 Se" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-0910d22a-e602-41e0-a184-2f7208535d99 "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "ALAN - 9 · Atari · Added 24 Sep 2026" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-26fd9680-84a4-46f7-8ad5-8036431ab663 "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "ALAN - 9 · Atari · Added 23 Sep 2026" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-dfee6ab0-e150-4981-8829-2c6c4c7b3fe7 "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Atari Recharged · Atari · Added 23 Sep 2" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-43c7ff14-b12f-42ba-8d52-78e62dbf2566 "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "ATARI - 7800 · Atari · Added 22 Sep 2026" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-3e97fbc6-e62f-4e15-a69e-3081dffea53a "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Web · Coatsink · Added 22 Sep 2026" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-8d4f3105-aa1b-41cd-bff3-9c53db0cca1a "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "MSN · Coatsink · Added 20 Sep 2026" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-5feeabc7-dd18-482f-950d-5e55ba0c56cf "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Nintendo Switch · Atari · Added 13 Sep 2" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-6bd045dc-d928-4f8b-9790-d717e6291eb1 "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "MSN · Atari · Added 7 Sep 2026" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-3d9f71d1-f81d-4662-9a5d-7d11ab32c6b0 "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Atari · Added 19 Aug 2026" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-5571d867-d4d6-4e7f-9158-23dcf1694cd5 "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Coatsink · Added 14 Aug 2026" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-7f133f55-288b-4dd9-aba9-b8555dc52c4a "Select
+        a build" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Starred builds always come first." @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "! = reviews overly negative" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "26 games" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Atari Recharged · Atari · Added 19 Sep 2" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-045d2542-0151-4683-9d87-fd8e8b0a582f "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Atari Classics, HTML5 · Atari · Added 28" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-9e7b1a20-3c4d-4f5a-8b6c-000000000009 "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Atari Classics, HTML5 · Atari · Added 28" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-9e7b1a20-3c4d-4f5a-8b6c-000000000005 "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Coatsink · Added 28 Sep 2026" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-97fd7158-a35f-4699-9a6e-ee3d5af4c5ce "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Nintendo Switch · Coatsink · Added 25 Se" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-0910d22a-e602-41e0-a184-2f7208535d99 "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "ALAN - 9 · Atari · Added 24 Sep 2026" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-26fd9680-84a4-46f7-8ad5-8036431ab663 "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "ALAN - 9 · Atari · Added 23 Sep 2026" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-dfee6ab0-e150-4981-8829-2c6c4c7b3fe7 "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Atari Recharged · Atari · Added 23 Sep 2" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-43c7ff14-b12f-42ba-8d52-78e62dbf2566 "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "ATARI - 7800 · Atari · Added 22 Sep 2026" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-3e97fbc6-e62f-4e15-a69e-3081dffea53a "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Web · Coatsink · Added 22 Sep 2026" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-8d4f3105-aa1b-41cd-bff3-9c53db0cca1a "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "MSN · Coatsink · Added 20 Sep 2026" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-5feeabc7-dd18-482f-950d-5e55ba0c56cf "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Nintendo Switch · Atari · Added 13 Sep 2" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-6bd045dc-d928-4f8b-9790-d717e6291eb1 "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "MSN · Atari · Added 7 Sep 2026" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-3d9f71d1-f81d-4662-9a5d-7d11ab32c6b0 "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Atari · Added 19 Aug 2026" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-5571d867-d4d6-4e7f-9158-23dcf1694cd5 "Select
+        a build" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Coatsink · Added 14 Aug 2026" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#builds-label-7f133f55-288b-4dd9-aba9-b8555dc52c4a "Select
+        a build" @ desktop-1440.png
+    consistent: true
+  - element: p.mt-2
+    found:
+    - value: 16px / 400
+      where: p.mt-2 "! Negative reviews" @ narrow-320.png
+    - value: 16px / 400
+      where: p.mt-2 "! Negative reviews" @ narrow-320.png
+    - value: 16px / 400
+      where: p.mt-2 "! Negative reviews" @ desktop-1440.png
+    - value: 16px / 400
+      where: p.mt-2 "! Negative reviews" @ desktop-1440.png
+    consistent: true
+findings:
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Atari Missile Command" is 204×20px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Atari Centipede" is 142×20px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Guess the Game (Reddit)" is 224×20px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: button.inline-flex "v1" is 40×44px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Haunted House" is 136×20px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Lunar Taxi" is 92×20px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "PopopoP" is 81×20px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: label.sr-only "Search games by title" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only#_R_alb_ "Notifications" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Missile Command Recharged" is 261×20px at 390px.
+  evidence:
+    kind: rendered-measurement
+    ref: phone-390.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Missile Command Recharged" is 272×21px at 768px.
+  evidence:
+    kind: rendered-measurement
+    ref: md-768.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Atari Missile Command" is 213×21px at 768px.
+  evidence:
+    kind: rendered-measurement
+    ref: md-768.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Atari Centipede" is 146×21px at 768px.
+  evidence:
+    kind: rendered-measurement
+    ref: md-768.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Guess the Game (Reddit)" is 233×21px at 768px.
+  evidence:
+    kind: rendered-measurement
+    ref: md-768.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Haunted House" is 146×21px at 768px.
+  evidence:
+    kind: rendered-measurement
+    ref: md-768.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Lunar Taxi" is 99×21px at 768px.
+  evidence:
+    kind: rendered-measurement
+    ref: md-768.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Atari Centipede" is 156×22px at 1024px.
+  evidence:
+    kind: rendered-measurement
+    ref: lg-1024.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Haunted House" is 151×22px at 1024px.
+  evidence:
+    kind: rendered-measurement
+    ref: lg-1024.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Lunar Taxi" is 102×22px at 1024px.
+  evidence:
+    kind: rendered-measurement
+    ref: lg-1024.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "PopopoP" is 88×22px at 1024px.
+  evidence:
+    kind: rendered-measurement
+    ref: lg-1024.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Ninja Soccer" is 127×22px at 1024px.
+  evidence:
+    kind: rendered-measurement
+    ref: lg-1024.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: a.underline-offset-2 "Atari Missile Command" is 229×22px at 1440px.
+  evidence:
+    kind: rendered-measurement
+    ref: desktop-1440.png
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.adp-mono gap: 6px (2×); 8px (30×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.flex gap: 8px (14×); 12px (20×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.flex padding-x: 8px (14×); 12px (14×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.flex padding-y: 0px (14×); 8px (14×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-x: 12px (77×); 16px (39×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-y: 0px (8×); 8px (108×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.flex>: 12px / 700; 16px / 400; 20px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.inline-flex>: 12px / 400; 12px / 600; 12px / 700; 13px / 600;
+    16px / 400.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h1.adp-h1>: 28px / 800; 34px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h2.adp-h2>: 18px / 800; 20px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true

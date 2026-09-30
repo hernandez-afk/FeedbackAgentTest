@@ -1,7 +1,7 @@
 From e864d6c9838e0bfe52331439dddb110d5f6c3865 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Mon, 28 Sep 2026 12:44:23 +0000
-Subject: [PATCH 1/9] fix(fuji): 44px buttons and inputs, wrapping labels,
+Subject: [PATCH 01/10] fix(fuji): 44px buttons and inputs, wrapping labels,
  token hover, one select style
 
 From the Design System Agent's standalone audits of the pre-harness
@@ -176,7 +176,7 @@ index 0000000..b2ae370
 From c3a8455b28cac3165c978b41c9e4d1ff971cc418 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:21:37 +0000
-Subject: [PATCH 2/9] fix(imports): standalone audit fixes for /imports and
+Subject: [PATCH 02/10] fix(imports): standalone audit fixes for /imports and
  prior imports (GFE-IMPORTS)
 
 From the Design System Agent's standalone audit:
@@ -500,7 +500,7 @@ index a2aee92..82586b8 100644
 From 0c43e1b5915c493c046202629858cb71f7a3a671 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:25:24 +0000
-Subject: [PATCH 3/9] fix(catalog-admin): standalone audit fixes for add/edit
+Subject: [PATCH 03/10] fix(catalog-admin): standalone audit fixes for add/edit
  game and add build (GFE-CATALOG-ADMIN)
 
 From the Design System Agent's standalone audit:
@@ -991,7 +991,7 @@ index 9ee83ae..f721a31 100644
 From 353244c3b3334042d80d15071bc3968d8e604c37 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:28:19 +0000
-Subject: [PATCH 4/9] fix(shell): standalone audit fixes for the header and
+Subject: [PATCH 04/10] fix(shell): standalone audit fixes for the header and
  sign-in (GFE-SHELL)
 
 From the Design System Agent's standalone audit, confirmed by its
@@ -1501,7 +1501,7 @@ index 0b9a3a4..47426bf 100644
 From f4224007bc83a3f23e9c159b9ad9d1c9e3d09789 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:29:25 +0000
-Subject: [PATCH 5/9] fix(dashboard): standalone audit fixes for the game
+Subject: [PATCH 05/10] fix(dashboard): standalone audit fixes for the game
  dashboard (GFE-DASHBOARD)
 
 From the Design System Agent's standalone audit:
@@ -1995,7 +1995,7 @@ index 2f83698..8f28cda 100644
 From ae8e7a081556b9847f762817f931060718d62037 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:31:48 +0000
-Subject: [PATCH 6/9] fix(capture): standalone audit fixes for the tester
+Subject: [PATCH 06/10] fix(capture): standalone audit fixes for the tester
  capture flow (GFE-CAPTURE)
 
 From the Design System Agent's standalone audit:
@@ -2352,7 +2352,7 @@ index a940681..9539660 100644
 From 287d7a8458821273fb4c26b3f15d75ccf71e3aaa Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:33:10 +0000
-Subject: [PATCH 7/9] fix(admin): standalone audit fixes for /admin and
+Subject: [PATCH 07/10] fix(admin): standalone audit fixes for /admin and
  /admin/questions (GFE-ADMIN)
 
 From the Design System Agent's standalone audit:
@@ -3000,7 +3000,7 @@ index 49bdcc6..2062cea 100644
 From 78092614e95753cf179c2cbb69c9a72344209ab4 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:36:46 +0000
-Subject: [PATCH 8/9] fix(review): standalone audit fixes for the session
+Subject: [PATCH 08/10] fix(review): standalone audit fixes for the session
  detail page (GFE-REVIEW)
 
 From the Design System Agent's standalone audit:
@@ -3385,7 +3385,7 @@ index 7858528..cca49d5 100644
 From 4b976436973f59e1f7702d1c731e6c486c522d4f Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:42:03 +0000
-Subject: [PATCH 9/9] fix(dashboard, admin): last screenshot-tool findings
+Subject: [PATCH 09/10] fix(dashboard, admin): last screenshot-tool findings
 
 - Dashboard header: the title column's fixed min-w-[220px] made the
   page scroll 21px sideways at 320px with 200% text; it now wraps under
@@ -3427,6 +3427,96 @@ index 409726b..49f7bb7 100644
            <h1 className="adp-h1">{gameTitle}</h1>
            <p className="adp-mono mt-1" style={{ color: 'var(--color-ink-sub)' }}>
              {[gamePlatform, `${buildCount} build${buildCount === 1 ? '' : 's'}`]
+-- 
+2.43.0
+
+From 95917d96faf74b775bf9d472acf8bed1641ef042 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 30 Sep 2026 12:41:30 +0000
+Subject: [PATCH 10/10] fix(games, sessions): screenshot-tool findings on the
+ GFE-SORT pages
+
+The updated Design System Agent's screenshot tool, run on /games and
+/sessions after the shared primitive changes:
+- Build pills are 44x44 minimum (a leftover min-h-[1.75rem] overrode
+  min-h-11); the selected pill is bold (700), not 600.
+- The page's + Add game link and the Manage builds toggle are 44px.
+- The sessions submitter email wraps instead of being clipped at 200%
+  text (and no longer relies on a title tooltip).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ frontend/app/games/page.tsx               | 2 +-
+ frontend/app/sessions/page.tsx            | 3 +--
+ frontend/components/BuildPills.tsx        | 6 +++---
+ frontend/components/ManageBuildsPanel.tsx | 5 +++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/frontend/app/games/page.tsx b/frontend/app/games/page.tsx
+index 779bc29..bc31d32 100644
+--- a/frontend/app/games/page.tsx
++++ b/frontend/app/games/page.tsx
+@@ -555,7 +555,7 @@ function PageHeader({ isAdmin }: { isAdmin: boolean }): React.JSX.Element {
+       {isAdmin && (
+         <Link
+           href="/games/new"
+-          className="adp-mono shrink-0 self-center"
++          className="adp-mono shrink-0 self-center inline-flex items-center min-h-11 rounded-[var(--radius-sm)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+           style={{ color: 'var(--color-accent-text)' }}
+         >
+           + Add game
+diff --git a/frontend/app/sessions/page.tsx b/frontend/app/sessions/page.tsx
+index 8d482e8..712e610 100644
+--- a/frontend/app/sessions/page.tsx
++++ b/frontend/app/sessions/page.tsx
+@@ -162,9 +162,8 @@ function SessionRow({
+ 
+       {/* Submitter */}
+       <td
+-        className="px-4 py-3 adp-mono truncate max-w-[200px]"
++        className="px-4 py-3 adp-mono max-w-[200px] [overflow-wrap:anywhere]"
+         style={{ color: 'var(--color-ink-sub)' }}
+-        title={session.submitter_email}
+       >
+         {session.submitter_email}
+       </td>
+diff --git a/frontend/components/BuildPills.tsx b/frontend/components/BuildPills.tsx
+index 5d8f076..403b4c6 100644
+--- a/frontend/components/BuildPills.tsx
++++ b/frontend/components/BuildPills.tsx
+@@ -183,12 +183,12 @@ export default function BuildPills({
+               type="button"
+               onClick={() => handleSelect(build)}
+               className={[
+-                'inline-flex items-center px-3 py-1.5 rounded-full adp-mono text-[0.75rem]',
+-                'border transition-all focus:outline-none min-h-[1.75rem]',
++                'inline-flex items-center justify-center min-h-11 min-w-11 px-3 py-2 rounded-full adp-mono text-[0.75rem]',
++                'border transition-all focus:outline-none',
+                 'focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2',
+                 'focus-visible:ring-offset-[var(--color-surface)]',
+                 isActive
+-                  ? 'border-[var(--color-accent)] text-[var(--color-accent-ink)] font-semibold'
++                  ? 'border-[var(--color-accent)] text-[var(--color-accent-ink)] font-bold'
+                   : 'border-[var(--color-hair)] text-[var(--color-ink-sub)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent-text)]',
+               ].join(' ')}
+               style={
+diff --git a/frontend/components/ManageBuildsPanel.tsx b/frontend/components/ManageBuildsPanel.tsx
+index 59d26cf..8f5578e 100644
+--- a/frontend/components/ManageBuildsPanel.tsx
++++ b/frontend/components/ManageBuildsPanel.tsx
+@@ -261,8 +261,9 @@ function Chevron({ open }: { open: boolean }): React.JSX.Element {
+ }
+ 
+ const toggleButtonClass =
+-  'adp-mono inline-flex items-center gap-1.5 focus:outline-none ' +
+-  'focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-sm';
++  // 44px target (standalone audit, screenshot tool): was the 18px text line.
++  'adp-mono inline-flex items-center gap-2 min-h-11 focus:outline-none ' +
++  'focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-[var(--radius-sm)]';
+ 
+ /**
+  * BundleStateChip (CH-453) — per-row "Playable" / "No bundle" indicator,
 -- 
 2.43.0
 

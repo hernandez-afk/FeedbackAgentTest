@@ -1,0 +1,470 @@
+id: sort--sessions
+source: rendered
+target: http://localhost:3000/sessions
+capturedAt: '2026-09-30T12:40:36Z'
+manifestVersion: 1.0.0
+shots:
+- file: narrow-320.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: narrow-320-text200.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: phone-390.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: phone-390-text200.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: md-768.png
+  viewport:
+    name: md
+    w: 768
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 128
+- file: lg-1024.png
+  viewport:
+    name: lg
+    w: 1024
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: desktop-1440.png
+  viewport:
+    name: desktop
+    w: 1440
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+computedInventory:
+  spacing:
+  - element: button.inline-flex
+    property: gap
+    found:
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-x
+    found:
+    - px: 12
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-y
+    found:
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    consistent: true
+  - element: button.md:hidden
+    property: gap
+    found:
+    - px: 6
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: select.adp-mono
+    property: padding-x
+    found:
+    - px: 12
+      where: select.adp-mono#filter-platform "All platformsAtari Classics, HTML5 (5
+        ga" @ narrow-320.png
+    - px: 12
+      where: select.adp-mono#filter-game "All gamesAsteroids Classics PlusMissile
+        " @ narrow-320.png
+    - px: 12
+      where: select.adp-mono#filter-build "Select a game first" @ narrow-320.png
+    - px: 12
+      where: select.adp-mono#filter-status "All statusesNewTriagedActionedDismissed"
+        @ narrow-320.png
+    - px: 12
+      where: select.adp-mono#filter-severity "All severitiesCriticalHighMediumLow"
+        @ narrow-320.png
+    - px: 12
+      where: select.adp-mono#filter-platform "All platformsAtari Classics, HTML5 (5
+        ga" @ desktop-1440.png
+    - px: 12
+      where: select.adp-mono#filter-game "All gamesAsteroids Classics PlusMissile
+        " @ desktop-1440.png
+    - px: 12
+      where: select.adp-mono#filter-build "Select a game first" @ desktop-1440.png
+    - px: 12
+      where: select.adp-mono#filter-status "All statusesNewTriagedActionedDismissed"
+        @ desktop-1440.png
+    - px: 12
+      where: select.adp-mono#filter-severity "All severitiesCriticalHighMediumLow"
+        @ desktop-1440.png
+    consistent: true
+  - element: select.adp-mono
+    property: padding-y
+    found:
+    - px: 8
+      where: select.adp-mono#filter-platform "All platformsAtari Classics, HTML5 (5
+        ga" @ narrow-320.png
+    - px: 8
+      where: select.adp-mono#filter-game "All gamesAsteroids Classics PlusMissile
+        " @ narrow-320.png
+    - px: 8
+      where: select.adp-mono#filter-build "Select a game first" @ narrow-320.png
+    - px: 8
+      where: select.adp-mono#filter-status "All statusesNewTriagedActionedDismissed"
+        @ narrow-320.png
+    - px: 8
+      where: select.adp-mono#filter-severity "All severitiesCriticalHighMediumLow"
+        @ narrow-320.png
+    - px: 8
+      where: select.adp-mono#filter-platform "All platformsAtari Classics, HTML5 (5
+        ga" @ desktop-1440.png
+    - px: 8
+      where: select.adp-mono#filter-game "All gamesAsteroids Classics PlusMissile
+        " @ desktop-1440.png
+    - px: 8
+      where: select.adp-mono#filter-build "Select a game first" @ desktop-1440.png
+    - px: 8
+      where: select.adp-mono#filter-status "All statusesNewTriagedActionedDismissed"
+        @ desktop-1440.png
+    - px: 8
+      where: select.adp-mono#filter-severity "All severitiesCriticalHighMediumLow"
+        @ desktop-1440.png
+    consistent: true
+  typography:
+  - element: button.inline-flex
+    found:
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 400
+      where: button.inline-flex @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    found:
+    - value: 16px / 400
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: button.relative
+    found:
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    consistent: true
+  - element: h1.adp-h1
+    found:
+    - value: 28px / 800
+      where: h1.adp-h1 "Sessions" @ narrow-320.png
+    - value: 34px / 800
+      where: h1.adp-h1 "Sessions" @ desktop-1440.png
+    consistent: false
+  - element: label.adp-mono
+    found:
+    - value: 12px / 400
+      where: label.adp-mono "Platform" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Game" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Build" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Status" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Severity" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Platform" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "Game" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "Build" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "Status" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "Severity" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-body
+    found:
+    - value: 15px / 500
+      where: p.adp-body "Playtest sessions submitted across all g" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Playtest sessions submitted across all g" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-mono
+    found:
+    - value: 12px / 400
+      where: p.adp-mono "54 sessions — page 1 of 2" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "54 sessions — page 1 of 2" @ desktop-1440.png
+    consistent: true
+  - element: select.adp-mono
+    found:
+    - value: 12px / 400
+      where: select.adp-mono#filter-platform "All platformsAtari Classics, HTML5 (5
+        ga" @ narrow-320.png
+    - value: 12px / 400
+      where: select.adp-mono#filter-game "All gamesAsteroids Classics PlusMissile
+        " @ narrow-320.png
+    - value: 12px / 400
+      where: select.adp-mono#filter-build "Select a game first" @ narrow-320.png
+    - value: 12px / 400
+      where: select.adp-mono#filter-status "All statusesNewTriagedActionedDismissed"
+        @ narrow-320.png
+    - value: 12px / 400
+      where: select.adp-mono#filter-severity "All severitiesCriticalHighMediumLow"
+        @ narrow-320.png
+    - value: 12px / 400
+      where: select.adp-mono#filter-platform "All platformsAtari Classics, HTML5 (5
+        ga" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.adp-mono#filter-game "All gamesAsteroids Classics PlusMissile
+        " @ desktop-1440.png
+    - value: 12px / 400
+      where: select.adp-mono#filter-build "Select a game first" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.adp-mono#filter-status "All statusesNewTriagedActionedDismissed"
+        @ desktop-1440.png
+    - value: 12px / 400
+      where: select.adp-mono#filter-severity "All severitiesCriticalHighMediumLow"
+        @ desktop-1440.png
+    consistent: true
+findings:
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only#_R_alb_ "Notifications" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.inline-flex>: 12px / 400; 12px / 600.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h1.adp-h1>: 28px / 800; 34px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
