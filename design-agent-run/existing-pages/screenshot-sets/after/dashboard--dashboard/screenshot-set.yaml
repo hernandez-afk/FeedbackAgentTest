@@ -1,0 +1,773 @@
+id: dashboard--dashboard
+source: rendered
+target: http://localhost:3000/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/dashboard
+capturedAt: '2026-09-30T08:43:12Z'
+manifestVersion: 1.0.0
+shots:
+- file: narrow-320.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: narrow-320-text200.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: phone-390.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: phone-390-text200.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: md-768.png
+  viewport:
+    name: md
+    w: 768
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 128
+- file: lg-1024.png
+  viewport:
+    name: lg
+    w: 1024
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: desktop-1440.png
+  viewport:
+    name: desktop
+    w: 1440
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+computedInventory:
+  spacing:
+  - element: button.adp-mono
+    property: padding-x
+    found:
+    - px: 16
+      where: button.adp-mono#dashboard-tab-executive "Executive" @ narrow-320.png
+    - px: 16
+      where: button.adp-mono#dashboard-tab-lifecycle "Lifecycle" @ narrow-320.png
+    - px: 16
+      where: button.adp-mono#dashboard-tab-recommendations "Recommendations" @ narrow-320.png
+    - px: 16
+      where: button.adp-mono#dashboard-tab-audience "Audience" @ narrow-320.png
+    - px: 16
+      where: button.adp-mono#dashboard-tab-feedback "Feedback" @ narrow-320.png
+    - px: 16
+      where: button.adp-mono#dashboard-tab-executive "Executive" @ desktop-1440.png
+    - px: 16
+      where: button.adp-mono#dashboard-tab-lifecycle "Lifecycle" @ desktop-1440.png
+    - px: 16
+      where: button.adp-mono#dashboard-tab-recommendations "Recommendations" @ desktop-1440.png
+    - px: 16
+      where: button.adp-mono#dashboard-tab-audience "Audience" @ desktop-1440.png
+    - px: 16
+      where: button.adp-mono#dashboard-tab-feedback "Feedback" @ desktop-1440.png
+    consistent: true
+  - element: button.adp-mono
+    property: padding-y
+    found:
+    - px: 12
+      where: button.adp-mono#dashboard-tab-executive "Executive" @ narrow-320.png
+    - px: 12
+      where: button.adp-mono#dashboard-tab-lifecycle "Lifecycle" @ narrow-320.png
+    - px: 12
+      where: button.adp-mono#dashboard-tab-recommendations "Recommendations" @ narrow-320.png
+    - px: 12
+      where: button.adp-mono#dashboard-tab-audience "Audience" @ narrow-320.png
+    - px: 12
+      where: button.adp-mono#dashboard-tab-feedback "Feedback" @ narrow-320.png
+    - px: 12
+      where: button.adp-mono#dashboard-tab-executive "Executive" @ desktop-1440.png
+    - px: 12
+      where: button.adp-mono#dashboard-tab-lifecycle "Lifecycle" @ desktop-1440.png
+    - px: 12
+      where: button.adp-mono#dashboard-tab-recommendations "Recommendations" @ desktop-1440.png
+    - px: 12
+      where: button.adp-mono#dashboard-tab-audience "Audience" @ desktop-1440.png
+    - px: 12
+      where: button.adp-mono#dashboard-tab-feedback "Feedback" @ desktop-1440.png
+    consistent: true
+  - element: button.flex
+    property: gap
+    found:
+    - px: 8
+      where: button.flex "Andreas Sketches" @ desktop-1440.png
+    - px: 8
+      where: button.flex "ALAN - 9" @ desktop-1440.png
+    - px: 8
+      where: button.flex "ATARI - 7800" @ desktop-1440.png
+    - px: 8
+      where: button.flex "HTML5" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Azerion H5 games" @ desktop-1440.png
+    - px: 8
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 8
+      where: button.flex "No project" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Classics, HTML5" @ desktop-1440.png
+    - px: 8
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Nintendo Switch" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Web" @ desktop-1440.png
+    - px: 8
+      where: button.flex "No platform" @ desktop-1440.png
+    consistent: true
+  - element: button.flex
+    property: padding-x
+    found:
+    - px: 8
+      where: button.flex "Andreas Sketches" @ desktop-1440.png
+    - px: 8
+      where: button.flex "ALAN - 9" @ desktop-1440.png
+    - px: 8
+      where: button.flex "ATARI - 7800" @ desktop-1440.png
+    - px: 8
+      where: button.flex "HTML5" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Azerion H5 games" @ desktop-1440.png
+    - px: 8
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 8
+      where: button.flex "No project" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Atari Classics, HTML5" @ desktop-1440.png
+    - px: 8
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Nintendo Switch" @ desktop-1440.png
+    - px: 8
+      where: button.flex "Web" @ desktop-1440.png
+    - px: 8
+      where: button.flex "No platform" @ desktop-1440.png
+    consistent: true
+  - element: button.flex
+    property: padding-y
+    found:
+    - px: 0
+      where: button.flex "Andreas Sketches" @ desktop-1440.png
+    - px: 0
+      where: button.flex "ALAN - 9" @ desktop-1440.png
+    - px: 0
+      where: button.flex "ATARI - 7800" @ desktop-1440.png
+    - px: 0
+      where: button.flex "HTML5" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Azerion H5 games" @ desktop-1440.png
+    - px: 0
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 0
+      where: button.flex "No project" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Atari Classics, HTML5" @ desktop-1440.png
+    - px: 0
+      where: button.flex "MSN" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Nintendo Switch" @ desktop-1440.png
+    - px: 0
+      where: button.flex "Web" @ desktop-1440.png
+    - px: 0
+      where: button.flex "No platform" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: gap
+    found:
+    - px: 8
+      where: button.inline-flex "Browse & filter" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Analyze feedback" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Analyze videos" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Download feedback (CSV)" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "A to Z" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Newest" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Active" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Critical" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Analyze feedback" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Analyze videos" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Download feedback (CSV)" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-x
+    found:
+    - px: 16
+      where: button.inline-flex "Browse & filter" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Analyze feedback" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Analyze videos" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Download feedback (CSV)" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "A to Z" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Newest" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Active" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Critical" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Analyze feedback" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Analyze videos" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Download feedback (CSV)" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    property: padding-y
+    found:
+    - px: 8
+      where: button.inline-flex "Browse & filter" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Analyze feedback" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Analyze videos" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Download feedback (CSV)" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 0
+      where: button.inline-flex "A to Z" @ desktop-1440.png
+    - px: 0
+      where: button.inline-flex "Newest" @ desktop-1440.png
+    - px: 0
+      where: button.inline-flex "Active" @ desktop-1440.png
+    - px: 0
+      where: button.inline-flex "Critical" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Analyze feedback" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Analyze videos" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Download feedback (CSV)" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    property: gap
+    found:
+    - px: 6
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: h3.flex
+    property: gap
+    found:
+    - px: 8
+      where: h3.flex#tree-starred-heading "Starred builds" @ desktop-1440.png
+    consistent: true
+  - element: h3.flex
+    property: padding-x
+    found:
+    - px: 8
+      where: h3.flex#tree-starred-heading "Starred builds" @ desktop-1440.png
+    consistent: true
+  - element: h3.flex
+    property: padding-y
+    found:
+    - px: 0
+      where: h3.flex#tree-starred-heading "Starred builds" @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    property: padding-x
+    found:
+    - px: 12
+      where: input.w-full#filter-date-from @ narrow-320.png
+    - px: 12
+      where: input.w-full#filter-date-to @ narrow-320.png
+    - px: 36
+      where: input.w-full#dashboard-game-search @ desktop-1440.png
+    - px: 12
+      where: input.w-full#filter-date-from @ desktop-1440.png
+    - px: 12
+      where: input.w-full#filter-date-to @ desktop-1440.png
+    consistent: false
+  - element: input.w-full
+    property: padding-y
+    found:
+    - px: 8
+      where: input.w-full#filter-date-from @ narrow-320.png
+    - px: 8
+      where: input.w-full#filter-date-to @ narrow-320.png
+    - px: 8
+      where: input.w-full#dashboard-game-search @ desktop-1440.png
+    - px: 8
+      where: input.w-full#filter-date-from @ desktop-1440.png
+    - px: 8
+      where: input.w-full#filter-date-to @ desktop-1440.png
+    consistent: true
+  - element: label.inline-flex
+    property: gap
+    found:
+    - px: 12
+      where: label.inline-flex "Experts only" @ narrow-320.png
+    - px: 12
+      where: label.inline-flex "Experts only" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-mono
+    property: gap
+    found:
+    - px: 8
+      where: p.adp-mono "! = reviews overly negative" @ desktop-1440.png
+    consistent: true
+  - element: select.w-full
+    property: padding-x
+    found:
+    - px: 12
+      where: select.w-full#filter-build "All buildsCheckpoint 1HTML5 build" @ narrow-320.png
+    - px: 12
+      where: select.w-full#filter-submitter "All testers" @ narrow-320.png
+    - px: 12
+      where: select.w-full#filter-build "All buildsCheckpoint 1HTML5 build" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#filter-submitter "All testers" @ desktop-1440.png
+    consistent: true
+  - element: select.w-full
+    property: padding-y
+    found:
+    - px: 8
+      where: select.w-full#filter-build "All buildsCheckpoint 1HTML5 build" @ narrow-320.png
+    - px: 8
+      where: select.w-full#filter-submitter "All testers" @ narrow-320.png
+    - px: 8
+      where: select.w-full#filter-build "All buildsCheckpoint 1HTML5 build" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#filter-submitter "All testers" @ desktop-1440.png
+    consistent: true
+  typography:
+  - element: button.adp-mono
+    found:
+    - value: 12px / 400
+      where: button.adp-mono#dashboard-tab-executive "Executive" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono#dashboard-tab-lifecycle "Lifecycle" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono#dashboard-tab-recommendations "Recommendations" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono#dashboard-tab-audience "Audience" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono#dashboard-tab-feedback "Feedback" @ narrow-320.png
+    - value: 12px / 400
+      where: button.adp-mono#dashboard-tab-executive "Executive" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono#dashboard-tab-lifecycle "Lifecycle" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono#dashboard-tab-recommendations "Recommendations" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono#dashboard-tab-audience "Audience" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.adp-mono#dashboard-tab-feedback "Feedback" @ desktop-1440.png
+    consistent: true
+  - element: button.flex
+    found:
+    - value: 20px / 800
+      where: button.flex "Andreas Sketches" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "ALAN - 9" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "ATARI - 7800" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "HTML5" @ desktop-1440.png
+    - value: 20px / 800
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "Atari Recharged" @ desktop-1440.png
+    - value: 20px / 800
+      where: button.flex "Azerion H5 games" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "MSN" @ desktop-1440.png
+    - value: 20px / 800
+      where: button.flex "No project" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "Atari Classics, HTML5" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "MSN" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "Nintendo Switch" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "Web" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.flex "No platform" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    found:
+    - value: 13px / 600
+      where: button.inline-flex "Browse & filter" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Analyze feedback" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Analyze videos" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Download feedback (CSV)" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "A to Z" @ desktop-1440.png
+    - value: 12px / 700
+      where: button.inline-flex "Newest" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "Active" @ desktop-1440.png
+    - value: 12px / 400
+      where: button.inline-flex "Critical" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 16px / 400
+      where: button.inline-flex @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Analyze feedback" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Analyze videos" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Download feedback (CSV)" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    found:
+    - value: 16px / 400
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: button.relative
+    found:
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative#filter-experts-only @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    - value: 16px / 400
+      where: button.relative#filter-experts-only @ desktop-1440.png
+    consistent: true
+  - element: h1.adp-h1
+    found:
+    - value: 28px / 800
+      where: h1.adp-h1 "Atari Asteroids" @ narrow-320.png
+    - value: 34px / 800
+      where: h1.adp-h1 "Atari Asteroids" @ desktop-1440.png
+    consistent: false
+  - element: h2.adp-kicker
+    found:
+    - value: 11px / 500
+      where: h2.adp-kicker#dashboard-browse-heading "Browse" @ desktop-1440.png
+    consistent: true
+  - element: h3.flex
+    found:
+    - value: 20px / 800
+      where: h3.flex#tree-starred-heading "Starred builds" @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    found:
+    - value: 15px / 500
+      where: input.w-full#filter-date-from @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#filter-date-to @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#dashboard-game-search @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#filter-date-from @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#filter-date-to @ desktop-1440.png
+    consistent: true
+  - element: label.adp-mono
+    found:
+    - value: 12px / 400
+      where: label.adp-mono "Build" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Tester" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "From" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "To" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Build" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "Tester" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "From" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "To" @ desktop-1440.png
+    consistent: true
+  - element: label.inline-flex
+    found:
+    - value: 16px / 400
+      where: label.inline-flex "Experts only" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "Experts only" @ desktop-1440.png
+    consistent: true
+  - element: label.sr-only
+    found:
+    - value: 16px / 400
+      where: label.sr-only "Search games by title" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-body
+    found:
+    - value: 15px / 500
+      where: p.adp-body "No feedback yet" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Use Analyze feedback (above) to generate" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "No feedback yet" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body "Use Analyze feedback (above) to generate" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-h1
+    found:
+    - value: 28px / 800
+      where: p.adp-h1 "No AI insights yet" @ narrow-320.png
+    - value: 34px / 800
+      where: p.adp-h1 "No AI insights yet" @ desktop-1440.png
+    consistent: false
+  - element: p.adp-h2
+    found:
+    - value: 18px / 800
+      where: p.adp-h2 "Not analyzed yet" @ narrow-320.png
+    - value: 18px / 800
+      where: p.adp-h2 "0" @ narrow-320.png
+    - value: 18px / 800
+      where: p.adp-h2 "—" @ narrow-320.png
+    - value: 18px / 800
+      where: p.adp-h2 "—" @ narrow-320.png
+    - value: 20px / 800
+      where: p.adp-h2 "Not analyzed yet" @ desktop-1440.png
+    - value: 20px / 800
+      where: p.adp-h2 "0" @ desktop-1440.png
+    - value: 20px / 800
+      where: p.adp-h2 "—" @ desktop-1440.png
+    - value: 20px / 800
+      where: p.adp-h2 "—" @ desktop-1440.png
+    consistent: false
+  - element: p.adp-kicker
+    found:
+    - value: 11px / 500
+      where: p.adp-kicker "Sentiment" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Total feedback" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Play again" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Video coverage" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Feedback analysis" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Video analysis" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Total feedback" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Play again" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Sessions with video" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Severity mix" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Sort" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "Sentiment" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "Total feedback" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "Play again" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "Video coverage" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "Feedback analysis" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "Video analysis" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "Total feedback" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "Play again" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "Sessions with video" @ desktop-1440.png
+    - value: 11px / 500
+      where: p.adp-kicker "Severity mix" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-mono
+    found:
+    - value: 12px / 400
+      where: p.adp-mono "Atari Classics, HTML5 · 2 builds" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "No feedback or video yet" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "No videos to analyze yet." @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "No ratings yet" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "No feedback or video yet" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Starred builds always come first." @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "! = reviews overly negative" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Atari Classics, HTML5 · 2 builds" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "No feedback or video yet" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "No videos to analyze yet." @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "No ratings yet" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "No feedback or video yet" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-stat
+    found:
+    - value: 24px / 800
+      where: p.adp-stat "0" @ narrow-320.png
+    - value: 24px / 800
+      where: p.adp-stat "—" @ narrow-320.png
+    - value: 24px / 800
+      where: p.adp-stat "—" @ narrow-320.png
+    - value: 32px / 800
+      where: p.adp-stat "0" @ desktop-1440.png
+    - value: 32px / 800
+      where: p.adp-stat "—" @ desktop-1440.png
+    - value: 32px / 800
+      where: p.adp-stat "—" @ desktop-1440.png
+    consistent: false
+  - element: select.w-full
+    found:
+    - value: 12px / 400
+      where: select.w-full#filter-build "All buildsCheckpoint 1HTML5 build" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#filter-submitter "All testers" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#filter-build "All buildsCheckpoint 1HTML5 build" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#filter-submitter "All testers" @ desktop-1440.png
+    consistent: true
+findings:
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: button.relative#filter-experts-only is 44×24px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only#_R_alb_ "Notifications" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-x: 12px (5×); 16px (7×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-y: 0px (4×); 8px (8×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'input.w-full padding-x: 12px (4×); 36px (1×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.flex>: 12px / 700; 20px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.inline-flex>: 12px / 400; 12px / 600; 12px / 700; 13px / 600;
+    16px / 400.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h1.adp-h1>: 28px / 800; 34px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<p.adp-h1>: 28px / 800; 34px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<p.adp-h2>: 18px / 800; 20px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<p.adp-stat>: 24px / 800; 32px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true

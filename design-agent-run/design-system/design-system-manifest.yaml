@@ -8,6 +8,9 @@
 platform:
   targets: ["claude-code"]
 
+harness:
+  mode: "lite"             # the agent's default: core skill + tool checks + one critic pass
+
 meta:
   name: "Fuji"
   version: "1.0.0"
@@ -71,10 +74,27 @@ typography:
     heading: "typefaces.display"        # .adp-h1 / .adp-h2, Archivo 800
     readableSubtext: "typefaces.body"   # .adp-body, --color-ink-sub
     formLabel: "typefaces.ui"           # .adp-mono / Label primitive
+  styles:                  # every kind of text has one style (agent schema, Sep 2026). From globals.css.
+    - { name: "page-title",      step: "h1-28/34", weight: 800, typeface: "display", appliesTo: ["h1"], usage: ".adp-h1" }
+    - { name: "section-heading", step: "h2-18/20", weight: 800, typeface: "display", appliesTo: ["h2"], usage: ".adp-h2" }
+    - { name: "body",            step: "body-15",  weight: 500, typeface: "body",    appliesTo: ["p"],  usage: ".adp-body" }
+    - { name: "caption",         step: "mono-12",  weight: 500, typeface: "ui",      usage: ".adp-mono: meta lines, helper text, counts" }
+    - { name: "control",         step: "mono-12",  weight: 700, typeface: "ui",      appliesTo: ["button"], usage: "Button sm; md is 13px pending the type-scale decision (existing-pages/README.md)" }
+    - { name: "stat",            step: "stat-28/36", weight: 800, typeface: "display", usage: "KPI numbers" }
+    # Not set yet, on purpose: 'label' (the form-label typeface is an open
+    # decision) and 'kicker' (.adp-kicker is 11px, off the scale; decision).
 
 spacing:
   baseUnitPx: 4
   scale: [4, 8, 12, 16, 20, 24, 32, 40, 48, 64]
+  roles:                   # the same kind of space is the same value everywhere. From the Fuji primitives.
+    - { name: "card-padding",      px: 24, property: "padding",   appliesTo: ["Card"], usage: "Card padding md (default)" }
+    - { name: "control-padding-x", px: 16, property: "padding-x", appliesTo: ["Button"], usage: "Button md; sm uses 12" }
+    - { name: "field-padding-x",   px: 12, property: "padding-x", appliesTo: ["Input", "Select", "Textarea"] }
+    - { name: "stack-related",     px: 8,  property: "gap", usage: "Label to field; items in one group; filter rows; tree leaves" }
+    - { name: "stack-group",       px: 24, property: "gap", usage: "Between groups of related items" }
+    - { name: "section",           px: 32, property: "margin", usage: "Between page sections (py-8 on main from sm)" }
+    - { name: "page-gutter",       px: 16, property: "padding-x", usage: "Page edges on phones (px-4); 24 from sm (px-6)" }
 
 radius:
   tokens:
@@ -108,6 +128,13 @@ accessibility:
   requireSemanticHtml: true
 
 components:
+  - name: "Select"
+    category: "input"
+    status: "proposed"   # added by the existing-pages audit (selectClasses); needs the design-system owner's approval
+    importPath: "@/components/primitives/selectClasses"
+    props: ["mono", "className"]
+    description: "The NativeSelect pattern as a class composer: native <select>, 44px, padded, native arrow kept."
+    variants: [{ name: "default", status: "proposed" }, { name: "mono", status: "proposed" }]
   - name: "Button"
     category: "action"
     status: "approved"

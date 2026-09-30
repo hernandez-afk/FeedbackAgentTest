@@ -1,0 +1,3432 @@
+From e864d6c9838e0bfe52331439dddb110d5f6c3865 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 28 Sep 2026 12:44:23 +0000
+Subject: [PATCH 1/9] fix(fuji): 44px buttons and inputs, wrapping labels,
+ token hover, one select style
+
+From the Design System Agent's standalone audits of the pre-harness
+pages (every area failed the same primitive rules):
+- Button sm/md/lg and Input/Textarea are at least 44px tall
+  (accessibility.minTouchTargetPx).
+- Button labels wrap instead of overflowing at 320px with 200% text.
+- Primary/utility hover darkens to --color-accent-deep (interaction
+  states: active) instead of fading; secondary hover text is
+  --color-accent-text, never mint.
+- sm button text moves to the mono-12 step.
+- selectClasses(): the NativeSelect pattern as a shared composer.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ frontend/__tests__/primitive-targets.test.ts  | 36 +++++++++++++++++++
+ .../components/primitives/buttonClasses.ts    | 24 +++++++++----
+ .../components/primitives/inputClasses.ts     |  2 +-
+ .../components/primitives/selectClasses.ts    | 21 +++++++++++
+ 4 files changed, 75 insertions(+), 8 deletions(-)
+ create mode 100644 frontend/__tests__/primitive-targets.test.ts
+ create mode 100644 frontend/components/primitives/selectClasses.ts
+
+diff --git a/frontend/__tests__/primitive-targets.test.ts b/frontend/__tests__/primitive-targets.test.ts
+new file mode 100644
+index 0000000..38d5350
+--- /dev/null
++++ b/frontend/__tests__/primitive-targets.test.ts
+@@ -0,0 +1,36 @@
++/**
++ * Fuji primitive rules from the standalone audits of the pre-harness pages
++ * (design-agent-run/existing-pages/): 44px targets, wrapping labels, token
++ * hover, and one select style.
++ */
++import { describe, it, expect } from 'vitest';
++import { buttonClasses } from '@/components/primitives/buttonClasses';
++import { inputClasses } from '@/components/primitives/inputClasses';
++import { selectClasses } from '@/components/primitives/selectClasses';
++
++describe('primitive touch targets and wrapping', () => {
++  it('every button size is at least 44px and may wrap', () => {
++    for (const size of ['sm', 'md', 'lg'] as const) {
++      const c = buttonClasses({ size });
++      expect(c).toContain('min-h-11');
++      expect(c).toContain('whitespace-normal');
++      expect(c).not.toContain('whitespace-nowrap');
++    }
++  });
++
++  it('hover darkens to the active token and never turns text mint', () => {
++    expect(buttonClasses({ variant: 'primary' })).toContain('hover:bg-[var(--color-accent-deep)]');
++    expect(buttonClasses({ variant: 'primary' })).not.toContain('hover:opacity-90');
++    expect(buttonClasses({ variant: 'secondary' })).toContain('hover:text-[var(--color-accent-text)]');
++    expect(buttonClasses({ variant: 'secondary' })).not.toContain('hover:text-[var(--color-accent)]');
++  });
++
++  it('inputs and selects are 44px; selects keep the native arrow', () => {
++    expect(inputClasses()).toContain('min-h-11');
++    const s = selectClasses();
++    expect(s).toContain('min-h-11');
++    expect(s).toContain('px-3');
++    expect(s).not.toContain('appearance-none');
++    expect(selectClasses({ mono: true })).toContain('adp-mono');
++  });
++});
+diff --git a/frontend/components/primitives/buttonClasses.ts b/frontend/components/primitives/buttonClasses.ts
+index 6fe0cb9..e3bc991 100644
+--- a/frontend/components/primitives/buttonClasses.ts
++++ b/frontend/components/primitives/buttonClasses.ts
+@@ -21,6 +21,13 @@
+  *   - lg   reserved for full-width form-submit buttons (Create Game).
+  *          Don't use lg for anything else — it breaks the visual rhythm
+  *          when adjacent to md primary actions.
++ *
++ * Every size is at least 44px tall (manifest accessibility.minTouchTargetPx),
++ * and labels wrap instead of pushing past a narrow container at 200% text
++ * (mobile.maxTextScalePercent). Both came out of the standalone audits of the
++ * pre-harness pages (design-agent-run/existing-pages/). Hover darkens the fill
++ * to --color-accent-deep (manifest interactionStates.active) instead of only
++ * fading it, and secondary hover text uses --color-accent-text, never mint.
+  */
+ 
+ export type ButtonVariant = 'primary' | 'secondary' | 'destructive' | 'utility';
+@@ -28,9 +35,9 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
+ 
+ const VARIANT_CLASS: Record<ButtonVariant, string> = {
+   primary:
+-    'bg-[var(--color-accent)] text-[var(--color-accent-ink)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed border border-transparent',
++    'bg-[var(--color-accent)] text-[var(--color-accent-ink)] hover:bg-[var(--color-accent-deep)] disabled:opacity-50 disabled:cursor-not-allowed border border-transparent',
+   secondary:
+-    'bg-transparent text-[var(--color-ink-sub)] border border-[var(--color-hair)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] disabled:opacity-50 disabled:cursor-not-allowed',
++    'bg-transparent text-[var(--color-ink-sub)] border border-[var(--color-hair)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent-text)] disabled:opacity-50 disabled:cursor-not-allowed',
+   // Destructive uses --color-negative-text (coral.600 #bf4b36, 4.91:1 on white) for
+   // text and border — not --color-negative (coral.500 #e5705b, 3.08:1) which fails
+   // WCAG AA as text on white. On hover the filled state uses the fill color with
+@@ -39,23 +46,26 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
+   destructive:
+     'bg-transparent text-[var(--color-negative-text)] border border-[var(--color-negative-text)] hover:bg-[var(--color-negative)] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed',
+   utility:
+-    'bg-[var(--color-accent)] text-[var(--color-accent-ink)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed border border-transparent uppercase tracking-[0.15em]',
++    'bg-[var(--color-accent)] text-[var(--color-accent-ink)] hover:bg-[var(--color-accent-deep)] disabled:opacity-50 disabled:cursor-not-allowed border border-transparent uppercase tracking-[0.15em]',
+ };
+ 
+ const SIZE_CLASS: Record<ButtonSize, string> = {
+-  sm: 'text-[0.7rem] px-3 py-1.5 rounded-[var(--radius-button)] font-mono',
+-  md: 'text-[0.8125rem] px-4 py-2 rounded-[var(--radius-button)] font-mono',
++  // sm text is the mono-12 step (was 11.2px, under minReadableTextPx 11 at
++  // most zooms and off the type scale). md keeps 13px pending the type-scale
++  // decision recorded in existing-pages/README.md.
++  sm: 'text-[0.75rem] px-3 py-2 min-h-11 rounded-[var(--radius-button)] font-mono',
++  md: 'text-[0.8125rem] px-4 py-2 min-h-11 rounded-[var(--radius-button)] font-mono',
+   // `lg` must NOT use the `.adp-body` semantic class because adp-body sets
+   // `color: var(--color-ink-sub)` which is a semi-transparent alpha that blends
+   // with the button's background and overrides the variant's text token.
+   // On a primary (teal) button, rgba(22,21,26,0.60) blends to #0d6154 = 3.85:1
+   // on #00d4aa — a WCAG AA failure. We replicate adp-body's font properties
+   // directly here without the color declaration so the variant class wins.
+-  lg: '[font-family:var(--font-display)] text-[0.9375rem] leading-[1.6] px-5 py-2.5 rounded-[var(--radius-button)]',
++  lg: '[font-family:var(--font-display)] text-[0.9375rem] leading-[1.6] px-5 py-2.5 min-h-11 rounded-[var(--radius-button)]',
+ };
+ 
+ export const BUTTON_BASE_CLASS =
+-  'inline-flex items-center justify-center gap-2 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)] font-semibold whitespace-nowrap';
++  'inline-flex items-center justify-center gap-2 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)] font-semibold max-w-full whitespace-normal text-center';
+ 
+ export function buttonClasses({
+   variant = 'primary',
+diff --git a/frontend/components/primitives/inputClasses.ts b/frontend/components/primitives/inputClasses.ts
+index a29483c..0c95d92 100644
+--- a/frontend/components/primitives/inputClasses.ts
++++ b/frontend/components/primitives/inputClasses.ts
+@@ -20,7 +20,7 @@ export type InputState = 'default' | 'error' | 'disabled';
+ 
+ /** Base classes shared between Input and Textarea. */
+ export const INPUT_BASE_CLASS =
+-  'w-full bg-[var(--color-field)] text-[var(--color-ink)] adp-body ' +
++  'w-full min-h-11 bg-[var(--color-field)] text-[var(--color-ink)] adp-body ' +
+   'border border-[var(--color-hair)] rounded-[var(--radius-button)] ' +
+   'placeholder:text-[var(--color-ink-faint)] ' +
+   'transition-colors duration-[var(--dur-fast)] ease-[var(--ease)] ' +
+diff --git a/frontend/components/primitives/selectClasses.ts b/frontend/components/primitives/selectClasses.ts
+new file mode 100644
+index 0000000..b2ae370
+--- /dev/null
++++ b/frontend/components/primitives/selectClasses.ts
+@@ -0,0 +1,21 @@
++/**
++ * selectClasses — the one approved native <select> style (Fuji NativeSelect
++ * pattern, first shipped in SessionsFilters, CH-479).
++ *
++ * Added by the standalone audits of the pre-harness pages
++ * (design-agent-run/existing-pages/): three pages hand-rolled their own
++ * select, two of them with `appearance-none`, which dropped the padding and
++ * the dropdown arrow and left a 26px control. This keeps the native arrow,
++ * pads the text off the border, and is 44px tall (minTouchTargetPx).
++ *
++ * No 'use client' — safe in server components.
++ */
++import { INPUT_BASE_CLASS } from './inputClasses';
++
++export function selectClasses({
++  mono = false,
++  className = '',
++}: { mono?: boolean; className?: string } = {}): string {
++  const base = INPUT_BASE_CLASS.replace('adp-body', mono ? 'adp-mono' : 'adp-body');
++  return `${base} px-3 py-2 min-w-0 max-w-full disabled:opacity-50 disabled:cursor-not-allowed ${className}`.trim();
++}
+-- 
+2.43.0
+
+From c3a8455b28cac3165c978b41c9e4d1ff971cc418 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 30 Sep 2026 08:21:37 +0000
+Subject: [PATCH 2/9] fix(imports): standalone audit fixes for /imports and
+ prior imports (GFE-IMPORTS)
+
+From the Design System Agent's standalone audit:
+- Game-imports header wraps at 320px with 200% text (min-w-0, breaks).
+- One accent-filled action per phase: Clear all, Remove and Prior
+  imports move to secondary.
+- Import dialog scrolls within the viewport.
+- Each sending row has a progress bar (role=progressbar); a 0-byte file
+  no longer shows NaN%.
+- The game select uses selectClasses (field colour, focus ring, 44px).
+- Long game titles wrap in the running header.
+- Empty states use compact (h2, tighter padding); corrected-file and
+  Add the game links are 44px.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ .../__tests__/import-queue-panel.test.tsx     | 38 +++++++++++++
+ .../__tests__/prior-imports-list.test.tsx     | 54 +++++++++++++++++++
+ frontend/app/games/[gameId]/imports/page.tsx  |  6 ++-
+ frontend/components/imports/ImportDialog.tsx  |  2 +-
+ .../components/imports/ImportQueuePanel.tsx   | 44 ++++++++++++---
+ .../components/imports/PriorImportsList.tsx   |  5 +-
+ 6 files changed, 136 insertions(+), 13 deletions(-)
+ create mode 100644 frontend/__tests__/prior-imports-list.test.tsx
+
+diff --git a/frontend/__tests__/import-queue-panel.test.tsx b/frontend/__tests__/import-queue-panel.test.tsx
+index 318dfe1..4bcd5f9 100644
+--- a/frontend/__tests__/import-queue-panel.test.tsx
++++ b/frontend/__tests__/import-queue-panel.test.tsx
+@@ -172,3 +172,41 @@ describe('confirmed stop targets only the named row (review HIGH)', () => {
+     expect(seen[1]).toContain('filename=b.pdf');
+   });
+ });
++
++describe('standalone design audit fixes', () => {
++  it('shows a determinate byte bar for the row being sent', async () => {
++    // A fetch that never settles holds the row in `sending` at 0 bytes.
++    vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>(() => undefined)));
++    await render(<ImportQueuePanel games={GAMES} initialGameId="g-1" />);
++    await pickFiles([file('a.pdf', 10)]);
++    await click(buttonByText('Import 1 item'));
++    await click(buttonByText('Add to Alpha'));
++    const bar = container.querySelector('[role="progressbar"]');
++    expect(bar).not.toBeNull();
++    expect(bar!.getAttribute('aria-label')).toBe('Sending a.pdf');
++    expect(bar!.getAttribute('aria-valuenow')).toBe('0');
++    expect(bar!.getAttribute('aria-valuemax')).toBe('100');
++  });
++
++  it('keeps Import N items the only accent-filled action in the pick phase', async () => {
++    await render(<ImportQueuePanel games={GAMES} initialGameId="g-1" />);
++    await pickFiles([file('a.pdf', 10)]);
++    const filled = Array.from(container.querySelectorAll('button')).filter((b) =>
++      b.className.includes('bg-[var(--color-accent)]'),
++    );
++    expect(filled.map((b) => b.textContent)).toEqual(['Import 1 item']);
++  });
++
++  it('styles the game select with the shared field select', async () => {
++    await render(<ImportQueuePanel games={GAMES} />);
++    const select = container.querySelector<HTMLSelectElement>('#import-game')!;
++    expect(select.className).toContain('bg-[var(--color-field)]');
++    expect(select.className).toContain('focus-visible:ring-2');
++  });
++
++  it('renders the empty queue as a compact EmptyState under the page h1', async () => {
++    await render(<ImportQueuePanel games={GAMES} />);
++    const title = container.querySelector('[role="status"] p');
++    expect(title?.className).toContain('adp-h2');
++  });
++});
+diff --git a/frontend/__tests__/prior-imports-list.test.tsx b/frontend/__tests__/prior-imports-list.test.tsx
+new file mode 100644
+index 0000000..208a246
+--- /dev/null
++++ b/frontend/__tests__/prior-imports-list.test.tsx
+@@ -0,0 +1,54 @@
++// @vitest-environment jsdom
++/**
++ * PriorImportsList — the standalone design audit's fixes: the empty state is
++ * compact (not a second h1-sized heading under the page h1), and the
++ * "Import a corrected file" link is a 44px target. Terminal-status rows only,
++ * so the poll hook never starts fetching.
++ */
++import { describe, it, expect, beforeEach, afterEach } from 'vitest';
++import { act } from 'react';
++import { createRoot, type Root } from 'react-dom/client';
++import PriorImportsList from '@/components/imports/PriorImportsList';
++import type { ImportedDocument } from '@/lib/imports-api';
++
++let container: HTMLDivElement;
++let root: Root;
++
++beforeEach(() => {
++  container = document.createElement('div');
++  document.body.appendChild(container);
++  root = createRoot(container);
++  (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
++});
++
++afterEach(async () => {
++  await act(async () => root.unmount());
++  container.remove();
++});
++
++const FAILED: ImportedDocument = {
++  id: 'd-1',
++  kind: 'pdf',
++  status: 'failed',
++  filename: 'notes.pdf',
++  created_at: '2026-08-31T14:05:00Z',
++  error: 'The document could not be opened.',
++};
++
++describe('PriorImportsList', () => {
++  it('renders the empty state compact, below the page h1 level', async () => {
++    await act(async () => root.render(<PriorImportsList gameId="g-1" initialDocs={[]} />));
++    const title = container.querySelector('[role="status"] p');
++    expect(title?.className).toContain('adp-h2');
++    expect(title?.className).not.toContain('adp-h1');
++  });
++
++  it('gives every "Import a corrected file" link a 44px target', async () => {
++    await act(async () => root.render(<PriorImportsList gameId="g-1" initialDocs={[FAILED]} />));
++    const links = Array.from(container.querySelectorAll('a')).filter((a) =>
++      (a.textContent ?? '').includes('Import a corrected file'),
++    );
++    expect(links.length).toBe(2); // stacked mobile list + sm+ table
++    for (const a of links) expect(a.className).toContain('min-h-11');
++  });
++});
+diff --git a/frontend/app/games/[gameId]/imports/page.tsx b/frontend/app/games/[gameId]/imports/page.tsx
+index b8652fd..f9ed6fd 100644
+--- a/frontend/app/games/[gameId]/imports/page.tsx
++++ b/frontend/app/games/[gameId]/imports/page.tsx
+@@ -72,8 +72,10 @@ export default async function PriorImportsPage({
+   return (
+     <main className="mx-auto w-full max-w-3xl px-4 py-8">
+       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+-        <div>
+-          <h1 className="adp-h1 mb-1">
++        {/* min-w-0 + anywhere-wrap: at 320px with 200% text the h1 was
++            wider than the column (standalone audit). */}
++        <div className="min-w-0 break-words">
++          <h1 className="adp-h1 mb-1 [overflow-wrap:anywhere]">
+             {game !== null ? `Everything imported into ${game.title}` : 'Everything imported'}
+           </h1>
+           <p className="adp-body" style={{ color: 'var(--color-ink-sub)' }}>
+diff --git a/frontend/components/imports/ImportDialog.tsx b/frontend/components/imports/ImportDialog.tsx
+index d42fad5..009f776 100644
+--- a/frontend/components/imports/ImportDialog.tsx
++++ b/frontend/components/imports/ImportDialog.tsx
+@@ -104,7 +104,7 @@ export default function ImportDialog({
+         aria-modal="true"
+         tabIndex={-1}
+         aria-labelledby={titleId}
+-        className="w-full max-w-md rounded-[var(--radius-lg)] border border-[var(--color-hair)] p-5 shadow-lg"
++        className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-[var(--radius-lg)] border border-[var(--color-hair)] p-5 shadow-lg"
+         style={{ background: 'var(--color-surface)' }}
+         onClick={(e) => e.stopPropagation()}
+       >
+diff --git a/frontend/components/imports/ImportQueuePanel.tsx b/frontend/components/imports/ImportQueuePanel.tsx
+index c2f4f62..245eef4 100644
+--- a/frontend/components/imports/ImportQueuePanel.tsx
++++ b/frontend/components/imports/ImportQueuePanel.tsx
+@@ -40,6 +40,7 @@ import Card from '@/components/primitives/Card';
+ import EmptyState from '@/components/primitives/EmptyState';
+ import InlineError from '@/components/primitives/InlineError';
+ import { buttonClasses } from '@/components/primitives/buttonClasses';
++import { selectClasses } from '@/components/primitives/selectClasses';
+ import { formatBytes } from '@/lib/format';
+ import { ImportUploadError, uploadImportDocument } from '@/lib/imports-api';
+ import {
+@@ -344,7 +345,7 @@ export default function ImportQueuePanel({
+               setGameError(null);
+             }}
+             aria-describedby={gameError ? 'import-game-error' : undefined}
+-            className="adp-body min-h-11 rounded-[var(--radius-card-inner)] border border-[var(--color-hair)] bg-[var(--color-surface)] px-3"
++            className={selectClasses()}
+           >
+             <option value="">Choose a game…</option>
+             {games.map((g) => (
+@@ -357,7 +358,9 @@ export default function ImportQueuePanel({
+           {gameError !== null && <InlineError id="import-game-error">{gameError}</InlineError>}
+           <p className="adp-mono" style={{ color: 'var(--color-ink-faint)' }}>
+             Not listed?{' '}
+-            <Link href="/games/new" className="underline">
++            {/* inline-flex min-h-11: a 44px target inside the sentence
++                (standalone audit). */}
++            <Link href="/games/new" className="inline-flex min-h-11 items-center underline">
+               Add the game
+             </Link>{' '}
+             first, then import onto it.
+@@ -366,6 +369,7 @@ export default function ImportQueuePanel({
+ 
+         {rows.length === 0 ? (
+           <EmptyState
++            compact
+             title="Nothing imported yet"
+             body="Drop a write-up from a playtest: a .docx, a .pdf, or a Confluence page exported to HTML. GFE reads what it can read."
+           />
+@@ -377,7 +381,7 @@ export default function ImportQueuePanel({
+                 type="button"
+                 onClick={() => setRows([])}
+                 disabled={confirmOpen}
+-                className={buttonClasses({ variant: 'utility', size: 'sm' })}
++                className={buttonClasses({ variant: 'secondary', size: 'sm' })}
+               >
+                 Clear all
+               </button>
+@@ -413,7 +417,7 @@ export default function ImportQueuePanel({
+                     onClick={() => removeRow(row.key)}
+                     disabled={confirmOpen}
+                     aria-label={`Remove ${row.file.name} from the queue`}
+-                    className={buttonClasses({ variant: 'utility', size: 'sm' })}
++                    className={buttonClasses({ variant: 'secondary', size: 'sm' })}
+                   >
+                     Remove
+                   </button>
+@@ -534,8 +538,8 @@ export default function ImportQueuePanel({
+           >
+             {gameMonogram(game.title)}
+           </span>
+-          <div>
+-            <p className="adp-body font-semibold">{game.title}</p>
++          <div className="min-w-0 grow">
++            <p className="adp-body font-semibold break-words">{game.title}</p>
+             <p className="adp-mono" style={{ color: 'var(--color-ink-sub)' }}>
+               {game.platform ? `${game.platform}, ` : ''}
+               {buildsLabel(game)}
+@@ -543,7 +547,7 @@ export default function ImportQueuePanel({
+           </div>
+           <Link
+             href={`/games/${encodeURIComponent(game.id)}/imports`}
+-            className={`${buttonClasses({ variant: 'utility', size: 'sm' })} ml-auto`}
++            className={`${buttonClasses({ variant: 'secondary', size: 'sm' })} shrink-0`}
+           >
+             Prior imports
+           </Link>
+@@ -585,6 +589,10 @@ export default function ImportQueuePanel({
+         <ul className="flex flex-col divide-y divide-[var(--color-hair)]">
+           {visibleRows.map((row) => {
+               const st = row.state;
++              const pct =
++                st.phase === 'sending' && row.file.size > 0
++                  ? Math.min(100, Math.floor((st.sentBytes / row.file.size) * 100))
++                  : 0;
+               return (
+                 <li key={row.key} className="flex items-start gap-3 py-3">
+                   <div className="min-w-0 grow">
+@@ -592,7 +600,7 @@ export default function ImportQueuePanel({
+                     <p className="adp-mono" style={{ color: 'var(--color-ink-sub)' }}>
+                       {st.phase === 'ready' && 'Waiting its turn.'}
+                       {st.phase === 'sending' &&
+-                        `${Math.floor((st.sentBytes / row.file.size) * 100)}%, ${formatBytes(
++                        `${pct}%, ${formatBytes(
+                           st.sentBytes,
+                         )} of ${formatBytes(row.file.size)}.`}
+                       {st.phase === 'paused' &&
+@@ -603,6 +611,26 @@ export default function ImportQueuePanel({
+                       {st.phase === 'failed' && st.reason}
+                       {st.phase === 'blocked' && st.reason}
+                     </p>
++                    {/* The byte bar frame 07 draws (standalone audit: only
++                        the text percentage had shipped). Same progressbar
++                        contract as ManageBuildsPanel: the name stays fixed,
++                        the value rides aria-valuenow. */}
++                    {st.phase === 'sending' && (
++                      <div
++                        role="progressbar"
++                        aria-valuenow={pct}
++                        aria-valuemin={0}
++                        aria-valuemax={100}
++                        aria-label={`Sending ${row.file.name}`}
++                        className="mt-2 h-2 w-full overflow-hidden rounded-[var(--radius-pill)]"
++                        style={{ background: 'var(--color-track)' }}
++                      >
++                        <div
++                          className="h-full rounded-[var(--radius-pill)] transition-all duration-300"
++                          style={{ width: `${pct}%`, background: 'var(--color-accent)' }}
++                        />
++                      </div>
++                    )}
+                   </div>
+                   <div className="shrink-0 flex items-center gap-2">
+                     {(st.phase === 'sending' || st.phase === 'paused') && (
+diff --git a/frontend/components/imports/PriorImportsList.tsx b/frontend/components/imports/PriorImportsList.tsx
+index a2aee92..82586b8 100644
+--- a/frontend/components/imports/PriorImportsList.tsx
++++ b/frontend/components/imports/PriorImportsList.tsx
+@@ -52,6 +52,7 @@ export default function PriorImportsList({
+   if (docs.length === 0) {
+     return (
+       <EmptyState
++        compact
+         title="Nothing imported yet"
+         body="Write-ups imported onto this game will be listed here with what was read out of each."
+         action={
+@@ -91,7 +92,7 @@ export default function PriorImportsList({
+             {doc.status === 'failed' && (
+               <Link
+                 href={`/imports?game=${encodeURIComponent(gameId)}`}
+-                className="adp-mono underline"
++                className="adp-mono inline-flex min-h-11 items-center underline"
+                 style={{ color: 'var(--color-ink-sub)' }}
+               >
+                 Import a corrected file
+@@ -138,7 +139,7 @@ export default function PriorImportsList({
+                 {doc.status === 'failed' && (
+                   <Link
+                     href={`/imports?game=${encodeURIComponent(gameId)}`}
+-                    className="adp-mono underline"
++                    className="adp-mono inline-flex min-h-11 items-center underline"
+                     style={{ color: 'var(--color-ink-sub)' }}
+                   >
+                     Import a corrected file
+-- 
+2.43.0
+
+From 0c43e1b5915c493c046202629858cb71f7a3a671 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 30 Sep 2026 08:25:24 +0000
+Subject: [PATCH 3/9] fix(catalog-admin): standalone audit fixes for add/edit
+ game and add build (GFE-CATALOG-ADMIN)
+
+From the Design System Agent's standalone audit:
+- Studio and Game selects use selectClasses: 44px, padded, native arrow.
+- Form cards use the Card primitive, p-4 on phones so the column stays
+  usable at 320px with 200% text.
+- Footers wrap; the submit is full width on phones.
+- Cancel and inline links are 44px.
+- Off-scale values moved to the scale (gap-2, px-3, mt-1), weights to
+  700/500, duration to --dur, the step tick to --color-accent-ink.
+- The visibility panel uses surface-2 instead of a mint tint.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ frontend/__tests__/add-build-form.test.tsx   | 19 ++++++++
+ frontend/__tests__/add-catalog-form.test.tsx | 29 ++++++++++++
+ frontend/__tests__/edit-game-form.test.tsx   | 12 +++++
+ frontend/app/games/new/loading.tsx           | 10 ++--
+ frontend/components/AddBuildForm.tsx         | 36 +++++++-------
+ frontend/components/AddCatalogForm.tsx       | 50 ++++++++++----------
+ frontend/components/EditGameForm.tsx         | 23 ++++-----
+ 7 files changed, 117 insertions(+), 62 deletions(-)
+
+diff --git a/frontend/__tests__/add-build-form.test.tsx b/frontend/__tests__/add-build-form.test.tsx
+index b31c909..ed6f13f 100644
+--- a/frontend/__tests__/add-build-form.test.tsx
++++ b/frontend/__tests__/add-build-form.test.tsx
+@@ -506,3 +506,22 @@ describe('AddBuildForm — with a zip (one-call upload)', () => {
+     await teardown(h);
+   });
+ });
++
++describe('AddBuildForm — standalone audit layout fixes', () => {
++  it('styles the Game select with the shared selectClasses (44px, native arrow kept)', async () => {
++    const h = await mount();
++    const select = h.container.querySelector('select')!;
++    expect(select.className).toContain('min-h-11');
++    expect(select.className).not.toContain('appearance-none');
++    await teardown(h);
++  });
++
++  it('gives the Cancel link a 44px target and lets the footer wrap', async () => {
++    const h = await mount();
++    const cancel = byText(h.container, 'a', 'Cancel')!;
++    expect(cancel.className).toContain('min-h-11');
++    expect(cancel.parentElement!.className).toContain('flex-wrap');
++    expect(byText(h.container, 'button', 'Add build')!.className).toContain('w-full');
++    await teardown(h);
++  });
++});
+diff --git a/frontend/__tests__/add-catalog-form.test.tsx b/frontend/__tests__/add-catalog-form.test.tsx
+index 32da1fb..d3e3ee0 100644
+--- a/frontend/__tests__/add-catalog-form.test.tsx
++++ b/frontend/__tests__/add-catalog-form.test.tsx
+@@ -488,3 +488,32 @@ describe('AddCatalogForm — create-succeeded/upload-failed recovery: Delete (CH
+   });
+ });
+ 
++
++describe('AddCatalogForm — standalone audit layout fixes', () => {
++  it('styles the Studio select with the shared selectClasses (44px, native arrow kept)', async () => {
++    const h = await mount();
++    const select = h.container.querySelector('select')!;
++    expect(select.className).toContain('min-h-11');
++    expect(select.className).not.toContain('appearance-none');
++    await teardown(h);
++  });
++
++  it('gives the Cancel link a 44px target and lets the footer wrap', async () => {
++    const h = await mount();
++    const cancel = byText(h.container, 'a', 'Cancel')!;
++    expect(cancel.className).toContain('min-h-11');
++    expect(cancel.parentElement!.className).toContain('flex-wrap');
++    const submit = byText(h.container, 'button', 'Create game')!;
++    expect(submit.className).toContain('w-full');
++    expect(submit.className).toContain('sm:w-auto');
++    await teardown(h);
++  });
++
++  it('keeps the visibility panel off the mint tint', async () => {
++    const h = await mount();
++    const panel = h.container.querySelector('input[type="checkbox"]')!.closest('label')!;
++    expect(panel.getAttribute('style')).toContain('var(--color-surface-2)');
++    expect(panel.getAttribute('style')).not.toContain('accent');
++    await teardown(h);
++  });
++});
+diff --git a/frontend/__tests__/edit-game-form.test.tsx b/frontend/__tests__/edit-game-form.test.tsx
+index 4e793c0..90f6f85 100644
+--- a/frontend/__tests__/edit-game-form.test.tsx
++++ b/frontend/__tests__/edit-game-form.test.tsx
+@@ -845,3 +845,15 @@ describe('EditGameForm — hosted link, round-3 findings (CH-722)', () => {
+     await teardown(h);
+   });
+ });
++
++describe('EditGameForm — standalone audit layout fixes', () => {
++  it('gives the Cancel link a 44px target and lets the footer wrap', async () => {
++    const h = await mount();
++    const cancel = Array.from(h.container.querySelectorAll('a')).find((a) =>
++      (a.textContent ?? '').includes('Cancel'),
++    )!;
++    expect(cancel.className).toContain('min-h-11');
++    expect(cancel.parentElement!.className).toContain('flex-wrap');
++    await teardown(h);
++  });
++});
+diff --git a/frontend/app/games/new/loading.tsx b/frontend/app/games/new/loading.tsx
+index 940e68d..d375f1a 100644
+--- a/frontend/app/games/new/loading.tsx
++++ b/frontend/app/games/new/loading.tsx
+@@ -5,6 +5,8 @@
+  * and games. Mirrors the page's max-width and header layout so there is
+  * no shift when data arrives.
+  */
++import Card from '@/components/primitives/Card';
++
+ export default function AddCatalogLoading(): React.JSX.Element {
+   const shimmer =
+     'rounded-[var(--radius-sm)] adp-shimmer';
+@@ -33,18 +35,14 @@ export default function AddCatalogLoading(): React.JSX.Element {
+         aria-hidden="true"
+       />
+       {/* Form card skeleton */}
+-      <div
+-        className="rounded-[var(--radius-xl)] border border-[var(--color-hair)] p-6 flex flex-col gap-6"
+-        style={{ background: 'var(--color-surface)' }}
+-        aria-hidden="true"
+-      >
++      <Card border shadow={false} padding="none" className="p-4 sm:p-6 flex flex-col gap-6" aria-hidden="true">
+         {[1, 2, 3, 4].map((i) => (
+           <div key={i} className="flex flex-col gap-2">
+             <div className={`h-4 w-28 ${shimmer}`} />
+             <div className={`h-11 w-full ${shimmer}`} />
+           </div>
+         ))}
+-      </div>
++      </Card>
+     </div>
+   );
+ }
+diff --git a/frontend/components/AddBuildForm.tsx b/frontend/components/AddBuildForm.tsx
+index 84d5025..ad08ccd 100644
+--- a/frontend/components/AddBuildForm.tsx
++++ b/frontend/components/AddBuildForm.tsx
+@@ -53,11 +53,12 @@ import { useRouter } from 'next/navigation';
+ import Link from 'next/link';
+ import Banner from '@/components/primitives/Banner';
+ import Button from '@/components/primitives/Button';
++import Card from '@/components/primitives/Card';
+ import Input from '@/components/primitives/Input';
+ import InlineError from '@/components/primitives/InlineError';
+ import BuildDropZone from '@/components/BuildDropZone';
+ import { isValidEmbedUrl } from '@/lib/html-games';
+-import { inputClasses } from '@/components/primitives/inputClasses';
++import { selectClasses } from '@/components/primitives/selectClasses';
+ import { addBuildToGame, uploadBuildBundle, MAX_BUNDLE_UPLOAD_BYTES } from '@/lib/catalog-api';
+ import { buildUploadErrorMessage, buildUploadErrorTarget } from '@/components/ManageBuildsPanel';
+ import type { Game, Build } from '@/lib/types';
+@@ -85,8 +86,9 @@ export type AddBuildFormProps = {
+ // Shared style fragments — CSS-var-only, no hardcoded design values
+ // ---------------------------------------------------------------------------
+ 
+-const selectBase = inputClasses() + ' appearance-none cursor-pointer';
+-const fieldLabelClass = 'adp-body font-semibold block';
++// Standalone audit #1: the Fuji NativeSelect style (44px, native arrow kept).
++const selectBase = selectClasses({ className: 'cursor-pointer' });
++const fieldLabelClass = 'adp-body font-bold block';
+ 
+ // ---------------------------------------------------------------------------
+ // Component
+@@ -316,13 +318,8 @@ export default function AddBuildForm({ games, gameCount }: AddBuildFormProps): R
+ 
+       <div>
+         {/* Form card */}
+-        <div
+-          className="rounded-[var(--radius-xl)] border border-[var(--color-hair)] p-6 flex flex-col gap-6"
+-          style={{
+-            background: 'var(--color-surface)',
+-            boxShadow: 'var(--shadow)',
+-          }}
+-        >
++        {/* Standalone audit #6/#7: the Card primitive; p-4 on phones. */}
++        <Card border padding="none" className="p-4 sm:p-6 flex flex-col gap-6">
+           {/* Game select */}
+           <div>
+             <label htmlFor={id('target-game')} className={fieldLabelClass}>
+@@ -378,7 +375,7 @@ export default function AddBuildForm({ games, gameCount }: AddBuildFormProps): R
+                   {existingBuilds.map((b) => (
+                     <li
+                       key={b.id}
+-                      className="adp-mono rounded-[var(--radius-pill)] px-2.5 py-1 border"
++                      className="adp-mono rounded-[var(--radius-pill)] px-3 py-1 border"
+                       style={{
+                         background: 'var(--color-surface-2)',
+                         borderColor: 'var(--color-hair)',
+@@ -504,18 +501,18 @@ export default function AddBuildForm({ games, gameCount }: AddBuildFormProps): R
+           {buildZipFile && addBuildPhase.phase === 'uploading' && (
+             <AddBuildProgressBar phase={addBuildPhase} buildLabel={newBuildLabel.trim() || 'build'} />
+           )}
+-        </div>
++        </Card>
+ 
+-        {/* Footer */}
+-        <div className="flex items-center gap-4 mt-6">
++        {/* Footer — wraps at 320px / 200% text (standalone audit #4). */}
++        <div className="flex flex-wrap items-center gap-4 mt-6">
+           <Link
+             href="/games"
+             className={
+-              'flex items-center gap-1.5 ' +
++              'inline-flex items-center gap-2 min-h-11 ' +
+               '[font-family:var(--font-mono)] text-[0.75rem] ' +
+               'text-[var(--color-ink-faint)] hover:text-[var(--color-ink-sub)] ' +
+               'transition-colors duration-[var(--dur-fast)] ' +
+-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-sm'
++              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-[var(--radius-sm)]'
+             }
+           >
+             ← Cancel
+@@ -528,6 +525,7 @@ export default function AddBuildForm({ games, gameCount }: AddBuildFormProps): R
+             onClick={() => void handleSubmit()}
+             disabled={submitting}
+             aria-busy={submitting}
++            className="w-full sm:w-auto"
+           >
+             {submitting
+               ? addBuildPhase.phase === 'uploading'
+@@ -565,10 +563,10 @@ function AddBuildProgressBar({
+   return (
+     <div
+       aria-live="polite"
+-      className="rounded-[var(--radius-lg)] border p-3 flex flex-col gap-1.5"
++      className="rounded-[var(--radius-lg)] border p-3 flex flex-col gap-2"
+       style={{ borderColor: 'var(--color-hair)', background: 'var(--color-surface-2)' }}
+     >
+-      <span className="adp-mono font-semibold" style={{ color: 'var(--color-ink)' }}>
++      <span className="adp-mono font-bold" style={{ color: 'var(--color-ink)' }}>
+         Uploading &amp; extracting build {buildLabel}…
+       </span>
+       <div
+@@ -581,7 +579,7 @@ function AddBuildProgressBar({
+         style={{ background: 'var(--color-track)' }}
+       >
+         <div
+-          className="h-full rounded-full transition-all duration-300"
++          className="h-full rounded-full transition-all duration-[var(--dur)]"
+           style={{ width: `${pct}%`, background: 'var(--color-accent)' }}
+         />
+       </div>
+diff --git a/frontend/components/AddCatalogForm.tsx b/frontend/components/AddCatalogForm.tsx
+index eda5d65..e323219 100644
+--- a/frontend/components/AddCatalogForm.tsx
++++ b/frontend/components/AddCatalogForm.tsx
+@@ -63,6 +63,7 @@ import { useRouter } from 'next/navigation';
+ import Link from 'next/link';
+ import Banner from '@/components/primitives/Banner';
+ import Button from '@/components/primitives/Button';
++import Card from '@/components/primitives/Card';
+ import Input from '@/components/primitives/Input';
+ import Textarea from '@/components/primitives/Textarea';
+ import GroupingFields from '@/components/catalog/GroupingFields';
+@@ -70,7 +71,7 @@ import InlineError from '@/components/primitives/InlineError';
+ import BuildDropZone from '@/components/BuildDropZone';
+ import { isValidEmbedUrl } from '@/lib/html-games';
+ import DeleteGameControl from '@/components/DeleteGameControl';
+-import { inputClasses } from '@/components/primitives/inputClasses';
++import { selectClasses } from '@/components/primitives/selectClasses';
+ import {
+   createGame,
+   listGames,
+@@ -104,12 +105,11 @@ export type AddCatalogFormProps = {
+ // Shared style fragments — CSS-var-only, no hardcoded design values
+ // ---------------------------------------------------------------------------
+ 
+-const selectBase =
+-  inputClasses() +
+-  ' appearance-none cursor-pointer';
++// Standalone audit #1: the Fuji NativeSelect style (44px, native arrow kept).
++const selectBase = selectClasses({ className: 'cursor-pointer' });
+ 
+ const fieldLabelClass =
+-  'adp-body font-semibold block';
++  'adp-body font-bold block';
+ 
+ // ---------------------------------------------------------------------------
+ // Component
+@@ -375,11 +375,11 @@ export default function AddCatalogForm({
+     <Link
+       href="/games"
+       className={
+-        'flex items-center gap-1.5 ' +
++        'inline-flex items-center gap-2 min-h-11 ' +
+         '[font-family:var(--font-mono)] text-[0.75rem] ' +
+         'text-[var(--color-ink-faint)] hover:text-[var(--color-ink-sub)] ' +
+         'transition-colors duration-[var(--dur-fast)] ' +
+-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-sm'
++        'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-[var(--radius-sm)]'
+       }
+     >
+       ← Cancel
+@@ -451,13 +451,9 @@ export default function AddCatalogForm({
+       {/* ── NEW GAME PANEL ─────────────────────────────────────────────── */}
+       <div>
+         {/* Form card */}
+-          <div
+-            className="rounded-[var(--radius-xl)] border border-[var(--color-hair)] p-6 flex flex-col gap-6"
+-            style={{
+-              background: 'var(--color-surface)',
+-              boxShadow: 'var(--shadow)',
+-            }}
+-          >
++          {/* Standalone audit #6/#7: the Card primitive; p-4 on phones keeps a
++              usable column at 320px with 200% text. */}
++          <Card border padding="none" className="p-4 sm:p-6 flex flex-col gap-6">
+             {/* Build zip (CH-489) — leads the panel per the signed-off design.
+                 Optional: no zip creates the game with a label-only build,
+                 exactly like the pre-CH-489 flow. */}
+@@ -806,8 +802,8 @@ export default function AddCatalogForm({
+                 selected studio so the "Off" consequence is concrete. */}
+             <label
+               htmlFor={id('org-visible')}
+-              className="flex items-start gap-2.5 p-3 rounded-[var(--radius-lg)] border cursor-pointer"
+-              style={{ borderColor: 'var(--color-accent-22)', background: 'var(--color-accent-08)' }}
++              className="flex items-start gap-2 p-3 rounded-[var(--radius-lg)] border cursor-pointer"
++              style={{ borderColor: 'var(--color-hair)', background: 'var(--color-surface-2)' }}
+             >
+               <input
+                 id={id('org-visible')}
+@@ -815,24 +811,25 @@ export default function AddCatalogForm({
+                 checked={orgVisible}
+                 onChange={(e) => setOrgVisible(e.target.checked)}
+                 disabled={submitting}
+-                className="mt-0.5 w-5 h-5 shrink-0 rounded-[var(--radius-sm)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-1"
++                className="mt-1 w-5 h-5 shrink-0 rounded-[var(--radius-sm)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-1"
+                 style={{ accentColor: 'var(--color-accent)' }}
+               />
+               <span>
+-                <span className="adp-body font-semibold block" style={{ color: 'var(--color-ink)' }}>
++                <span className="adp-body font-bold block" style={{ color: 'var(--color-ink)' }}>
+                   Visible to all testers (org-wide)
+                 </span>
+-                <span className="adp-mono block mt-0.5" style={{ color: 'var(--color-ink-sub)' }}>
++                <span className="adp-mono block mt-1" style={{ color: 'var(--color-ink-sub)' }}>
+                   On → any tester in any studio can see &amp; play it. Off → only{' '}
+                   {studios.find((s) => s.id === studioId)?.name ?? 'this studio'}&apos;s testers.
+                   Change later on the game&apos;s edit page.
+                 </span>
+               </span>
+             </label>
+-          </div>
++          </Card>
+ 
+-          {/* Footer */}
+-          <div className="flex items-center gap-4 mt-6">
++          {/* Footer — wraps so the submit never runs off a 320px screen
++              (standalone audit #4). */}
++          <div className="flex flex-wrap items-center gap-4 mt-6">
+             {cancelLink}
+             <div className="flex-1" aria-hidden="true" />
+             <Button
+@@ -844,6 +841,7 @@ export default function AddCatalogForm({
+               }
+               disabled={submitting}
+               aria-busy={submitting}
++              className="w-full sm:w-auto"
+             >
+               {submitting
+                 ? newGamePhase.phase === 'uploading'
+@@ -890,7 +888,7 @@ function NewGameProgressPanel({
+   return (
+     <div
+       aria-live="polite"
+-      className="rounded-[var(--radius-lg)] border p-3 flex flex-col gap-1.5"
++      className="rounded-[var(--radius-lg)] border p-3 flex flex-col gap-2"
+       style={{ borderColor: 'var(--color-hair)', background: 'var(--color-surface-2)' }}
+     >
+       <StepRow done={uploading} label="Game created (shell, 0 builds)" />
+@@ -907,7 +905,7 @@ function NewGameProgressPanel({
+             style={{ background: 'var(--color-track)' }}
+           >
+             <div
+-              className="h-full rounded-full transition-all duration-300"
++              className="h-full rounded-full transition-all duration-[var(--dur)]"
+               style={{ width: `${pct}%`, background: 'var(--color-accent)' }}
+             />
+           </div>
+@@ -927,7 +925,7 @@ function StepRow({ done, active = false, label }: { done: boolean; active?: bool
+     <div className="flex items-center gap-2 adp-mono">
+       <span
+         aria-hidden="true"
+-        className={`w-4 h-4 rounded-full flex-none flex items-center justify-center ${done || active ? 'text-white' : ''}`}
++        className={`w-4 h-4 rounded-full flex-none flex items-center justify-center ${done || active ? 'text-[var(--color-accent-ink)]' : ''}`}
+         style={
+           done
+             ? { background: 'var(--color-positive)' }
+@@ -942,7 +940,7 @@ function StepRow({ done, active = false, label }: { done: boolean; active?: bool
+           </svg>
+         )}
+       </span>
+-      <span style={{ color: done ? 'var(--color-ink-sub)' : active ? 'var(--color-ink)' : 'var(--color-ink-faint)', fontWeight: active ? 600 : 400 }}>
++      <span style={{ color: done ? 'var(--color-ink-sub)' : active ? 'var(--color-ink)' : 'var(--color-ink-faint)', fontWeight: active ? 700 : 500 }}>
+         {label}
+       </span>
+     </div>
+diff --git a/frontend/components/EditGameForm.tsx b/frontend/components/EditGameForm.tsx
+index 9ee83ae..f721a31 100644
+--- a/frontend/components/EditGameForm.tsx
++++ b/frontend/components/EditGameForm.tsx
+@@ -63,6 +63,7 @@ import { useRouter } from 'next/navigation';
+ import Link from 'next/link';
+ import Banner from '@/components/primitives/Banner';
+ import Button from '@/components/primitives/Button';
++import Card from '@/components/primitives/Card';
+ import Input from '@/components/primitives/Input';
+ import Textarea from '@/components/primitives/Textarea';
+ import InlineError from '@/components/primitives/InlineError';
+@@ -103,7 +104,7 @@ export type EditGameFormProps = {
+   hasArchivedBuilds?: boolean;
+ };
+ 
+-const fieldLabelClass = 'adp-body font-semibold block';
++const fieldLabelClass = 'adp-body font-bold block';
+ 
+ function OptionalHint(): React.JSX.Element {
+   return (
+@@ -493,10 +494,8 @@ export default function EditGameForm({
+         </div>
+       )}
+ 
+-      <div
+-        className="rounded-[var(--radius-xl)] border border-[var(--color-hair)] p-6 flex flex-col gap-6"
+-        style={{ background: 'var(--color-surface)', boxShadow: 'var(--shadow)' }}
+-      >
++      {/* Standalone audit #6/#7: the Card primitive; p-4 on phones. */}
++      <Card border padding="none" className="p-4 sm:p-6 flex flex-col gap-6">
+         {/* Game title */}
+         <div>
+           <label htmlFor={id('title')} className={fieldLabelClass}>
+@@ -741,10 +740,10 @@ export default function EditGameForm({
+             <Link
+               href="/games"
+               className={
+-                'inline-block mt-2 [font-family:var(--font-mono)] text-[0.75rem] ' +
++                'inline-flex items-center min-h-11 mt-2 [font-family:var(--font-mono)] text-[0.75rem] ' +
+                 'text-[var(--color-ink-faint)] hover:text-[var(--color-ink-sub)] ' +
+                 'transition-colors duration-[var(--dur-fast)] ' +
+-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-sm'
++                'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-[var(--radius-sm)]'
+               }
+             >
+               Go to Manage builds →
+@@ -773,17 +772,18 @@ export default function EditGameForm({
+             description="On: after playing, testers see a quick thumbs up/down instead of the full feedback form. Off: the full feedback form."
+           />
+         </div>
+-      </div>
++      </Card>
+ 
+-      <div className="flex items-center gap-4 mt-6">
++      {/* Footer wraps at 320px / 200% text (standalone audit #4). */}
++      <div className="flex flex-wrap items-center gap-4 mt-6">
+         <Link
+           href="/games"
+           className={
+-            'flex items-center gap-1.5 ' +
++            'inline-flex items-center gap-2 min-h-11 ' +
+             '[font-family:var(--font-mono)] text-[0.75rem] ' +
+             'text-[var(--color-ink-faint)] hover:text-[var(--color-ink-sub)] ' +
+             'transition-colors duration-[var(--dur-fast)] ' +
+-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-sm'
++            'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-[var(--radius-sm)]'
+           }
+         >
+           ← Cancel
+@@ -796,6 +796,7 @@ export default function EditGameForm({
+           onClick={() => void handleSubmit()}
+           disabled={submitting}
+           aria-busy={submitting}
++          className="w-full sm:w-auto"
+         >
+           {submitting ? 'Saving…' : 'Save changes'}
+         </Button>
+-- 
+2.43.0
+
+From 353244c3b3334042d80d15071bc3968d8e604c37 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 30 Sep 2026 08:28:19 +0000
+Subject: [PATCH 4/9] fix(shell): standalone audit fixes for the header and
+ sign-in (GFE-SHELL)
+
+From the Design System Agent's standalone audit, confirmed by its
+screenshot tool:
+- The header no longer scrolls sideways at 320px with 200% text:
+  RoleBadge's built-in inline-flex overrode the caller's hidden, so it
+  showed on phones; the right cluster can now shrink (min-w-0).
+- Wordmark, nav links, Add pills and the chip's clear button are 44px;
+  the wordmark link's name matches its text; landmarks are labelled.
+- The header Admin/Questions link is secondary, so it never competes
+  with a page's own primary action.
+- The mobile menu is a labelled nav with a plain list of links (no
+  role=menu without arrow keys), scrolls within the viewport, and shows
+  the full email.
+- Role badge, chip and bell counts move to the mono-12 step.
+- Login: h1 gradient ends on --color-accent-text, the card uses
+  --radius-lg, and the Google button is the Button primitive.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ frontend/app/layout.tsx                     |  20 +-
+ frontend/app/login/page.tsx                 |  19 +-
+ frontend/components/HeaderSelectionChip.tsx |   4 +-
+ frontend/components/NavClient.tsx           | 208 +++++++++++---------
+ frontend/components/NotificationBell.tsx    |   2 +-
+ frontend/components/RoleBadge.tsx           |   7 +-
+ frontend/components/Wordmark.tsx            |   2 +-
+ 7 files changed, 151 insertions(+), 111 deletions(-)
+
+diff --git a/frontend/app/layout.tsx b/frontend/app/layout.tsx
+index 94c288b..2235c58 100644
+--- a/frontend/app/layout.tsx
++++ b/frontend/app/layout.tsx
+@@ -89,6 +89,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
+                   // rule (globals.css §13) — landscape + short viewport on
+                   // /game/<slug>'s play screen only. Every other route is
+                   // untouched; this id carries no styling of its own.
++                  aria-label="Site"
+                   className="sticky top-0 z-30 border-b border-[var(--color-hair)] px-4 sm:px-6 py-3 sm:py-4"
+                   style={{
+                     background: 'color-mix(in oklab, var(--color-bg) 78%, transparent)',
+@@ -99,7 +100,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
+                   <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+                     {/* Left side: wordmark + selection chip */}
+                     <div className="flex items-center gap-3 min-w-0">
+-                      <Link href="/" className="shrink-0" aria-label="Home">
++                      <Link
++                      href="/"
++                      className="inline-flex items-center min-h-11 min-w-11 shrink-0 rounded-[var(--radius-sm)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
++                      aria-label="ATARI Game Feedback, home"
++                    >
+                         <Wordmark />
+                       </Link>
+                       {/* Chip is a client component — reads SelectionContext.
+@@ -107,8 +112,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
+                       <HeaderSelectionChip />
+                     </div>
+ 
+-                    {/* Right side: role badge, nav controls */}
+-                    <div className="flex items-center gap-2">
++                    {/* Right side: role badge, nav controls. min-w-0 so it can
++                        shrink instead of pushing the page sideways at 320px
++                        with 200% text (standalone audit). */}
++                    <div className="flex items-center gap-2 min-w-0">
+                       {/* Role from verified server session — not client state */}
+                       <RoleBadge
+                         isAdmin={isAdmin}
+@@ -131,6 +138,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
+                   without the nav chrome. */}
+               {!email && (
+                 <nav
++                  aria-label="Site"
+                   className="sticky top-0 z-30 border-b border-[var(--color-hair)] px-4 sm:px-6 py-3 sm:py-4"
+                   style={{
+                     background: 'color-mix(in oklab, var(--color-bg) 78%, transparent)',
+@@ -139,7 +147,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
+                   }}
+                 >
+                   <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+-                    <Link href="/" className="shrink-0" aria-label="Home">
++                    <Link
++                      href="/"
++                      className="inline-flex items-center min-h-11 min-w-11 shrink-0 rounded-[var(--radius-sm)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
++                      aria-label="ATARI Game Feedback, home"
++                    >
+                       <Wordmark />
+                     </Link>
+                   </div>
+diff --git a/frontend/app/login/page.tsx b/frontend/app/login/page.tsx
+index b368181..ce7a6f5 100644
+--- a/frontend/app/login/page.tsx
++++ b/frontend/app/login/page.tsx
+@@ -2,6 +2,7 @@ import { signIn, auth } from "@/auth";
+ import { redirect } from "next/navigation";
+ import { sanitizeCallbackUrl } from "@/lib/sanitize";
+ import Banner from "@/components/primitives/Banner";
++import { buttonClasses } from "@/components/primitives/buttonClasses";
+ import Backdrop from "@/components/Backdrop";
+ import DevLoginPanel from "@/components/DevLoginPanel";
+ 
+@@ -32,15 +33,16 @@ export default async function LoginPage({
+       <div className="relative w-full max-w-md z-10">
+         <div
+           className="bg-[var(--color-surface)] border border-[var(--color-hair)] p-6 sm:p-8"
+-          style={{ borderRadius: "20px", boxShadow: "var(--shadow-hi)" }}
++          style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-hi)" }}
+         >
+           <div className="text-center mb-8">
+             <h1
+               className="adp-h1 mb-2 bg-clip-text text-transparent"
+               style={{
+                 backgroundImage:
+-                  "linear-gradient(120deg, var(--color-ink) 0%, var(--color-accent) 100%)",
+-                fontSize: "clamp(1.625rem, 3vw + 0.5rem, 2.125rem)",
++                  // Ends on --color-accent-text: mint text is 1.91:1 on white
++                  // (standalone audit). Size comes from .adp-h1 (the h1-28/34 step).
++                  "linear-gradient(120deg, var(--color-ink) 0%, var(--color-accent-text) 100%)",
+               }}
+             >
+               Game Feedback Engine
+@@ -74,14 +76,9 @@ export default async function LoginPage({
+           >
+             <button
+               type="submit"
+-              className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-[var(--radius-button)] border border-[var(--color-hair)] bg-[var(--color-field)] hover:border-[var(--color-accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] transition-colors"
+-              style={{
+-                fontFamily: "var(--font-display)",
+-                fontWeight: 500,
+-                fontSize: "0.9375rem",
+-                color: "var(--color-ink)",
+-                minHeight: "44px",
+-              }}
++              // The Button primitive, not an inline restyle (standalone audit).
++              // The Google mark keeps its brand-mandated colours.
++              className={`${buttonClasses({ variant: "secondary", size: "lg", fullWidth: true })} gap-3 bg-[var(--color-field)]`}
+             >
+               <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                 <path
+diff --git a/frontend/components/HeaderSelectionChip.tsx b/frontend/components/HeaderSelectionChip.tsx
+index 53dcb99..df719cd 100644
+--- a/frontend/components/HeaderSelectionChip.tsx
++++ b/frontend/components/HeaderSelectionChip.tsx
+@@ -21,7 +21,7 @@ export default function HeaderSelectionChip(): React.JSX.Element | null {
+ 
+   return (
+     <span
+-      className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[var(--color-hair)] adp-mono text-[0.7rem]"
++      className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--color-hair)] adp-mono text-[0.75rem]"
+       style={{
+         background: 'var(--color-accent-08)',
+         color: 'var(--color-ink)',
+@@ -51,7 +51,7 @@ export default function HeaderSelectionChip(): React.JSX.Element | null {
+         type="button"
+         onClick={clearSelection}
+         aria-label="Clear selection"
+-        className="ml-0.5 flex items-center justify-center w-4 h-4 rounded-full hover:bg-[var(--color-track)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
++        className="-my-3 -mr-2 flex items-center justify-center w-11 h-11 rounded-full hover:bg-[var(--color-track)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+         style={{ color: 'var(--color-ink-sub)' }}
+       >
+         ×
+diff --git a/frontend/components/NavClient.tsx b/frontend/components/NavClient.tsx
+index 576fc02..72d8fc4 100644
+--- a/frontend/components/NavClient.tsx
++++ b/frontend/components/NavClient.tsx
+@@ -24,7 +24,7 @@ interface NavClientProps {
+ 
+ export default function NavClient({ email, isAdmin, isStudioAdmin, canReview, signOutAction }: NavClientProps) {
+   const [menuOpen, setMenuOpen] = useState(false);
+-  const menuRef = useRef<HTMLDivElement>(null);
++  const menuRef = useRef<HTMLElement>(null);
+   const buttonRef = useRef<HTMLButtonElement>(null);
+   const firstLinkRef = useRef<HTMLAnchorElement>(null);
+ 
+@@ -65,16 +65,27 @@ export default function NavClient({ email, isAdmin, isStudioAdmin, canReview, si
+   // identical to in-page buttons. Links that look like buttons render the
+   // primitive's classes via `asChild`-style composition (we just borrow the
+   // class list because Next's <Link> needs to own the <a>).
++  // Standalone audit: every header control gets the same token focus ring
++  // the Button primitive uses, and every link is at least 44px tall.
++  const focusRing =
++    'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]';
+   const inkLink =
+-    'adp-body text-[var(--color-ink-sub)] hover:text-[var(--color-ink)] transition-colors';
++    `adp-body text-[var(--color-ink-sub)] hover:text-[var(--color-ink)] transition-colors rounded-[var(--radius-sm)] ${focusRing}`;
++  const addPill =
++    `inline-flex items-center min-h-11 adp-mono rounded-[var(--radius-pill)] px-3 py-2 border ${focusRing}`;
++  const mobileLink = `flex items-center min-h-11 py-2 border-b border-[var(--color-hair)] ${focusRing}`;
+ 
+   return (
+     <>
+       {/* Desktop nav — hidden on mobile, only shown when authenticated */}
+       {email && (
+-        <div className="hidden md:flex items-center gap-6">
+-          <Link href="/games" className={inkLink}>Games</Link>
+-          {canReview && <Link href="/sessions" className={inkLink}>Sessions</Link>}
++        <nav aria-label="Main" className="hidden md:flex items-center gap-6">
++          <Link href="/games" className={`inline-flex items-center min-h-11 ${inkLink}`}>Games</Link>
++          {canReview && (
++            <Link href="/sessions" className={`inline-flex items-center min-h-11 ${inkLink}`}>
++              Sessions
++            </Link>
++          )}
+           {/* CH-489: admin-only entry into the upload-first catalog form.
+               Gated on isAdmin ALONE (NOT isStudioAdmin): game creation is
+               require_admin_user (cross-studio admin only) and /games/new
+@@ -83,7 +94,7 @@ export default function NavClient({ email, isAdmin, isStudioAdmin, canReview, si
+           {isAdmin && (
+             <Link
+               href="/games/new"
+-              className="adp-mono rounded-[var(--radius-pill)] px-3 py-1.5 border"
++              className={addPill}
+               style={{
+                 background: 'var(--color-accent-08)',
+                 borderColor: 'var(--color-accent-22)',
+@@ -101,7 +112,7 @@ export default function NavClient({ email, isAdmin, isStudioAdmin, canReview, si
+           {isAdmin && (
+             <Link
+               href="/builds/new"
+-              className="adp-mono rounded-[var(--radius-pill)] px-3 py-1.5 border"
++              className={addPill}
+               style={{
+                 background: 'var(--color-accent-08)',
+                 borderColor: 'var(--color-accent-22)',
+@@ -119,15 +130,17 @@ export default function NavClient({ email, isAdmin, isStudioAdmin, canReview, si
+             >
+               {email}
+             </span>
++            {/* Secondary, not primary: the header must not compete with the
++                page's own primary action (standalone audit). */}
+             {isAdmin ? (
+-              <Link href="/admin" className={buttonClasses({ variant: 'primary', size: 'sm' })}>
++              <Link href="/admin" className={buttonClasses({ variant: 'secondary', size: 'sm' })}>
+                 Admin
+               </Link>
+             ) : (
+               isStudioAdmin && (
+                 <Link
+                   href="/admin/questions"
+-                  className={buttonClasses({ variant: 'primary', size: 'sm' })}
++                  className={buttonClasses({ variant: 'secondary', size: 'sm' })}
+                 >
+                   Questions
+                 </Link>
+@@ -139,7 +152,7 @@ export default function NavClient({ email, isAdmin, isStudioAdmin, canReview, si
+               </Button>
+             </form>
+           </div>
+-        </div>
++        </nav>
+       )}
+ 
+       {/* Mobile hamburger button — visible only on mobile when authenticated */}
+@@ -150,7 +163,7 @@ export default function NavClient({ email, isAdmin, isStudioAdmin, canReview, si
+         aria-expanded={menuOpen}
+         aria-controls="mobile-nav"
+         onClick={() => setMenuOpen((o) => !o)}
+-        className="md:hidden flex flex-col justify-center items-center w-11 h-11 gap-1.5 rounded-[var(--radius-button)] border border-[var(--color-hair)] hover:border-[var(--color-accent)] transition-colors"
++        className={`md:hidden flex flex-col justify-center items-center w-11 h-11 gap-1.5 rounded-[var(--radius-button)] border border-[var(--color-hair)] hover:border-[var(--color-accent)] transition-colors ${focusRing}`}
+       >
+         <span
+           className={`block w-5 h-0.5 bg-[var(--color-ink-sub)] transition-transform duration-200 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`}
+@@ -163,97 +176,112 @@ export default function NavClient({ email, isAdmin, isStudioAdmin, canReview, si
+         />
+       </button>}
+ 
+-      {/* Mobile dropdown menu — only when authenticated */}
++      {/* Mobile dropdown — only when authenticated. A labelled <nav> holding a
++          plain list of links (standalone audit): role="menu" promised
++          arrow-key handling this disclosure never had. Capped to the viewport
++          below the header and scrollable, so every item is reachable in
++          landscape. */}
+       {menuOpen && email && (
+-        <div
++        <nav
+           ref={menuRef}
+           id="mobile-nav"
+-          role="menu"
+-          className="md:hidden absolute top-full left-0 right-0 z-50 border-b border-[var(--color-hair)] px-4 py-4 space-y-3"
++          aria-label="Main"
++          className="md:hidden absolute top-full left-0 right-0 z-50 border-b border-[var(--color-hair)] px-4 py-4 max-h-[calc(100svh-4rem)] overflow-y-auto"
+           style={{
+             background: 'var(--color-surface)',
+             boxShadow: 'var(--shadow-hi)',
+           }}
+         >
+-          <Link
+-            ref={firstLinkRef}
+-            href="/games"
+-            role="menuitem"
+-            onClick={() => setMenuOpen(false)}
+-            className={`block ${inkLink} py-2 border-b border-[var(--color-hair)] min-h-11`}
+-          >
+-            Games
+-          </Link>
+-          {canReview && (
+-            <Link
+-              href="/sessions"
+-              role="menuitem"
+-              onClick={() => setMenuOpen(false)}
+-              className={`block ${inkLink} py-2 border-b border-[var(--color-hair)] min-h-11`}
+-            >
+-              Sessions
+-            </Link>
+-          )}
+-          {/* CH-489: same isAdmin-only gate as the desktop "+ Add game" pill above. */}
+-          {isAdmin && (
+-            <Link
+-              href="/games/new"
+-              role="menuitem"
+-              onClick={() => setMenuOpen(false)}
+-              className="block adp-mono py-2 border-b border-[var(--color-hair)] min-h-11 flex items-center"
+-              style={{ color: 'var(--color-accent-text)' }}
+-            >
+-              + Add game
+-            </Link>
+-          )}
+-          {/* CH-494: same isAdmin-only gate as the desktop "+ Add build" pill above. */}
+-          {isAdmin && (
+-            <Link
+-              href="/builds/new"
+-              role="menuitem"
+-              onClick={() => setMenuOpen(false)}
+-              className="block adp-mono py-2 border-b border-[var(--color-hair)] min-h-11 flex items-center"
+-              style={{ color: 'var(--color-accent-text)' }}
+-            >
+-              + Add build
+-            </Link>
+-          )}
+-          <div className="pt-1 border-t border-[var(--color-hair)]">
+-            <span
+-              className="block adp-mono truncate py-2"
+-              style={{ color: 'var(--color-ink-sub)' }}
+-              title={email}
+-            >
+-              {email}
+-            </span>
+-          </div>
+-          {isAdmin ? (
+-            <Link
+-              href="/admin"
+-              role="menuitem"
+-              onClick={() => setMenuOpen(false)}
+-              className={buttonClasses({ variant: 'primary', size: 'sm', fullWidth: true })}
+-            >
+-              Admin
+-            </Link>
+-          ) : (
+-            isStudioAdmin && (
++          <ul className="space-y-3">
++            <li>
+               <Link
+-                href="/admin/questions"
+-                role="menuitem"
++                ref={firstLinkRef}
++                href="/games"
+                 onClick={() => setMenuOpen(false)}
+-                className={buttonClasses({ variant: 'primary', size: 'sm', fullWidth: true })}
++                className={`${mobileLink} ${inkLink}`}
+               >
+-                Questions
++                Games
+               </Link>
+-            )
+-          )}
+-          <form action={signOutAction}>
+-            <Button variant="secondary" size="sm" type="submit" fullWidth>
+-              Sign out
+-            </Button>
+-          </form>
+-        </div>
++            </li>
++            {canReview && (
++              <li>
++                <Link
++                  href="/sessions"
++                  onClick={() => setMenuOpen(false)}
++                  className={`${mobileLink} ${inkLink}`}
++                >
++                  Sessions
++                </Link>
++              </li>
++            )}
++            {/* CH-489: same isAdmin-only gate as the desktop "+ Add game" pill above. */}
++            {isAdmin && (
++              <li>
++                <Link
++                  href="/games/new"
++                  onClick={() => setMenuOpen(false)}
++                  className={`${mobileLink} adp-mono`}
++                  style={{ color: 'var(--color-accent-text)' }}
++                >
++                  + Add game
++                </Link>
++              </li>
++            )}
++            {/* CH-494: same isAdmin-only gate as the desktop "+ Add build" pill above. */}
++            {isAdmin && (
++              <li>
++                <Link
++                  href="/builds/new"
++                  onClick={() => setMenuOpen(false)}
++                  className={`${mobileLink} adp-mono`}
++                  style={{ color: 'var(--color-accent-text)' }}
++                >
++                  + Add build
++                </Link>
++              </li>
++            )}
++            <li className="pt-1 border-t border-[var(--color-hair)]">
++              {/* Wraps instead of truncating: a `title` tooltip is unreachable
++                  on touch, so the full address must be visible here. */}
++              <span
++                className="block adp-mono py-2 [overflow-wrap:anywhere]"
++                style={{ color: 'var(--color-ink-sub)' }}
++              >
++                {email}
++              </span>
++            </li>
++            {isAdmin ? (
++              <li>
++                <Link
++                  href="/admin"
++                  onClick={() => setMenuOpen(false)}
++                  className={buttonClasses({ variant: 'secondary', size: 'sm', fullWidth: true })}
++                >
++                  Admin
++                </Link>
++              </li>
++            ) : (
++              isStudioAdmin && (
++                <li>
++                  <Link
++                    href="/admin/questions"
++                    onClick={() => setMenuOpen(false)}
++                    className={buttonClasses({ variant: 'secondary', size: 'sm', fullWidth: true })}
++                  >
++                    Questions
++                  </Link>
++                </li>
++              )
++            )}
++            <li>
++              <form action={signOutAction}>
++                <Button variant="secondary" size="sm" type="submit" fullWidth>
++                  Sign out
++                </Button>
++              </form>
++            </li>
++          </ul>
++        </nav>
+       )}
+     </>
+   );
+diff --git a/frontend/components/NotificationBell.tsx b/frontend/components/NotificationBell.tsx
+index 64b8b89..e733a5d 100644
+--- a/frontend/components/NotificationBell.tsx
++++ b/frontend/components/NotificationBell.tsx
+@@ -228,7 +228,7 @@ export default function NotificationBell({
+         {count > 0 && (
+           <span
+             aria-hidden="true"
+-            className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 inline-flex items-center justify-center rounded-full text-[0.65rem] font-semibold leading-none"
++            className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 inline-flex items-center justify-center rounded-full text-[0.75rem] font-bold leading-none"
+             style={{
+               background: 'var(--color-accent)',
+               color: 'var(--color-accent-ink)',
+diff --git a/frontend/components/RoleBadge.tsx b/frontend/components/RoleBadge.tsx
+index 7ae722a..55557fd 100644
+--- a/frontend/components/RoleBadge.tsx
++++ b/frontend/components/RoleBadge.tsx
+@@ -43,13 +43,16 @@ export default function RoleBadge({
+   isSuperAdmin,
+   isStudioAdmin,
+   canReview,
+-  className = '',
++  // The caller owns `display` (e.g. "hidden sm:inline-flex"). A built-in
++  // inline-flex used to override the caller's `hidden`, so the badge showed
++  // on phones and pushed the header sideways (standalone audit).
++  className = 'inline-flex',
+ }: RoleBadgeProps): React.JSX.Element {
+   const label = resolveLabel(isAdmin, isSuperAdmin, isStudioAdmin, canReview);
+ 
+   return (
+     <span
+-      className={`inline-flex items-center px-2 py-0.5 rounded-full adp-mono text-[0.65rem] uppercase tracking-[0.1em] ${className}`.trim()}
++      className={`items-center px-2 py-1 rounded-full adp-mono text-[0.75rem] uppercase tracking-[0.1em] ${className}`.trim()}
+       style={{
+         background: 'var(--color-accent-08)',
+         color: 'var(--color-accent-text)',
+diff --git a/frontend/components/Wordmark.tsx b/frontend/components/Wordmark.tsx
+index 0b9a3a4..47426bf 100644
+--- a/frontend/components/Wordmark.tsx
++++ b/frontend/components/Wordmark.tsx
+@@ -32,7 +32,7 @@ type WordmarkProps = {
+ 
+ export default function Wordmark({ showSuffix = true, className = '', accent = true }: WordmarkProps) {
+   return (
+-    <span className={`adp-wordmark ${className}`.trim()} aria-label="Atari Game Feedback Engine">
++    <span className={`adp-wordmark ${className}`.trim()}>
+       {accent ? <b>ATARI</b> : <span className="font-bold">ATARI</span>}
+       {showSuffix && <span className="hidden sm:inline"> Game Feedback</span>}
+     </span>
+-- 
+2.43.0
+
+From f4224007bc83a3f23e9c159b9ad9d1c9e3d09789 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 30 Sep 2026 08:29:25 +0000
+Subject: [PATCH 5/9] fix(dashboard): standalone audit fixes for the game
+ dashboard (GFE-DASHBOARD)
+
+From the Design System Agent's standalone audit:
+- Header actions stretch on phones, so Analyze feedback / Analyze
+  videos / Download no longer spill out at 320px with 200% text.
+- Tabs and Build/Tester selects are 44px (selectClasses); tabs change
+  colour on hover.
+- Analyze feedback shows a spinner while starting.
+- Off-scale type (17px, 24px, 11.2px) moves to the h2 and mono-12
+  steps; off-scale gaps and padding move to the 4px scale.
+- The monogram tile is 64px (maxFixedSizePx).
+- Empty states name the real button, Analyze feedback.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ .../components/dashboard/DashboardFilters.tsx | 12 +++---
+ .../components/dashboard/DashboardHeader.tsx  | 30 +++++++------
+ .../components/dashboard/DashboardTabs.tsx    |  2 +-
+ .../components/dashboard/EnrichmentAction.tsx | 43 +++++++++++++------
+ .../dashboard/EnrichmentExecutiveSection.tsx  |  4 +-
+ .../dashboard/EnrichmentRecommendations.tsx   |  4 +-
+ .../dashboard/ExpertVsTesterPanel.tsx         |  2 +-
+ .../dashboard/IssueClustersPanel.tsx          |  2 +-
+ frontend/components/dashboard/KpiRow.tsx      |  2 +-
+ .../dashboard/QuestionKeyColumn.tsx           |  6 +--
+ .../dashboard/SeverityByBuildChart.tsx        | 16 +++----
+ .../components/vision/RunVisionAnalysis.tsx   | 31 ++++++-------
+ 12 files changed, 85 insertions(+), 69 deletions(-)
+
+diff --git a/frontend/components/dashboard/DashboardFilters.tsx b/frontend/components/dashboard/DashboardFilters.tsx
+index 9200bdd..552a653 100644
+--- a/frontend/components/dashboard/DashboardFilters.tsx
++++ b/frontend/components/dashboard/DashboardFilters.tsx
+@@ -32,6 +32,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+ import { useTransition } from 'react';
+ import Input from '@/components/primitives/Input';
+ import Toggle from '@/components/primitives/Toggle';
++import { selectClasses } from '@/components/primitives/selectClasses';
+ import type { Build, DashboardSubmitter } from '@/lib/types';
+ 
+ export default function DashboardFilters({
+@@ -78,13 +79,14 @@ export default function DashboardFilters({
+         >
+           Build
+         </label>
++        {/* Fuji select (standalone audit): the old fixed 40px height was under
++            the 44px touch target and clipped the value at 200% text. */}
+         <select
+           id="filter-build"
+           value={build}
+           onChange={(e) => updateParam('build', e.target.value)}
+           aria-label="Filter by build"
+-          className="adp-mono rounded-[var(--radius-button)] border border-[var(--color-hair)] px-3 py-2 outline-none focus:ring-2 focus:ring-[var(--color-accent)] transition-colors"
+-          style={{ background: 'var(--color-field)', color: 'var(--color-ink)', height: '40px' }}
++          className={selectClasses({ mono: true })}
+         >
+           <option value="">All builds</option>
+           {builds.map((b) => (
+@@ -108,8 +110,7 @@ export default function DashboardFilters({
+           value={submitter}
+           onChange={(e) => updateParam('submitter', e.target.value)}
+           aria-label="Filter by tester"
+-          className="adp-mono rounded-[var(--radius-button)] border border-[var(--color-hair)] px-3 py-2 outline-none focus:ring-2 focus:ring-[var(--color-accent)] transition-colors"
+-          style={{ background: 'var(--color-field)', color: 'var(--color-ink)', height: '40px' }}
++          className={selectClasses({ mono: true })}
+         >
+           <option value="">All testers</option>
+           {submitters.map((s) => (
+@@ -158,7 +159,8 @@ export default function DashboardFilters({
+         <span className="adp-mono" style={{ color: 'var(--color-ink-sub)' }}>
+           Source
+         </span>
+-        <div className="flex items-center" style={{ height: '40px' }}>
++        {/* min-h-11 matches the 44px selects and inputs beside it. */}
++        <div className="flex items-center min-h-11">
+           <Toggle
+             id="filter-experts-only"
+             checked={expertsOnly}
+diff --git a/frontend/components/dashboard/DashboardHeader.tsx b/frontend/components/dashboard/DashboardHeader.tsx
+index 96c5bd3..409726b 100644
+--- a/frontend/components/dashboard/DashboardHeader.tsx
++++ b/frontend/components/dashboard/DashboardHeader.tsx
+@@ -19,7 +19,7 @@
+  * actions ("Analyze feedback" / "Analyze videos" / "Export"). This reverses
+  * an earlier decision (kept in git history) to render it as its own
+  * full-width bordered section below the header; `RunVisionAnalysis` itself
+- * now renders a slim `flex flex-col items-end` column — kicker + button +
++ * now renders a slim `flex flex-col` column — kicker + button +
+  * one status line — instead of owning a `<section>`, so nothing about its
+  * behaviour (poll loop, live region, notices) was cut, just how it lays out
+  * (see that component's module docstring). Like `enrichmentAction`/
+@@ -168,14 +168,13 @@ function HeaderStat({
+   return (
+     <div>
+       <p className="adp-kicker">{label}</p>
+-      <p
+-        className="adp-body font-bold mt-0.5"
+-        style={{ fontSize: '1.0625rem', color: tone ?? 'var(--color-ink)' }}
+-      >
++      {/* `.adp-h2` (the h2-18/20 step) replaces an off-scale 17px bold
++          body line (standalone audit). */}
++      <p className="adp-h2 mt-1" style={{ color: tone ?? 'var(--color-ink)' }}>
+         {value}
+       </p>
+       {helpText && (
+-        <p className="adp-mono mt-0.5" style={{ color: 'var(--color-ink-faint)' }}>
++        <p className="adp-mono mt-1" style={{ color: 'var(--color-ink-faint)' }}>
+           {helpText}
+         </p>
+       )}
+@@ -200,10 +199,12 @@ export default function DashboardHeader({
+   return (
+     <Card padding="md" as="section" aria-label="Game overview">
+       <div className="flex gap-4 items-start flex-wrap">
+-        {/* Monogram tile — stands in for cover art (Game has no image field). */}
++        {/* Monogram tile — stands in for cover art (Game has no image field).
++            64px, the manifest's mobile.maxFixedSizePx (was 74px, standalone
++            audit). */}
+         <div
+           aria-hidden="true"
+-          className="w-[74px] h-[74px] rounded-[var(--radius-lg)] shrink-0 flex items-center justify-center"
++          className="w-16 h-16 rounded-[var(--radius-lg)] shrink-0 flex items-center justify-center"
+           style={{
+             background:
+               'linear-gradient(135deg, var(--color-ink), var(--color-chart-1))',
+@@ -211,21 +212,22 @@ export default function DashboardHeader({
+         >
+           {/* `text-white` (Tailwind keyword utility, not a raw hex literal) —
+               the tile is always the dark ink→teal gradient above, so the
+-              monogram text is always white regardless of theme. */}
+-          <span className="adp-mono font-bold text-white" style={{ fontSize: '1.5rem' }}>
+-            {monogram(gameTitle)}
+-          </span>
++              monogram text is always white regardless of theme. The `!` suffix because
++              `.adp-h2` sets its own colour outside Tailwind's utility layer.
++              `.adp-h2` is the h2 step (was an off-scale 24px, standalone
++              audit). */}
++          <span className="adp-h2 text-white!">{monogram(gameTitle)}</span>
+         </div>
+ 
+         <div className="flex-1 min-w-[220px]">
+           <h1 className="adp-h1">{gameTitle}</h1>
+-          <p className="adp-mono mt-0.5" style={{ color: 'var(--color-ink-sub)' }}>
++          <p className="adp-mono mt-1" style={{ color: 'var(--color-ink-sub)' }}>
+             {[gamePlatform, `${buildCount} build${buildCount === 1 ? '' : 's'}`]
+               .filter(Boolean)
+               .join(' · ')}
+           </p>
+ 
+-          <div className="flex gap-6 flex-wrap mt-3.5" aria-label="Headline stats">
++          <div className="flex gap-6 flex-wrap mt-4" aria-label="Headline stats">
+             <HeaderStat label="Sentiment" value={sentiment.label} tone={SENTIMENT_TONE_COLOR[sentiment.tone]} />
+             <HeaderStat label="Total feedback" value={kpis ? kpis.total_feedback : '—'} />
+             <HeaderStat label="Play again" value={formatPlayAgain(kpis?.play_again_avg ?? null)} />
+diff --git a/frontend/components/dashboard/DashboardTabs.tsx b/frontend/components/dashboard/DashboardTabs.tsx
+index fc2638e..3899fe9 100644
+--- a/frontend/components/dashboard/DashboardTabs.tsx
++++ b/frontend/components/dashboard/DashboardTabs.tsx
+@@ -156,7 +156,7 @@ export default function DashboardTabs({
+               tabIndex={isActive ? 0 : -1}
+               onClick={() => selectTab(tab.key)}
+               onKeyDown={(event) => handleKeyDown(event, index)}
+-              className="adp-mono px-4 py-2.5 -mb-px border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
++              className="adp-mono min-h-11 px-4 py-3 -mb-px border-b-2 transition-colors whitespace-nowrap hover:text-[var(--color-ink)]! hover:border-[var(--color-hair)]! aria-selected:hover:border-[var(--color-accent)]! aria-selected:hover:text-[var(--color-accent-text)]! focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
+               style={{
+                 color: isActive ? 'var(--color-accent-text)' : 'var(--color-ink-sub)',
+                 borderColor: isActive ? 'var(--color-accent)' : 'transparent',
+diff --git a/frontend/components/dashboard/EnrichmentAction.tsx b/frontend/components/dashboard/EnrichmentAction.tsx
+index 49bcb3f..84b689d 100644
+--- a/frontend/components/dashboard/EnrichmentAction.tsx
++++ b/frontend/components/dashboard/EnrichmentAction.tsx
+@@ -44,6 +44,26 @@ const LABEL: Record<EnrichmentActionVariant, string> = {
+   retry: 'Retry feedback analysis',
+ };
+ 
++/** Small inline spinner shown while the trigger POST is in flight, same as
++ *  RunVisionAnalysis's (standalone audit: "Starting…" alone gave no sign of
++ *  progress). Decorative — the label change carries the state. */
++function Spinner(): React.JSX.Element {
++  return (
++    <svg
++      className="animate-spin"
++      width="14"
++      height="14"
++      viewBox="0 0 24 24"
++      fill="none"
++      aria-hidden="true"
++      data-testid="enrichment-action-spinner"
++    >
++      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.25" />
++      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
++    </svg>
++  );
++}
++
+ export type EnrichmentActionProps = {
+   gameId: string;
+   variant: EnrichmentActionVariant;
+@@ -84,28 +104,23 @@ export default function EnrichmentAction({
+   }, [gameId, router]);
+ 
+   return (
+-    <div className="flex flex-col items-end gap-1">
+-      <p
+-        className="adp-mono"
+-        style={{
+-          color: 'var(--color-ink-faint)',
+-          textTransform: 'uppercase',
+-          letterSpacing: '0.06em',
+-          fontSize: '0.7rem',
+-        }}
+-      >
+-        Feedback analysis
+-      </p>
++    // Stretched on phones, right-aligned from `sm` up (standalone audit):
++    // `items-end` alone left the button at its intrinsic width, so at 320px
++    // with 200% text it pushed past the header, and the three header actions
++    // didn't line up with each other on phones.
++    <div className="flex flex-col items-stretch sm:items-end gap-1">
++      <p className="adp-kicker">Feedback analysis</p>
+       {/* `sm` — header utility action, per buttonClasses.ts's size policy. */}
+       <Button variant="secondary" size="sm" onClick={handleClick} disabled={submitting}>
++        {submitting && <Spinner />}
+         {submitting ? 'Starting…' : LABEL[variant]}
+       </Button>
+       {stale && variant === 'refresh' && !submitting && (
+-        <p className="adp-mono text-right" style={{ color: 'var(--color-warn-text)', fontSize: '0.7rem' }}>
++        <p className="adp-mono sm:text-right" style={{ color: 'var(--color-warn-text)' }}>
+           Feedback changed — re-run
+         </p>
+       )}
+-      {error && <InlineError className="text-right">{error}</InlineError>}
++      {error && <InlineError className="sm:text-right">{error}</InlineError>}
+     </div>
+   );
+ }
+diff --git a/frontend/components/dashboard/EnrichmentExecutiveSection.tsx b/frontend/components/dashboard/EnrichmentExecutiveSection.tsx
+index 05790f0..3b48f91 100644
+--- a/frontend/components/dashboard/EnrichmentExecutiveSection.tsx
++++ b/frontend/components/dashboard/EnrichmentExecutiveSection.tsx
+@@ -10,7 +10,7 @@
+  * Server component — pure display, same posture as `EnrichmentPanel.tsx`
+  * (which this file was split out of). Takes the already-fetched report plus
+  * a caller-derived `status` as props; does not fetch or trigger a run itself
+- * — the single "Run AI analysis" CTA now lives once in `DashboardHeader`
++ * — the single "Analyze feedback" CTA now lives once in `DashboardHeader`
+  * (CH-423), not duplicated per tab, so this component has no `action` prop
+  * at all (unlike `EnrichmentPanel`, which rendered `action` in its own
+  * header bar because it WAS the only AI surface on the page).
+@@ -183,7 +183,7 @@ export default function EnrichmentExecutiveSection({
+       <Card {...SECTION_CARD_PROPS} as="section" aria-label="AI insights">
+         <EmptyState
+           title="No AI insights yet"
+-          body="Run AI analysis (above) to generate a narrative summary, sentiment breakdown, and theme clusters from this game's feedback."
++          body="Use Analyze feedback (above) to generate a narrative summary, sentiment breakdown, and theme clusters from this game's feedback."
+         />
+       </Card>
+     );
+diff --git a/frontend/components/dashboard/EnrichmentRecommendations.tsx b/frontend/components/dashboard/EnrichmentRecommendations.tsx
+index c065401..22a2c6e 100644
+--- a/frontend/components/dashboard/EnrichmentRecommendations.tsx
++++ b/frontend/components/dashboard/EnrichmentRecommendations.tsx
+@@ -6,7 +6,7 @@
+  * that file's module docstring for why the two are separated.
+  *
+  * Server component — pure display, same posture as `EnrichmentPanel.tsx`.
+- * No `action` prop: the single "Run AI analysis" CTA lives once in
++ * No `action` prop: the single "Analyze feedback" CTA lives once in
+  * `DashboardHeader` (CH-423), not duplicated per tab.
+  *
+  * Renders every `EnrichmentPanelStatus` the combined panel did, reusing
+@@ -61,7 +61,7 @@ export default function EnrichmentRecommendations({
+       <Card {...SECTION_CARD_PROPS} as="section" aria-label="Recommendations">
+         <EmptyState
+           title="No recommendations yet"
+-          body="Run AI analysis (above) to generate ranked, traceable recommendations from this game's feedback."
++          body="Use Analyze feedback (above) to generate ranked, traceable recommendations from this game's feedback."
+         />
+       </Card>
+     );
+diff --git a/frontend/components/dashboard/ExpertVsTesterPanel.tsx b/frontend/components/dashboard/ExpertVsTesterPanel.tsx
+index cb283c7..d70a189 100644
+--- a/frontend/components/dashboard/ExpertVsTesterPanel.tsx
++++ b/frontend/components/dashboard/ExpertVsTesterPanel.tsx
+@@ -45,7 +45,7 @@ function Bar({
+   color: string;
+ }): React.JSX.Element {
+   return (
+-    <div className="flex flex-col gap-1.5">
++    <div className="flex flex-col gap-2">
+       <div className="flex items-center justify-between gap-2">
+         <p className="adp-body font-semibold" style={{ color: 'var(--color-ink)' }}>
+           {label}
+diff --git a/frontend/components/dashboard/IssueClustersPanel.tsx b/frontend/components/dashboard/IssueClustersPanel.tsx
+index 0d6e312..a37680c 100644
+--- a/frontend/components/dashboard/IssueClustersPanel.tsx
++++ b/frontend/components/dashboard/IssueClustersPanel.tsx
+@@ -106,7 +106,7 @@ export default function IssueClustersPanel({
+                   {cluster.theme}
+                 </p>
+               </div>
+-              <p className="adp-body mt-1.5" style={{ color: 'var(--color-ink-sub)' }}>
++              <p className="adp-body mt-2" style={{ color: 'var(--color-ink-sub)' }}>
+                 {cluster.count} report{cluster.count === 1 ? '' : 's'} across {cluster.builds.length}{' '}
+                 build{cluster.builds.length === 1 ? '' : 's'}
+                 {cluster.first_seen_build_label
+diff --git a/frontend/components/dashboard/KpiRow.tsx b/frontend/components/dashboard/KpiRow.tsx
+index 1a91929..2696108 100644
+--- a/frontend/components/dashboard/KpiRow.tsx
++++ b/frontend/components/dashboard/KpiRow.tsx
+@@ -168,7 +168,7 @@ export default function KpiRow({
+             No severity assigned yet ({unset})
+           </p>
+         ) : (
+-          <div className="mt-2 flex flex-wrap gap-1.5">
++          <div className="mt-2 flex flex-wrap gap-2">
+             {(['critical', 'high', 'medium', 'low'] as const)
+               .filter((key) => kpis.severity_mix[key] > 0)
+               .map((key) => (
+diff --git a/frontend/components/dashboard/QuestionKeyColumn.tsx b/frontend/components/dashboard/QuestionKeyColumn.tsx
+index 7e6eec7..874b22d 100644
+--- a/frontend/components/dashboard/QuestionKeyColumn.tsx
++++ b/frontend/components/dashboard/QuestionKeyColumn.tsx
+@@ -51,7 +51,7 @@ function DistributionBars({
+   const keys = orderedKeys(distribution);
+   const max = Math.max(1, ...keys.map((k) => distribution[k]));
+   return (
+-    <ul className="flex flex-col gap-1.5" aria-label="Answer distribution">
++    <ul className="flex flex-col gap-2" aria-label="Answer distribution">
+       {keys.map((k) => {
+         const count = distribution[k];
+         const pct = Math.round((count / max) * 100);
+@@ -99,7 +99,7 @@ export default function QuestionKeyColumn({
+       <div className="flex items-start justify-between gap-2 mb-3">
+         <div className="flex flex-col gap-1">
+           <h2 className="adp-h2">{rollup.wording}</h2>
+-          <div className="flex items-center gap-1.5">
++          <div className="flex items-center gap-2">
+             {rollup.is_core && (
+               <Badge variant="info" size="sm">
+                 Core
+@@ -142,7 +142,7 @@ export default function QuestionKeyColumn({
+                 <p className="adp-body" style={{ color: 'var(--color-ink)' }}>
+                   {entry.excerpt}
+                 </p>
+-                <p className="adp-mono mt-1.5" style={{ color: 'var(--color-ink-faint)' }}>
++                <p className="adp-mono mt-2" style={{ color: 'var(--color-ink-faint)' }}>
+                   {entry.build_label} ·{' '}
+                   <time dateTime={entry.created_at}>{humanizeDate(entry.created_at)}</time>
+                 </p>
+diff --git a/frontend/components/dashboard/SeverityByBuildChart.tsx b/frontend/components/dashboard/SeverityByBuildChart.tsx
+index 7af895a..79cb8ab 100644
+--- a/frontend/components/dashboard/SeverityByBuildChart.tsx
++++ b/frontend/components/dashboard/SeverityByBuildChart.tsx
+@@ -237,7 +237,7 @@ function SortToggle({
+ 
+ function sortToggleClass(active: boolean): string {
+   const base =
+-    'px-3 py-1.5 rounded-[var(--radius-card-inner)] adp-mono transition-colors duration-[var(--dur-fast)] ' +
++    'min-h-11 px-3 py-2 rounded-[var(--radius-card-inner)] adp-mono transition-colors duration-[var(--dur-fast)] ' +
+     'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-1 ' +
+     'focus-visible:ring-offset-[var(--color-bg)]';
+   if (active) return `${base} bg-[var(--color-surface)] shadow-sm`;
+@@ -323,25 +323,25 @@ export default function SeverityByBuildChart({
+         className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 adp-mono"
+         style={{ fontSize: 12, color: 'var(--color-ink-sub)' }}
+       >
+-        <span className="inline-flex items-center gap-1.5">
++        <span className="inline-flex items-center gap-2">
+           <LegendSwatch color={CRIT} /> Critical
+         </span>
+-        <span className="inline-flex items-center gap-1.5">
++        <span className="inline-flex items-center gap-2">
+           <LegendSwatch color={HIGH} /> High
+         </span>
+-        <span className="inline-flex items-center gap-1.5">
++        <span className="inline-flex items-center gap-2">
+           <LegendSwatch color={MED} /> Medium
+         </span>
+-        <span className="inline-flex items-center gap-1.5">
++        <span className="inline-flex items-center gap-2">
+           <LegendSwatch color={LOW} /> Low
+         </span>
+-        <span className="inline-flex items-center gap-1.5">
++        <span className="inline-flex items-center gap-2">
+           <LegendSwatch hatch /> Untriaged
+         </span>
+       </div>
+ 
+       {/* rows */}
+-      <div className="mt-4 flex flex-col gap-3.5">
++      <div className="mt-4 flex flex-col gap-4">
+         {displayRows.map((r) => {
+           const ch = r.critical + r.high;
+           const barShare = (r.total / maxTotal) * 100;
+@@ -349,7 +349,7 @@ export default function SeverityByBuildChart({
+           const isOther = r.key === '__other__';
+           const buildHref = `/sessions?game=${gameId}&build=${r.key}`;
+           const critHref = r.critical > 0 ? `${buildHref}&severity=critical` : buildHref;
+-          const cellLink = 'rounded-lg py-1.5 px-2 -mx-2 transition-colors hover:bg-black/[0.035]';
++          const cellLink = 'rounded-lg py-2 px-2 -mx-2 transition-colors hover:bg-black/[0.035]';
+           const innerGrid = { gridTemplateColumns: '120px 1fr' } as const;
+           // CH-484: one drill target per severity. The four coloured segments
+           // each link to that build filtered to their severity; the folded
+diff --git a/frontend/components/vision/RunVisionAnalysis.tsx b/frontend/components/vision/RunVisionAnalysis.tsx
+index 2f83698..8f28cda 100644
+--- a/frontend/components/vision/RunVisionAnalysis.tsx
++++ b/frontend/components/vision/RunVisionAnalysis.tsx
+@@ -18,7 +18,7 @@
+  * feature cut: the trigger, the poll loop, the live status text, and every
+  * notice (queued / global-off / error) all still exist, just laid out as a
+  * kicker + button + one status line, matching `EnrichmentAction`'s own
+- * `flex flex-col items-end` header-action shape instead of owning its own
++ * `flex flex-col` header-action shape instead of owning its own
+  * bordered `<section>`.
+  *
+  * Data seam (contract, corrected per CH-253):
+@@ -194,17 +194,14 @@ export default function RunVisionAnalysis({
+       : null;
+ 
+   return (
+-    // Slim header-action column — same `flex flex-col items-end` shape as
++    // Slim header-action column — same `flex flex-col` shape as
+     // `EnrichmentAction`'s own header CTA (module docstring). No outer
+     // bordered section anymore; the mock draws this as one of three stacked
+-    // header buttons, not a separate full-width block.
+-    <div className="flex flex-col items-end gap-1" aria-label="Video analysis">
+-      <p
+-        className="adp-mono"
+-        style={{ color: 'var(--color-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '0.7rem' }}
+-      >
+-        Video analysis
+-      </p>
++    // header buttons, not a separate full-width block. Stretched on phones,
++    // right-aligned from `sm` up (standalone audit: at 320px/200% text the
++    // intrinsic-width button spilled past the header).
++    <div className="flex flex-col items-stretch sm:items-end gap-1" aria-label="Video analysis">
++      <p className="adp-kicker">Video analysis</p>
+ 
+       <Button variant="secondary" size="sm" onClick={handleRun} disabled={disabled}>
+         {(submitting || inFlight) && <Spinner />}
+@@ -216,11 +213,11 @@ export default function RunVisionAnalysis({
+           prose line carried, just at the `.adp-mono` caption size the rest
+           of the header column uses. */}
+       {zeroHint ? (
+-        <p className="adp-mono text-right" style={{ color: 'var(--color-ink-faint)', fontSize: '0.7rem' }}>
++        <p className="adp-mono sm:text-right" style={{ color: 'var(--color-ink-faint)' }}>
+           {zeroHint}
+         </p>
+       ) : (
+-        <p className="adp-mono text-right" style={{ color: 'var(--color-ink-sub)', fontSize: '0.7rem' }}>
++        <p className="adp-mono sm:text-right" style={{ color: 'var(--color-ink-sub)' }}>
+           <span style={{ color: 'var(--color-accent-text)' }}>{analyzable}</span> of {counts.total}{' '}
+           video{counts.total === 1 ? '' : 's'} ready to analyze.
+         </p>
+@@ -231,8 +228,8 @@ export default function RunVisionAnalysis({
+         <p
+           role="status"
+           aria-live="polite"
+-          className="adp-mono text-right"
+-          style={{ color: 'var(--color-ink-sub)', fontSize: '0.7rem' }}
++          className="adp-mono sm:text-right"
++          style={{ color: 'var(--color-ink-sub)' }}
+         >
+           queued {counts.queued} · processing {counts.processing} · complete{' '}
+           {counts.complete} · failed {counts.failed}
+@@ -242,8 +239,8 @@ export default function RunVisionAnalysis({
+       {notice?.kind === 'queued' && (
+         <p
+           role="status"
+-          className="adp-mono text-right"
+-          style={{ color: 'var(--color-info-text)', fontSize: '0.7rem' }}
++          className="adp-mono sm:text-right"
++          style={{ color: 'var(--color-info-text)' }}
+         >
+           {notice.count} video{notice.count === 1 ? '' : 's'} queued for vision analysis.
+         </p>
+@@ -257,7 +254,7 @@ export default function RunVisionAnalysis({
+         </Banner>
+       )}
+       {notice?.kind === 'error' && (
+-        <InlineError className="text-right">Could not start analysis: {notice.message}</InlineError>
++        <InlineError className="sm:text-right">Could not start analysis: {notice.message}</InlineError>
+       )}
+     </div>
+   );
+-- 
+2.43.0
+
+From ae8e7a081556b9847f762817f931060718d62037 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 30 Sep 2026 08:31:48 +0000
+Subject: [PATCH 6/9] fix(capture): standalone audit fixes for the tester
+ capture flow (GFE-CAPTURE)
+
+From the Design System Agent's standalone audit:
+- Answer pills are 44px and a selected pill shows a check as well as the
+  fill; weights move to 700/500.
+- The "not available" game card offers Back to games (no dead end);
+  the skip link is 44px.
+- /brief shows a skeleton while it loads instead of an empty page.
+- Scale end captions wrap instead of running together at 200% text.
+- The thank-you summary heading sits outside the <dl>; the session ID
+  wraps instead of truncating to one character.
+- The feedback screen has an h1 (kept at the h2 size).
+- The required asterisk uses --color-negative-text (AA).
+- Step and summary labels use .adp-kicker instead of 11.2px text.
+- Screenshot thumbnails are 64px (maxFixedSizePx).
+- The drop zone says "or choose a file", which works on touch.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ .../capture-standalone-audit.test.tsx         | 33 +++++++++++++++++++
+ frontend/__tests__/dropzone.test.tsx          |  4 +--
+ frontend/app/brief/page.tsx                   | 11 +++++++
+ frontend/app/thankyou/page.tsx                | 11 +++----
+ frontend/app/upload/page.tsx                  |  2 +-
+ frontend/components/DropZone.tsx              |  2 +-
+ frontend/components/PerGameEntry.tsx          |  9 +++--
+ frontend/components/ScreenshotAttach.tsx      |  2 +-
+ frontend/components/VideoUploader.tsx         |  2 +-
+ .../feedback-form/CheckboxPillGroup.tsx       | 11 +++++--
+ .../feedback-form/DynamicFeedbackForm.tsx     |  6 ++--
+ .../feedback-form/QuestionField.tsx           |  2 +-
+ .../feedback-form/RadioPillGroup.tsx          | 11 +++++--
+ .../components/feedback-form/ScaleAnswer.tsx  |  4 +--
+ 14 files changed, 86 insertions(+), 24 deletions(-)
+ create mode 100644 frontend/__tests__/capture-standalone-audit.test.tsx
+
+diff --git a/frontend/__tests__/capture-standalone-audit.test.tsx b/frontend/__tests__/capture-standalone-audit.test.tsx
+new file mode 100644
+index 0000000..59da917
+--- /dev/null
++++ b/frontend/__tests__/capture-standalone-audit.test.tsx
+@@ -0,0 +1,33 @@
++/**
++ * Capture-flow fixes from the Design System Agent's standalone audit
++ * (design-agent-run/existing-pages/gfe-capture/): 44px answer pills, and a
++ * selected pill that shows a check, not only a colour change.
++ */
++import { describe, it, expect } from 'vitest';
++import { renderToStaticMarkup } from 'react-dom/server';
++import RadioPillGroup from '@/components/feedback-form/RadioPillGroup';
++import CheckboxPillGroup from '@/components/feedback-form/CheckboxPillGroup';
++
++const OPTIONS = [
++  { key: 'yes', label: 'Yes' },
++  { key: 'no', label: 'No' },
++];
++
++describe('answer pills', () => {
++  it('radio pills are 44px and the selected one carries a check', () => {
++    const html = renderToStaticMarkup(
++      <RadioPillGroup name="q" options={OPTIONS} selectedKey="yes" onSelect={() => {}} labelledBy="l" />,
++    );
++    expect(html).toContain('min-h-11');
++    expect(html).toContain('min-w-11');
++    expect(html.match(/<svg/g)?.length).toBe(1);
++  });
++
++  it('checkbox pills are 44px and only checked ones carry a check', () => {
++    const html = renderToStaticMarkup(
++      <CheckboxPillGroup options={OPTIONS} selectedKeys={[]} onToggle={() => {}} labelledBy="l" />,
++    );
++    expect(html).toContain('min-h-11');
++    expect(html).not.toContain('<svg');
++  });
++});
+diff --git a/frontend/__tests__/dropzone.test.tsx b/frontend/__tests__/dropzone.test.tsx
+index c62b827..2072e7a 100644
+--- a/frontend/__tests__/dropzone.test.tsx
++++ b/frontend/__tests__/dropzone.test.tsx
+@@ -55,8 +55,8 @@ describe('DropZone', () => {
+     expect(html).toContain('Drag and drop');
+   });
+ 
+-  it('includes "click to browse" instruction', () => {
++  it('includes the "choose a file" instruction (works on touch, not pointer-only)', () => {
+     const html = render(<DropZone onFile={() => {}} />);
+-    expect(html).toContain('click to browse');
++    expect(html).toContain('choose a file');
+   });
+ });
+diff --git a/frontend/app/brief/page.tsx b/frontend/app/brief/page.tsx
+index 5d4b797..2779b38 100644
+--- a/frontend/app/brief/page.tsx
++++ b/frontend/app/brief/page.tsx
+@@ -119,6 +119,7 @@ import { hasBriefContent } from '@/lib/brief';
+ import GameBrief from '@/components/GameBrief';
+ import Button from '@/components/primitives/Button';
+ import Card from '@/components/primitives/Card';
++import { SkeletonText } from '@/components/primitives/Skeleton';
+ import type { Game } from '@/lib/types';
+ 
+ // useSyncExternalStore plumbing for "has the client mounted yet" — no
+@@ -267,6 +268,16 @@ function BriefPageInner(): React.JSX.Element | null {
+     }
+   }, [hasMounted, shouldSkip, sid, router]);
+ 
++  if (hasMounted && stillWaitingOnFetch && !shouldSkip) {
++    // A slow fetch shows a skeleton instead of an empty page (standalone
++    // audit: requireLoadingAnimation).
++    return (
++      <div className="max-w-2xl mx-auto" role="status" aria-label="Loading the game brief">
++        <SkeletonText lines={4} />
++      </div>
++    );
++  }
++
+   if (!hasMounted || stillWaitingOnFetch || shouldSkip || !resolved) {
+     // Pre-mount, still fetching, still-skipping, and mid-navigation-to-
+     // /upload all render nothing — no flash of the wrong (or missing)
+diff --git a/frontend/app/thankyou/page.tsx b/frontend/app/thankyou/page.tsx
+index 7d3ed3c..f1ad005 100644
+--- a/frontend/app/thankyou/page.tsx
++++ b/frontend/app/thankyou/page.tsx
+@@ -83,13 +83,10 @@ function ThankYouPageInner(): React.JSX.Element {
+         {/* Summary card — only when selection context is available */}
+         {(selection !== null || sessionId !== null) && (
+           <Card shadow={false} border padding="sm">
++            {/* The heading sits above the <dl>: a <p> inside it was invalid
++                markup (standalone audit). */}
++            <h2 className="adp-kicker mb-3 text-left">Session summary</h2>
+             <dl className="space-y-3 text-left">
+-              <p
+-                className="adp-mono text-[0.7rem] uppercase tracking-[0.1em] mb-3"
+-                style={{ color: 'var(--color-ink-faint)' }}
+-              >
+-                Session summary
+-              </p>
+ 
+               {selection !== null && (
+                 <>
+@@ -121,7 +118,7 @@ function ThankYouPageInner(): React.JSX.Element {
+                     Session ID
+                   </dt>
+                   <dd
+-                    className="adp-mono text-right truncate max-w-[60%]"
++                    className="adp-mono text-right min-w-0 break-all"
+                     style={{ color: 'var(--color-ink-faint)' }}
+                     title={sessionId}
+                   >
+diff --git a/frontend/app/upload/page.tsx b/frontend/app/upload/page.tsx
+index 23bb483..ce6277b 100644
+--- a/frontend/app/upload/page.tsx
++++ b/frontend/app/upload/page.tsx
+@@ -110,7 +110,7 @@ function UploadPageInner(): React.JSX.Element {
+       {/* Step indicator */}
+       <div className="flex items-center gap-2">
+         <p
+-          className="adp-mono text-[0.7rem] uppercase tracking-[0.1em]"
++          className="adp-kicker"
+           style={{ color: 'var(--color-ink-faint)' }}
+         >
+           Step 1 of 2
+diff --git a/frontend/components/DropZone.tsx b/frontend/components/DropZone.tsx
+index 9fb4c66..11818c4 100644
+--- a/frontend/components/DropZone.tsx
++++ b/frontend/components/DropZone.tsx
+@@ -178,7 +178,7 @@ export default function DropZone({
+             {zoneActive ? 'Drop to upload' : 'Drag and drop your recording here'}
+           </p>
+           <p className="adp-mono" style={{ color: 'var(--color-ink-sub)' }}>
+-            or click to browse
++            or choose a file
+           </p>
+         </div>
+ 
+diff --git a/frontend/components/PerGameEntry.tsx b/frontend/components/PerGameEntry.tsx
+index 1c7ea01..5946b38 100644
+--- a/frontend/components/PerGameEntry.tsx
++++ b/frontend/components/PerGameEntry.tsx
+@@ -101,6 +101,7 @@
+  */
+ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+ import { useRouter } from 'next/navigation';
++import Link from 'next/link';
+ import Banner from '@/components/primitives/Banner';
+ import Card from '@/components/primitives/Card';
+ import Button from '@/components/primitives/Button';
+@@ -855,7 +856,7 @@ export default function PerGameEntry({
+           shadow={false}
+           role="status"
+           aria-live="polite"
+-          className="flex flex-col items-start gap-2"
++          className="flex flex-col items-start gap-3"
+         >
+           <p className="adp-body" style={{ color: 'var(--color-ink-sub)' }}>
+             {/* Shown ONLY for a fallback-only (registry, e.g. Pong) embed
+@@ -867,6 +868,10 @@ export default function PerGameEntry({
+                 out-of-band-playable before any bundle existed for it). */}
+             The in-browser games are not available right now.
+           </p>
++          {/* Standalone audit: this card was a dead end with no way back. */}
++          <Link href="/games" className={buttonClasses({ variant: 'secondary', size: 'md' })}>
++            Back to games
++          </Link>
+         </Card>
+       ) : state.phase === 'error' ? (
+         <Card
+@@ -984,7 +989,7 @@ export default function PerGameEntry({
+               <button
+                 type="button"
+                 onClick={handleSkipToFeedback}
+-                className="adp-body underline text-[var(--color-ink-sub)] hover:text-[var(--color-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-sm"
++                className="adp-body underline inline-flex items-center min-h-11 text-left text-[var(--color-ink-sub)] hover:text-[var(--color-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-sm"
+               >
+                 Give feedback without playing
+               </button>
+diff --git a/frontend/components/ScreenshotAttach.tsx b/frontend/components/ScreenshotAttach.tsx
+index a46b0e2..1f8f980 100644
+--- a/frontend/components/ScreenshotAttach.tsx
++++ b/frontend/components/ScreenshotAttach.tsx
+@@ -270,7 +270,7 @@ export default function ScreenshotAttach({
+             {items.map((item) => (
+               <li key={item.localId} className="relative w-24">
+                 <div
+-                  className="relative w-24 h-24 rounded-[var(--radius-card-inner)] border overflow-hidden"
++                  className="relative w-16 h-16 rounded-[var(--radius-card-inner)] border overflow-hidden"
+                   style={{
+                     borderColor:
+                       item.status === 'error'
+diff --git a/frontend/components/VideoUploader.tsx b/frontend/components/VideoUploader.tsx
+index be24570..6691bf0 100644
+--- a/frontend/components/VideoUploader.tsx
++++ b/frontend/components/VideoUploader.tsx
+@@ -378,7 +378,7 @@ export default function VideoUploader({
+         <div className="flex items-center justify-between gap-2">
+           <div className="min-w-0">
+             <p
+-              className="adp-mono text-[0.7rem] uppercase tracking-[0.1em] mb-0.5"
++              className="adp-kicker mb-1"
+               style={{ color: 'var(--color-positive-text)' }}
+             >
+               Ready to submit
+diff --git a/frontend/components/feedback-form/CheckboxPillGroup.tsx b/frontend/components/feedback-form/CheckboxPillGroup.tsx
+index 613b287..aef01b9 100644
+--- a/frontend/components/feedback-form/CheckboxPillGroup.tsx
++++ b/frontend/components/feedback-form/CheckboxPillGroup.tsx
+@@ -54,14 +54,21 @@ export default function CheckboxPillGroup({
+               className="sr-only peer"
+             />
+             <span
+-              className="inline-flex items-center justify-center px-3 py-1.5 rounded-(--radius-pill) adp-mono text-[0.75rem] border transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-(--color-accent) peer-focus-visible:ring-offset-(--color-surface)"
++              className="inline-flex items-center justify-center gap-1 min-h-11 min-w-11 px-3 py-2 rounded-(--radius-pill) adp-mono text-[0.75rem] border transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-(--color-accent) peer-focus-visible:ring-offset-(--color-surface)"
+               style={{
+                 borderColor: checked ? 'var(--color-accent)' : 'var(--color-hair)',
+                 color: checked ? 'var(--color-accent-ink)' : 'var(--color-ink-sub)',
+                 background: checked ? 'var(--color-accent)' : 'transparent',
+-                fontWeight: checked ? 600 : 400,
++                fontWeight: checked ? 700 : 500,
+               }}
+             >
++              {/* A check as well as the fill, so selection isn't shown by
++                  colour alone (standalone audit). */}
++              {checked && (
++                <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" focusable="false">
++                  <path d="M3.5 8.5 L6.5 11.5 L12.5 4.5" strokeLinecap="round" strokeLinejoin="round" />
++                </svg>
++              )}
+               {opt.label}
+             </span>
+           </label>
+diff --git a/frontend/components/feedback-form/DynamicFeedbackForm.tsx b/frontend/components/feedback-form/DynamicFeedbackForm.tsx
+index b5a0d54..a8017d7 100644
+--- a/frontend/components/feedback-form/DynamicFeedbackForm.tsx
++++ b/frontend/components/feedback-form/DynamicFeedbackForm.tsx
+@@ -222,9 +222,11 @@ export default function DynamicFeedbackForm({
+         <p className="adp-kicker" style={{ color: 'var(--color-ink-faint)' }}>
+           Step 2 of 2 · Your feedback
+         </p>
+-        <h2 className="adp-h2" style={{ color: 'var(--color-ink)' }}>
++        {/* The feedback screen's page heading (standalone audit): an h1, kept
++            at the h2 size it had. */}
++        <h1 className="adp-h2" style={{ color: 'var(--color-ink)' }}>
+           A few questions
+-        </h2>
++        </h1>
+         <p className="adp-body" style={{ color: 'var(--color-ink-sub)' }}>
+           Takes a couple of minutes. Starred questions are required, the rest
+           are optional.
+diff --git a/frontend/components/feedback-form/QuestionField.tsx b/frontend/components/feedback-form/QuestionField.tsx
+index 6c25c00..48d029e 100644
+--- a/frontend/components/feedback-form/QuestionField.tsx
++++ b/frontend/components/feedback-form/QuestionField.tsx
+@@ -42,7 +42,7 @@ export default function QuestionField({
+       <p id={labelId} className="adp-body font-medium block" style={{ color: 'var(--color-ink)' }}>
+         {question.wording}
+         {question.required ? (
+-          <span aria-hidden="true" className="ml-1 adp-mono" style={{ color: 'var(--color-negative)' }}>
++          <span aria-hidden="true" className="ml-1 adp-mono" style={{ color: 'var(--color-negative-text)' }}>
+             *
+           </span>
+         ) : (
+diff --git a/frontend/components/feedback-form/RadioPillGroup.tsx b/frontend/components/feedback-form/RadioPillGroup.tsx
+index a76e518..a4e1b87 100644
+--- a/frontend/components/feedback-form/RadioPillGroup.tsx
++++ b/frontend/components/feedback-form/RadioPillGroup.tsx
+@@ -75,14 +75,21 @@ export default function RadioPillGroup({
+               className="sr-only peer"
+             />
+             <span
+-              className="inline-flex items-center justify-center min-w-9 px-3 py-1.5 rounded-(--radius-pill) adp-mono text-[0.75rem] border transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-(--color-accent) peer-focus-visible:ring-offset-(--color-surface)"
++              className="inline-flex items-center justify-center gap-1 min-h-11 min-w-11 px-3 py-2 rounded-(--radius-pill) adp-mono text-[0.75rem] border transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-(--color-accent) peer-focus-visible:ring-offset-(--color-surface)"
+               style={{
+                 borderColor: checked ? 'var(--color-accent)' : 'var(--color-hair)',
+                 color: checked ? 'var(--color-accent-ink)' : 'var(--color-ink-sub)',
+                 background: checked ? 'var(--color-accent)' : 'transparent',
+-                fontWeight: checked ? 600 : 400,
++                fontWeight: checked ? 700 : 500,
+               }}
+             >
++              {/* A check as well as the fill, so selection isn't shown by
++                  colour alone (standalone audit). */}
++              {checked && (
++                <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" focusable="false">
++                  <path d="M3.5 8.5 L6.5 11.5 L12.5 4.5" strokeLinecap="round" strokeLinejoin="round" />
++                </svg>
++              )}
+               {opt.label}
+             </span>
+           </label>
+diff --git a/frontend/components/feedback-form/ScaleAnswer.tsx b/frontend/components/feedback-form/ScaleAnswer.tsx
+index a940681..9539660 100644
+--- a/frontend/components/feedback-form/ScaleAnswer.tsx
++++ b/frontend/components/feedback-form/ScaleAnswer.tsx
+@@ -50,13 +50,13 @@ export default function ScaleAnswer({
+       />
+       {(minLabel || maxLabel) && (
+         <div
+-          className="flex justify-between adp-mono text-[0.7rem]"
++          className="flex flex-wrap justify-between gap-x-4 gap-y-1 adp-mono"
+           style={{ color: 'var(--color-ink-faint)' }}
+         >
+           {/* Per-question endpoint captions (CH-311) — number-prefixed to
+               match the reference design's "1 · Nothing / 5 · Very much". */}
+           <span>{minLabel ? `${min} · ${minLabel}` : ''}</span>
+-          <span>{maxLabel ? `${max} · ${maxLabel}` : ''}</span>
++          <span className="ml-auto text-right">{maxLabel ? `${max} · ${maxLabel}` : ''}</span>
+         </div>
+       )}
+     </div>
+-- 
+2.43.0
+
+From 287d7a8458821273fb4c26b3f15d75ccf71e3aaa Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 30 Sep 2026 08:33:10 +0000
+Subject: [PATCH 7/9] fix(admin): standalone audit fixes for /admin and
+ /admin/questions (GFE-ADMIN)
+
+From the Design System Agent's standalone audit:
+- Every select uses selectClasses (44px, padded, native arrow); the
+  question form's 26px selects are gone.
+- The flag switch is the Toggle primitive instead of a hand-built copy.
+- /admin/questions shows the ?error= / ?ok= result banners, so suppress
+  and retire no longer succeed or fail silently.
+- Checkbox labels, reorder arrows (8px apart) and chip remove buttons are
+  44px targets; the remove buttons have a visible focus ring and name
+  their scope; suppression chips name the build, not a raw id.
+- Emails and question text wrap instead of truncating.
+- Required asterisk uses --color-negative-text; the inline 11.2px text,
+  600 weights and off-scale spacing move to the scale.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ .../__tests__/preview-game-select.test.tsx    |  5 --
+ frontend/app/admin/page.tsx                   | 81 ++++++++-----------
+ frontend/app/admin/questions/page.tsx         | 77 +++++++++++++-----
+ .../components/PreviewGameSelect.stories.tsx  |  4 -
+ frontend/components/PreviewGameSelect.tsx     | 14 ++--
+ frontend/components/QuestionAuthoringForm.tsx | 29 ++++---
+ frontend/components/ReorderControl.tsx        |  8 +-
+ 7 files changed, 122 insertions(+), 96 deletions(-)
+
+diff --git a/frontend/__tests__/preview-game-select.test.tsx b/frontend/__tests__/preview-game-select.test.tsx
+index b1c3f3e..f231cbc 100644
+--- a/frontend/__tests__/preview-game-select.test.tsx
++++ b/frontend/__tests__/preview-game-select.test.tsx
+@@ -88,7 +88,6 @@ describe('PreviewGameSelect', () => {
+         games={GAMES}
+         selectedGameId=""
+         expert={false}
+-        selectClassName="cls"
+       />,
+     );
+     setValue(select(), 'game-a');
+@@ -101,7 +100,6 @@ describe('PreviewGameSelect', () => {
+         games={GAMES}
+         selectedGameId=""
+         expert={false}
+-        selectClassName="cls"
+       />,
+     );
+     expect(
+@@ -119,7 +117,6 @@ describe('PreviewGameSelect', () => {
+         games={GAMES}
+         selectedGameId="game-a"
+         expert={false}
+-        selectClassName="cls"
+       />,
+     );
+     // Selected-state UI is present.
+@@ -141,7 +138,6 @@ describe('PreviewGameSelect', () => {
+         games={GAMES}
+         selectedGameId="game-a"
+         expert={false}
+-        selectClassName="cls"
+       />,
+     );
+     const checkbox = container.querySelector(
+@@ -165,7 +161,6 @@ describe('PreviewGameSelect', () => {
+         games={GAMES}
+         selectedGameId="game-a"
+         expert={false}
+-        selectClassName="cls"
+       />,
+     );
+     setValue(select(), '');
+diff --git a/frontend/app/admin/page.tsx b/frontend/app/admin/page.tsx
+index 1255779..2230eed 100644
+--- a/frontend/app/admin/page.tsx
++++ b/frontend/app/admin/page.tsx
+@@ -7,6 +7,8 @@ import { backendFetch } from "@/lib/backend-fetch.server";
+ import Banner from "@/components/primitives/Banner";
+ import Badge from "@/components/primitives/Badge";
+ import { buttonClasses } from "@/components/primitives/buttonClasses";
++import { selectClasses } from "@/components/primitives/selectClasses";
++import Toggle from "@/components/primitives/Toggle";
+ import EmptyState from "@/components/primitives/EmptyState";
+ import type {
+   AdminUser,
+@@ -465,21 +467,22 @@ export default async function AdminPage({
+     // Feature flags are optional — don't block the page
+   }
+ 
+-  async function toggleFlag(formData: FormData): Promise<void> {
++  // Standalone audit: the flag switch is now the Toggle primitive (a client
++  // component), so this takes the next state directly instead of FormData.
++  // Bound per flag below: setFlag.bind(null, flag.key).
++  async function setFlag(flagKey: string, next: boolean): Promise<void> {
+     "use server";
+     const session = await auth();
+     if (!session?.user?.isAdmin || !session.user.email) {
+       redirect("/");
+     }
+-    const flagKey = String(formData.get("flag_key") ?? "");
+-    const enabled = formData.get("enabled") === "true";
+     try {
+       const res = await backendFetch(
+         `/api/admin/flags/${encodeURIComponent(flagKey)}`,
+         session.user.email,
+         {
+           method: "PUT",
+-          body: JSON.stringify({ enabled: !enabled }),
++          body: JSON.stringify({ enabled: next }),
+         },
+       );
+       if (!res.ok) {
+@@ -512,9 +515,12 @@ export default async function AdminPage({
+   const submitBtn =
+     buttonClasses({ variant: "primary", size: "md" }) + " w-full sm:w-auto";
+   const inputBase =
+-    "w-full sm:flex-1 bg-[var(--color-field)] border border-[var(--color-hair)] rounded-[var(--radius-button)] px-3 py-2.5 adp-mono text-[var(--color-ink)] placeholder:text-[var(--color-ink-faint)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus:border-[var(--color-accent)] min-h-11";
+-  const selectBase =
+-    "bg-[var(--color-field)] border border-[var(--color-hair)] rounded-[var(--radius-button)] px-3 py-2.5 adp-mono text-[var(--color-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus:border-[var(--color-accent)] min-h-11";
++    "w-full sm:flex-1 bg-[var(--color-field)] border border-[var(--color-hair)] rounded-[var(--radius-button)] px-3 py-2 adp-mono text-[var(--color-ink)] placeholder:text-[var(--color-ink-faint)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus:border-[var(--color-accent)] min-h-11";
++  // Standalone audit: the one approved NativeSelect style (full width on
++  // phone, sized per call site from sm up).
++  const selectMono = (className: string) => selectClasses({ mono: true, className });
++  // Checkbox labels carry the 44px hit area; the 16px box sits inside it.
++  const checkboxLabel = "adp-mono flex items-center gap-2 shrink-0 min-h-11";
+ 
+   return (
+     <div className="-mx-4 sm:-mx-6 -my-6 sm:-my-8 bg-[var(--color-bg)] text-[var(--color-ink)] min-h-[calc(100svh-4rem)]">
+@@ -587,14 +593,14 @@ export default async function AdminPage({
+                     {/* Email + studio name */}
+                     <div className="flex-1 min-w-0">
+                       <span
+-                        className="adp-mono truncate block"
++                        className="adp-mono block [overflow-wrap:anywhere]"
+                         style={{ color: "var(--color-ink)" }}
+                       >
+                         {u.email}
+                       </span>
+                       {u.studio_id && (
+                         <span
+-                          className="adp-mono truncate block mt-0.5"
++                          className="adp-mono block mt-1 [overflow-wrap:anywhere]"
+                           style={{ color: "var(--color-ink-faint)", fontSize: "0.75rem" }}
+                         >
+                           {/* Show studio name; fall back to a short id if the
+@@ -605,7 +611,7 @@ export default async function AdminPage({
+                       )}
+                       {readOnly && (
+                         <span
+-                          className="adp-mono truncate block mt-0.5"
++                          className="adp-mono block mt-1 [overflow-wrap:anywhere]"
+                           style={{ color: "var(--color-ink-faint)", fontSize: "0.75rem" }}
+                         >
+                           Managed via AUTH_SUPER_ADMIN_EMAILS — read-only
+@@ -614,7 +620,7 @@ export default async function AdminPage({
+                     </div>
+ 
+                     {/* Role + marker badges — friendly label (CH-250) */}
+-                    <div className="flex items-center gap-1.5 flex-wrap">
++                    <div className="flex items-center gap-2 flex-wrap">
+                       <Badge
+                         variant={ROLE_BADGE_VARIANT[u.role]}
+                         size="sm"
+@@ -673,7 +679,7 @@ export default async function AdminPage({
+                         id={`studio-${u.id}`}
+                         name="studio_id"
+                         defaultValue={u.studio_id ?? ""}
+-                        className={`${selectBase} w-40`}
++                        className={selectMono("sm:w-auto")}
+                         aria-label={`Studio for ${u.email}, required when role is Tester or Reviewer`}
+                       >
+                         <option value="">Select a studio…</option>
+@@ -693,7 +699,7 @@ export default async function AdminPage({
+                         id={`role-${u.id}`}
+                         name="role"
+                         defaultValue={u.role}
+-                        className={selectBase}
++                        className={selectMono("sm:w-auto")}
+                         aria-label={`Change role for ${u.email}`}
+                       >
+                         {ROLES.map((r) => (
+@@ -707,7 +713,7 @@ export default async function AdminPage({
+                           above. */}
+                       <label
+                         htmlFor={`expert-${u.id}`}
+-                        className="adp-mono flex items-center gap-1.5 shrink-0"
++                        className={checkboxLabel}
+                         style={{ color: "var(--color-ink-sub)" }}
+                       >
+                         <input
+@@ -776,7 +782,7 @@ export default async function AdminPage({
+               id="add-role"
+               name="role"
+               defaultValue="viewer"
+-              className={selectBase}
++              className={selectMono("sm:w-auto")}
+               aria-label="Role"
+             >
+               {ROLES.map((r) => (
+@@ -793,7 +799,7 @@ export default async function AdminPage({
+               id="add-studio"
+               name="studio_id"
+               defaultValue=""
+-              className={`${selectBase} sm:flex-1`}
++              className={selectMono("sm:flex-1")}
+               aria-label="Studio (required for Tester and Reviewer roles)"
+             >
+               <option value="">Select a studio…</option>
+@@ -807,7 +813,7 @@ export default async function AdminPage({
+                 person, independent of role/studio. Off by default. */}
+             <label
+               htmlFor="add-is-expert"
+-              className="adp-mono flex items-center gap-1.5 shrink-0"
++              className={checkboxLabel}
+               style={{ color: "var(--color-ink-sub)" }}
+             >
+               <input
+@@ -879,45 +885,26 @@ export default async function AdminPage({
+                   <div className="min-w-0 flex-1">
+                     <p
+                       className="adp-body"
+-                      style={{ color: "var(--color-ink)", fontWeight: 600 }}
++                      style={{ color: "var(--color-ink)", fontWeight: 700 }}
+                     >
+                       {flag.label}
+                     </p>
+                     <p
+-                      className="adp-mono mt-0.5"
++                      className="adp-mono mt-1"
+                       style={{ color: "var(--color-ink-sub)" }}
+                     >
+                       {flag.description}
+                     </p>
+                   </div>
+-                  <form action={toggleFlag} className="flex items-center min-h-11">
+-                    <input type="hidden" name="flag_key" value={flag.key} />
+-                    <input
+-                      type="hidden"
+-                      name="enabled"
+-                      value={String(flag.enabled)}
+-                    />
+-                    <button
+-                      type="submit"
+-                      role="switch"
+-                      aria-checked={flag.enabled}
+-                      aria-label={`Toggle ${flag.label}`}
+-                      className="relative inline-flex shrink-0 w-11 h-6 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
+-                      style={{
+-                        backgroundColor: flag.enabled
+-                          ? "var(--color-accent)"
+-                          : "var(--color-bar-neutral)",
+-                      }}
+-                    >
+-                      <span
+-                        aria-hidden="true"
+-                        className="absolute top-0.5 left-0 w-5 h-5 rounded-full bg-white shadow-sm transition-transform"
+-                        style={{
+-                          transform: `translateX(${flag.enabled ? "20px" : "2px"})`,
+-                        }}
+-                      />
+-                    </button>
+-                  </form>
++                  {/* Standalone audit: the Toggle primitive replaces the
++                      hand-built copy of it (and its raw bg-white thumb). */}
++                  <Toggle
++                    checked={flag.enabled}
++                    onChange={setFlag.bind(null, flag.key)}
++                    label={flag.label}
++                    showLabel={false}
++                    className="shrink-0"
++                  />
+                 </div>
+               ))}
+             </div>
+diff --git a/frontend/app/admin/questions/page.tsx b/frontend/app/admin/questions/page.tsx
+index 7b9ed95..e314cd0 100644
+--- a/frontend/app/admin/questions/page.tsx
++++ b/frontend/app/admin/questions/page.tsx
+@@ -6,6 +6,7 @@ import { backendFetch } from "@/lib/backend-fetch.server";
+ import Banner from "@/components/primitives/Banner";
+ import Badge from "@/components/primitives/Badge";
+ import { buttonClasses } from "@/components/primitives/buttonClasses";
++import { selectClasses } from "@/components/primitives/selectClasses";
+ import EmptyState from "@/components/primitives/EmptyState";
+ import QuestionAuthoringForm from "@/components/QuestionAuthoringForm";
+ import EditQuestionControl from "@/components/EditQuestionControl";
+@@ -437,8 +438,30 @@ export default async function QuestionsAdminPage({
+   const cardSurface =
+     "rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-hair)] overflow-hidden";
+   const rowHover = "hover:bg-[var(--color-surface-2)] transition-colors";
+-  const selectBase =
+-    "bg-[var(--color-field)] border border-[var(--color-hair)] rounded-[var(--radius-button)] px-3 py-2.5 adp-mono text-[var(--color-ink)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus:border-[var(--color-accent)] min-h-11";
++
++  // Result of the retire / activate / suppression Server Actions, which
++  // redirect back here with ?error= or ?ok= (standalone audit: these were
++  // never shown). Mirrors /admin's banners.
++  const errorMsg = params.error;
++  const okMsg = params.ok;
++
++  // Build id -> "<game> — <build label>" for the suppression chips, so they
++  // name the build instead of showing a raw id (standalone audit).
++  const buildLabelById = new Map<string, string>();
++  for (const g of games) {
++    for (const b of buildsByGameMap.get(g.id) ?? []) {
++      buildLabelById.set(b.id, `${g.title} — ${b.label}`);
++    }
++  }
++  function suppressionTarget(s: QuestionSuppression): string {
++    if (s.scope_build_id) {
++      return `build ${buildLabelById.get(s.scope_build_id) ?? `${s.scope_build_id.slice(0, 8)}…`}`;
++    }
++    return `game ${
++      games.find((g) => g.id === s.scope_game_id)?.title ??
++      s.scope_game_id?.slice(0, 8)
++    }`;
++  }
+ 
+   // -------------------------------------------------------------------------
+   // CH-349: group the resolved list into consecutive section blocks (the
+@@ -522,6 +545,20 @@ export default async function QuestionsAdminPage({
+             </Banner>
+           </div>
+         )}
++        {errorMsg && (
++          <div className="mb-4">
++            <Banner variant="error" title="Action failed">
++              {errorMsg}
++            </Banner>
++          </div>
++        )}
++        {okMsg && (
++          <div className="mb-4">
++            <Banner variant="success" title="Done">
++              {okMsg}
++            </Banner>
++          </div>
++        )}
+ 
+         {/* Create form */}
+         <section className="mb-10">
+@@ -555,7 +592,6 @@ export default async function QuestionsAdminPage({
+               games={games}
+               selectedGameId={previewGame?.id ?? ""}
+               expert={previewExpert}
+-              selectClassName={selectBase}
+             />
+           )}
+ 
+@@ -619,18 +655,18 @@ export default async function QuestionsAdminPage({
+                           <li key={q.id} className={`px-4 py-4 ${rowHover}`}>
+                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                               <div className="flex-1 min-w-0">
+-                                <span className="adp-body font-semibold block truncate">
++                                <span className="adp-body font-semibold block [overflow-wrap:anywhere]">
+                                   {q.wording}
+                                 </span>
+                                 <span
+-                                  className="adp-mono block mt-0.5 truncate"
++                                  className="adp-mono block mt-1 [overflow-wrap:anywhere]"
+                                   style={{ color: "var(--color-ink-faint)", fontSize: "0.75rem" }}
+                                 >
+                                   {q.key} · {q.qtype} · {scopeSummary(q, studios, games)} ·{" "}
+                                   {q.audience}
+                                 </span>
+                               </div>
+-                              <div className="flex items-center gap-1.5 flex-wrap shrink-0">
++                              <div className="flex items-center gap-2 flex-wrap shrink-0">
+                                 {q.is_core && (
+                                   <Badge variant="positive" size="sm" pill={false}>
+                                     Core
+@@ -656,7 +692,7 @@ export default async function QuestionsAdminPage({
+                                   </Badge>
+                                 )}
+                               </div>
+-                              <div className="flex items-center gap-2 shrink-0">
++                              <div className="flex items-center gap-2 flex-wrap shrink-0">
+                                 {control && !readOnly && (
+                                   <ReorderControl
+                                     questionLabel={q.wording}
+@@ -739,30 +775,31 @@ export default async function QuestionsAdminPage({
+                                     {suppressions.map((s) => (
+                                       <li
+                                         key={s.id}
+-                                        className="inline-flex items-center gap-2 adp-mono rounded-[var(--radius-pill)] py-1 pl-3 pr-1.5 border"
++                                        className="inline-flex items-center gap-1 adp-mono rounded-[var(--radius-pill)] pl-3 border max-w-full"
+                                         style={{
+                                           background: "var(--color-surface-2)",
+                                           borderColor: "var(--color-hair)",
+                                         }}
+                                       >
+-                                        <span>
+-                                          Suppressed at{" "}
+-                                          {s.scope_build_id
+-                                            ? `build ${s.scope_build_id.slice(0, 8)}…`
+-                                            : `game ${
+-                                                games.find((g) => g.id === s.scope_game_id)?.title ??
+-                                                s.scope_game_id?.slice(0, 8)
+-                                              }`}
++                                        <span className="min-w-0 [overflow-wrap:anywhere]">
++                                          Suppressed at {suppressionTarget(s)}
+                                         </span>
+                                         <form action={removeSuppression}>
+                                           <input type="hidden" name="question_id" value={q.id} />
+                                           <input type="hidden" name="suppression_id" value={s.id} />
++                                          {/* 44px hit area around the 20px visual circle
++                                              (standalone audit), with a visible focus ring. */}
+                                           <button
+                                             type="submit"
+-                                            aria-label="Remove suppression"
+-                                            className="w-5 h-5 rounded-full flex items-center justify-center bg-[var(--color-track)] text-[var(--color-ink-sub)] hover:bg-[var(--color-surface)]"
++                                            aria-label={`Remove suppression at ${suppressionTarget(s)}`}
++                                            className="group flex min-h-11 min-w-11 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                                           >
+-                                            ×
++                                            <span
++                                              aria-hidden="true"
++                                              className="w-5 h-5 rounded-full flex items-center justify-center bg-[var(--color-track)] text-[var(--color-ink-sub)] group-hover:bg-[var(--color-surface)]"
++                                            >
++                                              ×
++                                            </span>
+                                           </button>
+                                         </form>
+                                       </li>
+@@ -784,7 +821,7 @@ export default async function QuestionsAdminPage({
+                                     id={`suppress-${q.id}`}
+                                     name="scope_choice"
+                                     defaultValue=""
+-                                    className={`${selectBase} sm:w-64`}
++                                    className={selectClasses({ mono: true, className: "sm:w-64" })}
+                                   >
+                                     <option value="">Suppress at…</option>
+                                     <optgroup label="Games">
+diff --git a/frontend/components/PreviewGameSelect.stories.tsx b/frontend/components/PreviewGameSelect.stories.tsx
+index cb34909..188c7c7 100644
+--- a/frontend/components/PreviewGameSelect.stories.tsx
++++ b/frontend/components/PreviewGameSelect.stories.tsx
+@@ -42,9 +42,6 @@ const GAMES: Game[] = [
+   },
+ ];
+ 
+-const SELECT_CLASS =
+-  'bg-[var(--color-field)] border border-[var(--color-hair)] rounded-[var(--radius-button)] px-3 py-2.5 text-[var(--color-ink)] min-h-11';
+-
+ const meta = {
+   title: 'Pages/PreviewGameSelect',
+   component: PreviewGameSelect,
+@@ -60,7 +57,6 @@ const meta = {
+     games: GAMES,
+     selectedGameId: '',
+     expert: false,
+-    selectClassName: SELECT_CLASS,
+   },
+ } satisfies Meta<typeof PreviewGameSelect>;
+ 
+diff --git a/frontend/components/PreviewGameSelect.tsx b/frontend/components/PreviewGameSelect.tsx
+index 33a0c39..d38a963 100644
+--- a/frontend/components/PreviewGameSelect.tsx
++++ b/frontend/components/PreviewGameSelect.tsx
+@@ -18,11 +18,14 @@
+  * what a tester sees.
+  *
+  * A11y: the select and toggle carry explicit labels; navigation runs inside a
+- * transition so the control reflects the pending re-fetch.
++ * transition so the control reflects the pending re-fetch. The select uses the
++ * shared selectClasses() style, and the checkbox label and Clear button are
++ * 44px targets (standalone audit).
+  */
+ 
+ import { useRouter } from 'next/navigation';
+ import { useTransition } from 'react';
++import { selectClasses } from '@/components/primitives/selectClasses';
+ import type { Game } from '@/lib/types';
+ 
+ type Props = {
+@@ -31,8 +34,6 @@ type Props = {
+   selectedGameId: string;
+   /** Whether the current preview is for an expert tester. */
+   expert: boolean;
+-  /** Shared select styling from the parent page. */
+-  selectClassName: string;
+ };
+ 
+ function hrefFor(gameId: string, expert: boolean): string {
+@@ -46,7 +47,6 @@ export default function PreviewGameSelect({
+   games,
+   selectedGameId,
+   expert,
+-  selectClassName,
+ }: Props): React.JSX.Element {
+   const router = useRouter();
+   const [pending, startTransition] = useTransition();
+@@ -68,7 +68,7 @@ export default function PreviewGameSelect({
+         value={selectedGameId}
+         disabled={pending}
+         onChange={(e) => go(e.target.value, expert)}
+-        className={`${selectClassName} sm:w-72`}
++        className={selectClasses({ mono: true, className: 'sm:w-72' })}
+       >
+         <option value="">Full catalog (all questions)</option>
+         {games.map((g) => (
+@@ -79,7 +79,7 @@ export default function PreviewGameSelect({
+       </select>
+       {selectedGameId && (
+         <>
+-          <label className="inline-flex items-center gap-2 adp-body cursor-pointer select-none">
++          <label className="inline-flex items-center gap-2 min-h-11 adp-body cursor-pointer select-none">
+             <input
+               type="checkbox"
+               checked={expert}
+@@ -93,7 +93,7 @@ export default function PreviewGameSelect({
+             type="button"
+             disabled={pending}
+             onClick={() => go('', false)}
+-            className="adp-body underline text-[var(--color-ink-sub)] hover:text-[var(--color-ink)] disabled:opacity-50"
++            className="min-h-11 px-2 adp-body underline text-[var(--color-ink-sub)] hover:text-[var(--color-ink)] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-[var(--radius-button)]"
+           >
+             Clear
+           </button>
+diff --git a/frontend/components/QuestionAuthoringForm.tsx b/frontend/components/QuestionAuthoringForm.tsx
+index 2f84c67..a7459e3 100644
+--- a/frontend/components/QuestionAuthoringForm.tsx
++++ b/frontend/components/QuestionAuthoringForm.tsx
+@@ -68,7 +68,7 @@ import Button from '@/components/primitives/Button';
+ import Input from '@/components/primitives/Input';
+ import Textarea from '@/components/primitives/Textarea';
+ import InlineError from '@/components/primitives/InlineError';
+-import { inputClasses } from '@/components/primitives/inputClasses';
++import { selectClasses } from '@/components/primitives/selectClasses';
+ import { buttonClasses } from '@/components/primitives/buttonClasses';
+ import { createQuestion, editQuestion } from '@/lib/questions-api';
+ import type {
+@@ -132,8 +132,10 @@ export type QuestionAuthoringFormProps = {
+ // Shared style fragments — CSS-var-only, no hardcoded design values
+ // ---------------------------------------------------------------------------
+ 
+-const selectBase = inputClasses() + ' appearance-none cursor-pointer';
+-const fieldLabelClass = 'adp-body font-semibold block';
++// Standalone audit: the Fuji NativeSelect style (44px, padded, native arrow)
++// instead of an unpadded 26px select with its arrow removed.
++const selectBase = selectClasses({ className: 'cursor-pointer' });
++const fieldLabelClass = 'adp-body font-bold block';
+ const optionalTag = (
+   <span
+     className="adp-mono"
+@@ -144,7 +146,7 @@ const optionalTag = (
+ );
+ const requiredMark = (
+   <>
+-    <span aria-hidden="true" style={{ color: 'var(--color-negative)' }}>
++    <span aria-hidden="true" style={{ color: 'var(--color-negative-text)' }}>
+       {' '}
+       *
+     </span>
+@@ -719,9 +721,16 @@ export default function QuestionAuthoringForm({
+                         type="button"
+                         onClick={() => handleRemoveOption(o.key)}
+                         aria-label={`Remove option ${o.label}`}
+-                        className="w-5 h-5 rounded-full flex-none flex items-center justify-center bg-[var(--color-track)] text-[var(--color-ink-sub)] hover:bg-[var(--color-surface-2)]"
++                        className="group -my-3 -mr-3 flex-none flex min-h-11 min-w-11 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                       >
+-                        ×
++                        {/* 44px hit area around the 20px circle, with a visible
++                            focus ring (standalone audit). */}
++                        <span
++                          aria-hidden="true"
++                          className="w-5 h-5 rounded-full flex items-center justify-center bg-[var(--color-track)] text-[var(--color-ink-sub)] group-hover:bg-[var(--color-surface-2)]"
++                        >
++                          ×
++                        </span>
+                       </button>
+                     )}
+                   </li>
+@@ -735,7 +744,7 @@ export default function QuestionAuthoringForm({
+         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+           <label
+             htmlFor={id('required')}
+-            className="adp-body flex items-center gap-2"
++            className="adp-body flex items-center gap-2 min-h-11"
+           >
+             <input
+               id={id('required')}
+@@ -780,7 +789,7 @@ export default function QuestionAuthoringForm({
+             placeholder="e.g. User background"
+             className="mt-2"
+           />
+-          <p className="adp-mono mt-1" style={{ color: 'var(--color-ink-faint)', fontSize: '0.7rem' }}>
++          <p className="adp-mono mt-1" style={{ color: 'var(--color-ink-faint)' }}>
+             Groups this question under a header on the feedback form. Leave blank
+             to place it in the ungrouped bucket (shown last). A new question is
+             added to the end of its section; use the up/down arrows in the list
+@@ -802,7 +811,7 @@ export default function QuestionAuthoringForm({
+           >
+             <label
+               htmlFor={id('is-core')}
+-              className="adp-body font-semibold flex items-center gap-2"
++              className="adp-body font-bold flex items-center gap-2 min-h-11"
+             >
+               <input
+                 id={id('is-core')}
+@@ -836,7 +845,7 @@ export default function QuestionAuthoringForm({
+                 ? (['global', 'studio', 'game', 'build'] as Scope[])
+                 : (['studio', 'game', 'build'] as Scope[])
+             ).map((s) => (
+-              <label key={s} className="adp-mono flex items-center gap-1.5">
++              <label key={s} className="adp-mono flex items-center gap-2 min-h-11">
+                 <input
+                   type="radio"
+                   name={id('scope')}
+diff --git a/frontend/components/ReorderControl.tsx b/frontend/components/ReorderControl.tsx
+index 49bdcc6..2062cea 100644
+--- a/frontend/components/ReorderControl.tsx
++++ b/frontend/components/ReorderControl.tsx
+@@ -15,7 +15,7 @@
+  * peer exists (tier = (is_core, scope_specificity) - arrows never cross the
+  * core/extension line or a scope-specificity boundary) and the resulting
+  * `ordered_ids` for the whole section after the swap. This component is purely
+- * presentational over that: two vertical arrows, disabled (aria-disabled) at a
++ * presentational over that: an up and a down arrow, disabled (aria-disabled) at a
+  * tier boundary, each invoking the `reorder` Server Action with
+  * `{ section, ordered_ids }`. No ordering number is shown anywhere.
+  *
+@@ -53,8 +53,10 @@ type Props = {
+   reorder: (input: ReorderInput) => Promise<void>;
+ };
+ 
++// Standalone audit: each arrow is a 44px target (minTouchTargetPx) and the
++// pair sits side by side 8px apart, so the row does not grow to ~96px tall.
+ const arrowBase =
+-  'flex h-6 w-7 items-center justify-center rounded-[var(--radius-sm)] border text-[var(--color-ink-sub)] leading-none';
++  'flex h-11 w-11 items-center justify-center rounded-[var(--radius-sm)] border text-[var(--color-ink-sub)] leading-none';
+ const arrowEnabled =
+   'border-[var(--color-hair)] bg-[var(--color-surface-2)] hover:bg-[var(--color-surface)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] cursor-pointer';
+ const arrowDisabled = 'border-transparent opacity-30 cursor-not-allowed';
+@@ -87,7 +89,7 @@ export default function ReorderControl({
+ 
+   return (
+     <div
+-      className="flex flex-col gap-0.5 shrink-0"
++      className="flex gap-2 shrink-0"
+       aria-label={`Reorder ${questionLabel}`}
+       role="group"
+     >
+-- 
+2.43.0
+
+From 78092614e95753cf179c2cbb69c9a72344209ab4 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 30 Sep 2026 08:36:46 +0000
+Subject: [PATCH 8/9] fix(review): standalone audit fixes for the session
+ detail page (GFE-REVIEW)
+
+From the Design System Agent's standalone audit:
+- The seek bar has a 44px grab area, and Play, Mute and Full screen are
+  44px, without making the overlay taller; each has a focus ring and a
+  hover state.
+- Transport controls use inline SVG icons instead of Unicode glyphs.
+- The player shows a spinner while the recording loads.
+- The overlay uses fixed primitives (--color-ink-base, --color-surface-
+  white), so it stays legible over video in both themes; the dim total
+  time is darker-backed for AA.
+- Moment markers use chart colours, not the negative/mixed status
+  colours; chips are 44px, wrap long labels and highlight on hover.
+- Off-scale type (10.5/11/11.5/14px) and spacing move to the scale;
+  the undefined --radius-md on Try again becomes --radius-button.
+- Meta chips and answers wrap long unbroken text.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ .../video-reviewer-interactions.test.tsx      |   2 +-
+ frontend/app/sessions/[id]/page.tsx           |   6 +-
+ frontend/components/DeleteSessionControl.tsx  |   2 +-
+ frontend/components/FeedbackCard.tsx          |   2 +-
+ frontend/components/PlayerLoadNotice.tsx      |   6 +-
+ frontend/components/VideoReviewer.tsx         | 121 ++++++++++++------
+ 6 files changed, 88 insertions(+), 51 deletions(-)
+
+diff --git a/frontend/__tests__/video-reviewer-interactions.test.tsx b/frontend/__tests__/video-reviewer-interactions.test.tsx
+index 29584b9..1746504 100644
+--- a/frontend/__tests__/video-reviewer-interactions.test.tsx
++++ b/frontend/__tests__/video-reviewer-interactions.test.tsx
+@@ -276,7 +276,7 @@ describe('VideoReviewer, the control surface (CH-683)', () => {
+   function fillWidth(): string {
+     const el = [...container.querySelectorAll('div')]
+       .find((d) => (d as HTMLElement).style.width.endsWith('%')
+-                && (d as HTMLElement).style.background === 'var(--color-surface)');
++                && (d as HTMLElement).style.background === 'var(--color-surface-white)');
+     return el ? (el as HTMLElement).style.width : 'not-found';
+   }
+ 
+diff --git a/frontend/app/sessions/[id]/page.tsx b/frontend/app/sessions/[id]/page.tsx
+index e7cee23..4164356 100644
+--- a/frontend/app/sessions/[id]/page.tsx
++++ b/frontend/app/sessions/[id]/page.tsx
+@@ -124,7 +124,7 @@ export default async function SessionDetailPage({
+       <SessionArtifacts artifacts={artifacts} />
+ 
+       {/* Metadata chips */}
+-      <div className="flex flex-wrap gap-2.5">
++      <div className="flex flex-wrap gap-3">
+         {/* CH-594: neutral, not a warning - skipping is a sanctioned path.
+             First in the row so the session's nature reads before its
+             details. */}
+@@ -172,7 +172,7 @@ export default async function SessionDetailPage({
+           body="Feedback entries will appear here once testers submit."
+         />
+       ) : (
+-        <div className="space-y-3.5">
++        <div className="space-y-4">
+           {feedback.map((entry, idx) => (
+             <FeedbackCard key={idx} entry={entry} index={idx} />
+           ))}
+@@ -216,7 +216,7 @@ function MetaChip({
+ }): React.JSX.Element {
+   return (
+     <span
+-      className="inline-flex items-center gap-1 adp-mono rounded-[var(--radius-sm)] border border-[var(--color-hair)] px-3 py-1.5"
++      className="inline-flex items-center gap-1 max-w-full min-w-0 [overflow-wrap:anywhere] adp-mono rounded-[var(--radius-sm)] border border-[var(--color-hair)] px-3 py-2"
+       style={{ background: 'var(--color-surface)', color: 'var(--color-ink-sub)' }}
+     >
+       {children}
+diff --git a/frontend/components/DeleteSessionControl.tsx b/frontend/components/DeleteSessionControl.tsx
+index cc5f748..562d4f1 100644
+--- a/frontend/components/DeleteSessionControl.tsx
++++ b/frontend/components/DeleteSessionControl.tsx
+@@ -184,7 +184,7 @@ export default function DeleteSessionControl({
+ 
+         {error !== null && <InlineError className="mt-3">{error}</InlineError>}
+ 
+-        <div className="mt-5 flex justify-end gap-2.5">
++        <div className="mt-5 flex justify-end gap-3">
+           <Button
+             ref={cancelRef}
+             variant="secondary"
+diff --git a/frontend/components/FeedbackCard.tsx b/frontend/components/FeedbackCard.tsx
+index 5606b21..c2f06ba 100644
+--- a/frontend/components/FeedbackCard.tsx
++++ b/frontend/components/FeedbackCard.tsx
+@@ -63,7 +63,7 @@ function AnswerRow({
+         {label}
+       </p>
+       <div
+-        className="adp-body"
++        className="adp-body [overflow-wrap:anywhere]"
+         style={{ color: 'var(--color-ink)' }}
+       >
+         {children}
+diff --git a/frontend/components/PlayerLoadNotice.tsx b/frontend/components/PlayerLoadNotice.tsx
+index bb585be..c98e956 100644
+--- a/frontend/components/PlayerLoadNotice.tsx
++++ b/frontend/components/PlayerLoadNotice.tsx
+@@ -49,11 +49,11 @@ export default function PlayerLoadNotice({
+       role="status"
+     >
+       <div>
+-        <p className="font-semibold" style={{ color: 'var(--color-surface)' }}>
++        <p className="font-bold" style={{ color: 'var(--color-surface)' }}>
+           {failed ? "This recording can't be played" : "This recording isn't loading"}
+         </p>
+         <p
+-          className="mt-2 text-sm"
++          className="mt-2 adp-body"
+           style={{ color: 'color-mix(in srgb, var(--color-surface) 78%, transparent)' }}
+         >
+           {failed
+@@ -64,7 +64,7 @@ export default function PlayerLoadNotice({
+           <button
+             type="button"
+             onClick={onRetry}
+-            className="mt-4 inline-flex items-center justify-center rounded-[var(--radius-md)] border px-4 cursor-pointer"
++            className="mt-4 inline-flex items-center justify-center rounded-[var(--radius-button)] border px-4 min-h-11 cursor-pointer"
+             style={{
+               minHeight: '44px',
+               borderColor: 'color-mix(in srgb, var(--color-surface) 40%, transparent)',
+diff --git a/frontend/components/VideoReviewer.tsx b/frontend/components/VideoReviewer.tsx
+index 7858528..cca49d5 100644
+--- a/frontend/components/VideoReviewer.tsx
++++ b/frontend/components/VideoReviewer.tsx
+@@ -92,14 +92,45 @@ const STALL_POLL_MS = 2_000;
+  *  Raising this above 0 is a product change, not a tuning knob. */
+ const AUTO_RETRIES = 0;
+ 
+-/** Rotating set of token-based colors for timeline ticks and chips. */
++/** Rotating set of token-based colors for timeline ticks and chips. Data
++ *  colours only: negative/mixed read as error/warning, and an ordinary moment
++ *  is neither (standalone audit). */
+ const MARKER_COLORS: ReadonlyArray<string> = [
+   'var(--color-chart-1)',
+-  'var(--color-info)',
+-  'var(--color-mixed)',
+-  'var(--color-negative)',
++  'var(--color-chart-2)',
++  'var(--color-chart-3)',
++  'var(--color-chart-4)',
+ ];
+ 
++/** Transport icons: inline SVG per the manifest (icons.library), not Unicode
++ *  glyphs that read ambiguously (✕ for "muted" reads as "close") or render as
++ *  a blank box in some fonts (standalone audit). */
++function TransportIcon({ name }: { name: 'play' | 'pause' | 'volume' | 'muted' | 'fullscreen' }): React.JSX.Element {
++  const d = {
++    play: 'M6 4.5v11l9-5.5z',
++    pause: 'M6 4.5h3v11H6zM11 4.5h3v11h-3z',
++    volume: 'M3.5 7.5h3l4-3v11l-4-3h-3zM13.5 7a4 4 0 0 1 0 6',
++    muted: 'M3.5 7.5h3l4-3v11l-4-3h-3zM13.5 7.5l4 5M17.5 7.5l-4 5',
++    fullscreen: 'M3.5 7.5v-4h4M12.5 3.5h4v4M16.5 12.5v4h-4M7.5 16.5h-4v-4',
++  }[name];
++  const filled = name === 'play' || name === 'pause';
++  return (
++    <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false"
++      fill={filled ? 'currentColor' : 'none'} stroke={filled ? 'none' : 'currentColor'}
++      strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
++      <path d={d} />
++    </svg>
++  );
++}
++
++/** Classes shared by the three transport buttons: a 44px target that doesn't
++ *  grow the overlay (negative block margin), a token focus ring and a hover. */
++const TRANSPORT_BUTTON =
++  'inline-flex items-center justify-center w-11 h-11 -my-1.5 rounded-[var(--radius-button)] cursor-pointer ' +
++  'hover:bg-[color-mix(in_srgb,var(--color-surface-white)_15%,transparent)] ' +
++  'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]';
++
++
+ function markerColor(index: number): string {
+   const len = MARKER_COLORS.length;
+   return MARKER_COLORS[((index % len) + len) % len] ?? 'var(--color-chart-1)';
+@@ -338,7 +369,7 @@ export default function VideoReviewer({
+         style={{ background: 'var(--color-surface-2)', minHeight: '240px' }}
+         aria-label="No recording"
+       >
+-        <p className="adp-mono" style={{ color: 'var(--color-ink-faint)' }}>
++        <p className="adp-mono px-4 text-center" style={{ color: 'var(--color-ink-faint)' }}>
+           {/* CH-594: name the reason when it is the sanctioned skip, so the
+               reviewer reads intent rather than inferring a failure. Every
+               other outcome (and none) keeps the generic sentence. */}
+@@ -372,7 +403,7 @@ export default function VideoReviewer({
+ 
+   return (
+     <div className="w-full bg-[var(--color-surface)] rounded-[var(--radius-lg)] border border-[var(--color-hair)] shadow-[var(--shadow)] overflow-hidden">
+-      <div className="relative w-full" style={{ aspectRatio: '16/9', background: 'black' }}>
++      <div className="relative w-full" style={{ aspectRatio: '16/9', background: 'var(--color-ink-base)' }}>
+         {/* No `controls`: the transport below is ours. Keeping the native bar
+             would put two draggable timelines eight pixels apart, and only ours
+             can carry the moment markers. */}
+@@ -416,14 +447,27 @@ export default function VideoReviewer({
+          * anyway (nothing is arriving), and the bar returns the moment bytes do,
+          * with its position intact because `currentTime` lives on the element
+          * rather than in React state. */}
++        {/* Loading: a spinner over the black frame instead of a silent
++            "0:00 / 0:00" (standalone audit: requireLoadingAnimation). */}
++        {loadState === 'loading' && (
++          <div role="status" className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ color: 'var(--color-surface-white)' }}>
++            <svg className="animate-spin motion-reduce:animate-none" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
++              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.25" />
++              <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
++            </svg>
++            <span className="sr-only">Loading the recording</span>
++          </div>
++        )}
+         {!(failed || stalled) && (
+         <div
+           className="absolute left-0 right-0 bottom-0 px-3 pb-2"
+-          style={{ background: 'linear-gradient(to top, color-mix(in srgb, var(--color-ink) 74%, transparent), transparent)' }}
++          // Fixed primitives, not theme tokens: the overlay sits on video in both
++          // themes. 85% base keeps the dim " / total" text at AA over a bright
++          // frame (standalone audit).
++          style={{ background: 'linear-gradient(to top, color-mix(in srgb, var(--color-ink-base) 85%, transparent), transparent)' }}
+         >
+-          {/* 6px visual track inside a 20px grab area. Four times the visual
+-              bar, matching what large players ship, and clearing the 24px
+-              minimum target once the padding row is counted. */}
++          {/* 6px visual track inside a 44px grab area (minTouchTargetPx). The
++              negative block margin keeps the overlay the height it was. */}
+           <div
+             ref={trackRef}
+             role="slider"
+@@ -439,18 +483,18 @@ export default function VideoReviewer({
+             onPointerCancel={onPointerCancel}
+             onLostPointerCapture={onPointerCancel}
+             onKeyDown={onKeyDown}
+-            className="relative flex items-center cursor-pointer"
+-            style={{ height: '20px', touchAction: 'none' }}
++            className="relative flex items-center cursor-pointer -my-3 rounded-[var(--radius-sm)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
++            style={{ height: '44px', touchAction: 'none' }}
+           >
+-            <div className="relative w-full rounded-[var(--radius-pill)]" style={{ height: '6px', background: 'color-mix(in srgb, var(--color-surface) 22%, transparent)' }}>
++            <div className="relative w-full rounded-[var(--radius-pill)]" style={{ height: '6px', background: 'color-mix(in srgb, var(--color-surface-white) 22%, transparent)' }}>
+               <div
+                 className="absolute left-0 top-0 bottom-0 rounded-[var(--radius-pill)]"
+-                style={{ width: `${bufferedPct}%`, background: 'color-mix(in srgb, var(--color-surface) 52%, transparent)' }}
++                style={{ width: `${bufferedPct}%`, background: 'color-mix(in srgb, var(--color-surface-white) 52%, transparent)' }}
+                 aria-hidden="true"
+               />
+               <div
+                 className="absolute left-0 top-0 bottom-0 rounded-[var(--radius-pill)]"
+-                style={{ width: `${playedPct}%`, background: 'var(--color-surface)' }}
++                style={{ width: `${playedPct}%`, background: 'var(--color-surface-white)' }}
+                 aria-hidden="true"
+               />
+               {/* Ticks. aria-hidden and non-interactive: the chips below carry
+@@ -464,7 +508,7 @@ export default function VideoReviewer({
+                 isReachable(frame.approx_timecode_secs, reach) ? (
+                   <span
+                     key={idx}
+-                    className="absolute rounded-[1px]"
++                    className="absolute"
+                     style={{
+                       left: `${percentOf(frame.approx_timecode_secs, reach)}%`,
+                       top: '-4px',
+@@ -485,7 +529,7 @@ export default function VideoReviewer({
+                   width: '13px',
+                   height: '13px',
+                   transform: 'translate(-50%, -50%)',
+-                  background: 'var(--color-surface)',
++                  background: 'var(--color-surface-white)',
+                   pointerEvents: 'none',
+                 }}
+                 aria-hidden="true"
+@@ -497,11 +541,10 @@ export default function VideoReviewer({
+                     left: `${playedPct}%`,
+                     bottom: '18px',
+                     transform: 'translateX(-50%)',
+-                    background: 'var(--color-surface)',
+-                    color: 'var(--color-ink)',
+-                    borderRadius: '5px',
+-                    padding: '2px 6px',
+-                    fontSize: '11px',
++                    background: 'var(--color-surface-white)',
++                    color: 'var(--color-ink-base)',
++                    borderRadius: 'var(--radius-sm)',
++                    padding: '4px 8px',
+                     pointerEvents: 'none',
+                     whiteSpace: 'nowrap',
+                   }}
+@@ -513,19 +556,18 @@ export default function VideoReviewer({
+             </div>
+           </div>
+ 
+-          <div className="flex items-center gap-3 pt-0.5">
++          <div className="flex items-center gap-3 pt-1" style={{ color: 'var(--color-surface-white)' }}>
+             <button
+               type="button"
+               onClick={togglePlay}
+               aria-label={playing ? 'Pause' : 'Play'}
+-              className="cursor-pointer"
+-              style={{ width: '32px', height: '32px', color: 'var(--color-surface)', background: 'none', border: 'none' }}
++              className={TRANSPORT_BUTTON}
+             >
+-              {playing ? '‖' : '▶'}
++              <TransportIcon name={playing ? 'pause' : 'play'} />
+             </button>
+-            <span className="adp-mono" style={{ fontSize: '11.5px', color: 'var(--color-surface)', fontVariantNumeric: 'tabular-nums' }}>
++            <span className="adp-mono" style={{ fontVariantNumeric: 'tabular-nums' }}>
+               {timecode(currentTime)}
+-              <span style={{ color: 'color-mix(in srgb, var(--color-surface) 62%, transparent)' }}>
++              <span style={{ color: 'color-mix(in srgb, var(--color-surface-white) 78%, transparent)' }}>
+                 {` / ${timecode(reach)}${lengthKnown ? '' : ' so far'}`}
+               </span>
+             </span>
+@@ -534,19 +576,17 @@ export default function VideoReviewer({
+               type="button"
+               onClick={toggleMute}
+               aria-label={muted ? 'Unmute' : 'Mute'}
+-              className="cursor-pointer"
+-              style={{ width: '32px', height: '32px', color: 'var(--color-surface)', background: 'none', border: 'none' }}
++              className={TRANSPORT_BUTTON}
+             >
+-              {muted ? '✕' : '♪'}
++              <TransportIcon name={muted ? 'muted' : 'volume'} />
+             </button>
+             <button
+               type="button"
+               onClick={goFullscreen}
+               aria-label="Full screen"
+-              className="cursor-pointer"
+-              style={{ width: '32px', height: '32px', color: 'var(--color-surface)', background: 'none', border: 'none' }}
++              className={TRANSPORT_BUTTON}
+             >
+-              {'⛶'}
++              <TransportIcon name="fullscreen" />
+             </button>
+           </div>
+         </div>
+@@ -558,10 +598,8 @@ export default function VideoReviewer({
+         {frames.length > 0 && (
+           <>
+             <div className="flex items-baseline justify-between mb-2">
+-              <b className="adp-mono" style={{ fontSize: '10.5px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-ink-sub)' }}>
+-                Jump to a moment
+-              </b>
+-              <span className="adp-mono" style={{ fontSize: '11px', color: 'var(--color-ink-faint)' }}>
++              <b className="adp-kicker">Jump to a moment</b>
++              <span className="adp-mono" style={{ color: 'var(--color-ink-faint)' }}>
+                 {reachableCount === frames.length
+                   ? `${frames.length} found by the analysis`
+                   : `${reachableCount} of ${frames.length} reachable${lengthKnown ? '' : ' so far'}`}
+@@ -576,9 +614,8 @@ export default function VideoReviewer({
+                     key={idx}
+                     type="button"
+                     disabled={!reachable}
+-                    className="inline-flex items-center gap-1.5 adp-mono rounded-[var(--radius-pill)] border px-2.5 py-1"
++                    className="inline-flex items-center gap-2 min-h-11 max-w-full min-w-0 [overflow-wrap:anywhere] text-left adp-mono rounded-[var(--radius-pill)] border px-3 py-2 enabled:hover:border-[var(--color-accent)]! focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                     style={{
+-                      minHeight: '32px',
+                       background: 'var(--color-surface-2)',
+                       color: reachable ? 'var(--color-ink-sub)' : 'var(--color-ink-faint)',
+                       borderColor: 'var(--color-hair)',
+@@ -595,7 +632,7 @@ export default function VideoReviewer({
+                     />
+                     {/* Text node — attacker-controlled content, escaped by React */}
+                     {primaryLabel}
+-                    <span style={{ fontSize: '10.5px', color: 'var(--color-ink-faint)' }}>
++                    <span className="shrink-0" style={{ color: 'var(--color-ink-faint)' }}>
+                       {timecode(frame.approx_timecode_secs)}
+                     </span>
+                   </button>
+@@ -603,7 +640,7 @@ export default function VideoReviewer({
+               })}
+             </div>
+             {reachableCount < frames.length && (
+-              <p className="mt-3 text-sm" style={{ color: 'var(--color-ink-sub)' }}>
++              <p className="mt-3 adp-body" style={{ color: 'var(--color-ink-sub)' }}>
+                 {/* TWO different reasons a moment cannot be reached, and telling a
+                     reviewer the wrong one wastes their time. While the length is
+                     unknown, an unreachable moment is simply not downloaded yet and
+-- 
+2.43.0
+
+From 4b976436973f59e1f7702d1c731e6c486c522d4f Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 30 Sep 2026 08:42:03 +0000
+Subject: [PATCH 9/9] fix(dashboard, admin): last screenshot-tool findings
+
+- Dashboard header: the title column's fixed min-w-[220px] made the
+  page scroll 21px sideways at 320px with 200% text; it now wraps under
+  the monogram (basis 220px, min-w-0).
+- Question form selects use the mono select style, like every other
+  select on the admin pages (consistency_check: one text style per
+  element).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ frontend/components/QuestionAuthoringForm.tsx     | 2 +-
+ frontend/components/dashboard/DashboardHeader.tsx | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/frontend/components/QuestionAuthoringForm.tsx b/frontend/components/QuestionAuthoringForm.tsx
+index a7459e3..92ab7af 100644
+--- a/frontend/components/QuestionAuthoringForm.tsx
++++ b/frontend/components/QuestionAuthoringForm.tsx
+@@ -134,7 +134,7 @@ export type QuestionAuthoringFormProps = {
+ 
+ // Standalone audit: the Fuji NativeSelect style (44px, padded, native arrow)
+ // instead of an unpadded 26px select with its arrow removed.
+-const selectBase = selectClasses({ className: 'cursor-pointer' });
++const selectBase = selectClasses({ mono: true, className: 'cursor-pointer' });
+ const fieldLabelClass = 'adp-body font-bold block';
+ const optionalTag = (
+   <span
+diff --git a/frontend/components/dashboard/DashboardHeader.tsx b/frontend/components/dashboard/DashboardHeader.tsx
+index 409726b..49f7bb7 100644
+--- a/frontend/components/dashboard/DashboardHeader.tsx
++++ b/frontend/components/dashboard/DashboardHeader.tsx
+@@ -219,7 +219,7 @@ export default function DashboardHeader({
+           <span className="adp-h2 text-white!">{monogram(gameTitle)}</span>
+         </div>
+ 
+-        <div className="flex-1 min-w-[220px]">
++        <div className="flex-1 basis-[220px] min-w-0 [overflow-wrap:anywhere]">
+           <h1 className="adp-h1">{gameTitle}</h1>
+           <p className="adp-mono mt-1" style={{ color: 'var(--color-ink-sub)' }}>
+             {[gamePlatform, `${buildCount} build${buildCount === 1 ? '' : 's'}`]
+-- 
+2.43.0
+

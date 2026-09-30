@@ -1,0 +1,398 @@
+id: catalog-admin--game-edit
+source: rendered
+target: http://localhost:3000/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/edit
+capturedAt: '2026-09-30T08:43:30Z'
+manifestVersion: 1.0.0
+shots:
+- file: narrow-320.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: narrow-320-text200.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: phone-390.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: phone-390-text200.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: md-768.png
+  viewport:
+    name: md
+    w: 768
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 128
+- file: lg-1024.png
+  viewport:
+    name: lg
+    w: 1024
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: desktop-1440.png
+  viewport:
+    name: desktop
+    w: 1440
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+computedInventory:
+  spacing:
+  - element: button.inline-flex
+    property: gap
+    found:
+    - px: 8
+      where: button.inline-flex "Save changes" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Save changes" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-x
+    found:
+    - px: 20
+      where: button.inline-flex "Save changes" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 20
+      where: button.inline-flex "Save changes" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    property: padding-y
+    found:
+    - px: 10
+      where: button.inline-flex "Save changes" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 10
+      where: button.inline-flex "Save changes" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    property: gap
+    found:
+    - px: 6
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: input.w-full
+    property: padding-x
+    found:
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-title @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-platform @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-project @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-franchise @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-slug @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-play-url @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-title @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-platform @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-project @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-franchise @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-slug @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_9bn5ritpermlb_-play-url @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    property: padding-y
+    found:
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-title @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-platform @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-project @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-franchise @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-slug @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-play-url @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-title @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-platform @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-project @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-franchise @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-slug @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_9bn5ritpermlb_-play-url @ desktop-1440.png
+    consistent: true
+  - element: label.inline-flex
+    property: gap
+    found:
+    - px: 12
+      where: 'label.inline-flex "Visible to all studiosOn: anyone in any " @ narrow-320.png'
+    - px: 12
+      where: 'label.inline-flex "Dev feedback modeOn: after playing, test" @ narrow-320.png'
+    - px: 12
+      where: 'label.inline-flex "Visible to all studiosOn: anyone in any " @ desktop-1440.png'
+    - px: 12
+      where: 'label.inline-flex "Dev feedback modeOn: after playing, test" @ desktop-1440.png'
+    consistent: true
+  - element: p.adp-kicker
+    property: gap
+    found:
+    - px: 8
+      where: p.adp-kicker "Catalog" @ narrow-320.png
+    - px: 8
+      where: p.adp-kicker "Catalog" @ desktop-1440.png
+    consistent: true
+  typography:
+  - element: button.inline-flex
+    found:
+    - value: 15px / 600
+      where: button.inline-flex "Save changes" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - value: 15px / 600
+      where: button.inline-flex "Save changes" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    found:
+    - value: 16px / 400
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: button.relative
+    found:
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative#_R_9bn5ritpermlb_-org-visible @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative#_R_9bn5ritpermlb_-dev-feedback-mode @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    - value: 16px / 400
+      where: button.relative#_R_9bn5ritpermlb_-org-visible @ desktop-1440.png
+    - value: 16px / 400
+      where: button.relative#_R_9bn5ritpermlb_-dev-feedback-mode @ desktop-1440.png
+    consistent: true
+  - element: h1.adp-h1
+    found:
+    - value: 28px / 800
+      where: h1.adp-h1 "Edit Atari Asteroids" @ narrow-320.png
+    - value: 34px / 800
+      where: h1.adp-h1 "Edit Atari Asteroids" @ desktop-1440.png
+    consistent: false
+  - element: input.w-full
+    found:
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-title @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-platform @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-project @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-franchise @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-slug @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-play-url @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-title @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-platform @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-project @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-grouping-franchise @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-slug @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_9bn5ritpermlb_-play-url @ desktop-1440.png
+    consistent: true
+  - element: label.adp-body
+    found:
+    - value: 15px / 500
+      where: label.adp-body "Game title * (required)" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Platform / line optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Project optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Title optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Shareable link * (required)" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "About the game optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "How to play optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Access optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Play URL optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Game title * (required)" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Platform / line optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Project optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Title optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Shareable link * (required)" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "About the game optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "How to play optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Access optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Play URL optional" @ desktop-1440.png
+    consistent: true
+  - element: label.inline-flex
+    found:
+    - value: 16px / 400
+      where: 'label.inline-flex "Visible to all studiosOn: anyone in any " @ narrow-320.png'
+    - value: 16px / 400
+      where: 'label.inline-flex "Dev feedback modeOn: after playing, test" @ narrow-320.png'
+    - value: 16px / 400
+      where: 'label.inline-flex "Visible to all studiosOn: anyone in any " @ desktop-1440.png'
+    - value: 16px / 400
+      where: 'label.inline-flex "Dev feedback modeOn: after playing, test" @ desktop-1440.png'
+    consistent: true
+  - element: p.adp-body
+    found:
+    - value: 15px / 500
+      where: p.adp-body "Update this game's catalog details. Only" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Hosted game link" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Update this game's catalog details. Only" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body "Hosted game link" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    found:
+    - value: 11px / 500
+      where: p.adp-kicker "Catalog" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Catalog" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-mono
+    found:
+    - value: 12px / 400
+      where: p.adp-mono#_R_9bn5ritpermlb_-grouping-franchise-help "Games with the
+        same title are shown toge" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_9bn5ritpermlb_-slug-preview "Testers open /game/atari-asteroids"
+        @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Testers see this as a way to play, along" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "This game has 2 builds with their own li" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_9bn5ritpermlb_-grouping-franchise-help "Games with the
+        same title are shown toge" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_9bn5ritpermlb_-slug-preview "Testers open /game/atari-asteroids"
+        @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Testers see this as a way to play, along" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "This game has 2 builds with their own li" @ desktop-1440.png
+    consistent: true
+findings:
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: button.relative#_R_9bn5ritpermlb_-org-visible is 44×24px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: button.relative#_R_9bn5ritpermlb_-dev-feedback-mode is 44×24px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only "(required)" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only#_R_alb_ "Notifications" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-x: 12px (1×); 20px (2×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-y: 8px (1×); 10px (2×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.inline-flex>: 12px / 600; 15px / 600.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h1.adp-h1>: 28px / 800; 34px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true

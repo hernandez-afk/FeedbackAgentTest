@@ -1,0 +1,191 @@
+id: shell--login
+source: rendered
+target: http://localhost:3000/login
+capturedAt: '2026-09-30T08:42:19Z'
+manifestVersion: 1.0.0
+shots:
+- file: narrow-320.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: narrow-320-text200.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: phone-390.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: phone-390-text200.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: md-768.png
+  viewport:
+    name: md
+    w: 768
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: lg-1024.png
+  viewport:
+    name: lg
+    w: 1024
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: desktop-1440.png
+  viewport:
+    name: desktop
+    w: 1440
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+computedInventory:
+  spacing:
+  - element: button.inline-flex
+    property: gap
+    found:
+    - px: 12
+      where: button.inline-flex "Continue with Google" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Continue with Google" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-x
+    found:
+    - px: 20
+      where: button.inline-flex "Continue with Google" @ narrow-320.png
+    - px: 20
+      where: button.inline-flex "Continue with Google" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-y
+    found:
+    - px: 10
+      where: button.inline-flex "Continue with Google" @ narrow-320.png
+    - px: 10
+      where: button.inline-flex "Continue with Google" @ desktop-1440.png
+    consistent: true
+  - element: button.w-full
+    property: padding-x
+    found:
+    - px: 16
+      where: button.w-full "Sign in as dev user" @ narrow-320.png
+    - px: 16
+      where: button.w-full "Sign in as dev user" @ desktop-1440.png
+    consistent: true
+  - element: button.w-full
+    property: padding-y
+    found:
+    - px: 12
+      where: button.w-full "Sign in as dev user" @ narrow-320.png
+    - px: 12
+      where: button.w-full "Sign in as dev user" @ desktop-1440.png
+    consistent: true
+  - element: input.px-3
+    property: padding-x
+    found:
+    - px: 12
+      where: input.px-3#dev-login-email @ narrow-320.png
+    - px: 12
+      where: input.px-3#dev-login-email @ desktop-1440.png
+    consistent: true
+  - element: input.px-3
+    property: padding-y
+    found:
+    - px: 8
+      where: input.px-3#dev-login-email @ narrow-320.png
+    - px: 8
+      where: input.px-3#dev-login-email @ desktop-1440.png
+    consistent: true
+  typography:
+  - element: button.inline-flex
+    found:
+    - value: 15px / 600
+      where: button.inline-flex "Continue with Google" @ narrow-320.png
+    - value: 15px / 600
+      where: button.inline-flex "Continue with Google" @ desktop-1440.png
+    consistent: true
+  - element: button.w-full
+    found:
+    - value: 15px / 500
+      where: button.w-full "Sign in as dev user" @ narrow-320.png
+    - value: 15px / 500
+      where: button.w-full "Sign in as dev user" @ desktop-1440.png
+    consistent: true
+  - element: h1.adp-h1
+    found:
+    - value: 28px / 800
+      where: h1.adp-h1 "Game Feedback Engine" @ narrow-320.png
+    - value: 34px / 800
+      where: h1.adp-h1 "Game Feedback Engine" @ desktop-1440.png
+    consistent: false
+  - element: input.px-3
+    found:
+    - value: 16px / 400
+      where: input.px-3#dev-login-email @ narrow-320.png
+    - value: 16px / 400
+      where: input.px-3#dev-login-email @ desktop-1440.png
+    consistent: true
+  - element: label.adp-kicker
+    found:
+    - value: 11px / 500
+      where: label.adp-kicker "Authorized email" @ narrow-320.png
+    - value: 11px / 500
+      where: label.adp-kicker "Authorized email" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-body
+    found:
+    - value: 15px / 500
+      where: p.adp-body "Sign in with your Google account" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Dev login — local/dev only, disabled in " @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Sign in with your Google account" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body "Dev login — local/dev only, disabled in " @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    found:
+    - value: 11px / 500
+      where: p.adp-kicker "Internal tool / Atari Inc." @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Internal tool / Atari Inc." @ desktop-1440.png
+    consistent: true
+findings:
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only#_R_alb_ "Notifications" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h1.adp-h1>: 28px / 800; 34px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true

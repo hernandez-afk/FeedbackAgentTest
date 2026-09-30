@@ -1,0 +1,516 @@
+id: catalog-admin--games-new
+source: rendered
+target: http://localhost:3000/games/new
+capturedAt: '2026-09-30T08:43:20Z'
+manifestVersion: 1.0.0
+shots:
+- file: narrow-320.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: narrow-320-text200.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: phone-390.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: phone-390-text200.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: md-768.png
+  viewport:
+    name: md
+    w: 768
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 128
+- file: lg-1024.png
+  viewport:
+    name: lg
+    w: 1024
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: desktop-1440.png
+  viewport:
+    name: desktop
+    w: 1440
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+computedInventory:
+  spacing:
+  - element: button.flex
+    property: gap
+    found:
+    - px: 4
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ narrow-320.png
+    - px: 4
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ desktop-1440.png
+    consistent: true
+  - element: button.flex
+    property: padding-x
+    found:
+    - px: 16
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ narrow-320.png
+    - px: 16
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ desktop-1440.png
+    consistent: true
+  - element: button.flex
+    property: padding-y
+    found:
+    - px: 24
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ narrow-320.png
+    - px: 24
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: gap
+    found:
+    - px: 8
+      where: button.inline-flex "Create game & upload" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Create game & upload" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-x
+    found:
+    - px: 20
+      where: button.inline-flex "Create game & upload" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 20
+      where: button.inline-flex "Create game & upload" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    property: padding-y
+    found:
+    - px: 10
+      where: button.inline-flex "Create game & upload" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 10
+      where: button.inline-flex "Create game & upload" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    property: gap
+    found:
+    - px: 6
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: input.w-full
+    property: padding-x
+    found:
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-title @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-platform @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-grouping-project @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-grouping-franchise @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-slug @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-play-url @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-embed-url @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-first-build-label @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-title @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-platform @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-grouping-project @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-grouping-franchise @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-slug @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-play-url @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-embed-url @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-first-build-label @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    property: padding-y
+    found:
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-title @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-platform @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-grouping-project @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-grouping-franchise @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-slug @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-play-url @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-embed-url @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-first-build-label @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-title @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-platform @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-grouping-project @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-grouping-franchise @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-slug @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-play-url @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-embed-url @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-first-build-label @ desktop-1440.png
+    consistent: true
+  - element: label.flex
+    property: gap
+    found:
+    - px: 8
+      where: label.flex "Visible to all testers (org-wide)On → an" @ narrow-320.png
+    - px: 8
+      where: label.flex "Visible to all testers (org-wide)On → an" @ desktop-1440.png
+    consistent: true
+  - element: label.flex
+    property: padding-x
+    found:
+    - px: 12
+      where: label.flex "Visible to all testers (org-wide)On → an" @ narrow-320.png
+    - px: 12
+      where: label.flex "Visible to all testers (org-wide)On → an" @ desktop-1440.png
+    consistent: true
+  - element: label.flex
+    property: padding-y
+    found:
+    - px: 12
+      where: label.flex "Visible to all testers (org-wide)On → an" @ narrow-320.png
+    - px: 12
+      where: label.flex "Visible to all testers (org-wide)On → an" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    property: gap
+    found:
+    - px: 8
+      where: p.adp-kicker "Catalog · 26 games" @ narrow-320.png
+    - px: 8
+      where: p.adp-kicker "Catalog · 26 games" @ desktop-1440.png
+    consistent: true
+  - element: select.mt-2
+    property: padding-x
+    found:
+    - px: 12
+      where: select.mt-2#_R_4lritpermlb_-studio "Select a studio…AtariCoatsinkUnassigned
+        " @ narrow-320.png
+    - px: 12
+      where: select.mt-2#_R_4lritpermlb_-studio "Select a studio…AtariCoatsinkUnassigned
+        " @ desktop-1440.png
+    consistent: true
+  - element: select.mt-2
+    property: padding-y
+    found:
+    - px: 8
+      where: select.mt-2#_R_4lritpermlb_-studio "Select a studio…AtariCoatsinkUnassigned
+        " @ narrow-320.png
+    - px: 8
+      where: select.mt-2#_R_4lritpermlb_-studio "Select a studio…AtariCoatsinkUnassigned
+        " @ desktop-1440.png
+    consistent: true
+  typography:
+  - element: button.flex
+    found:
+    - value: 16px / 400
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    found:
+    - value: 15px / 600
+      where: button.inline-flex "Create game & upload" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - value: 15px / 600
+      where: button.inline-flex "Create game & upload" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    found:
+    - value: 16px / 400
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: button.relative
+    found:
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    consistent: true
+  - element: h1.adp-h1
+    found:
+    - value: 28px / 800
+      where: h1.adp-h1 "New game" @ narrow-320.png
+    - value: 34px / 800
+      where: h1.adp-h1 "New game" @ desktop-1440.png
+    consistent: false
+  - element: input.mt-1
+    found:
+    - value: 16px / 400
+      where: input.mt-1#_R_4lritpermlb_-org-visible @ narrow-320.png
+    - value: 16px / 400
+      where: input.mt-1#_R_4lritpermlb_-org-visible @ desktop-1440.png
+    consistent: true
+  - element: input.sr-only
+    found:
+    - value: 16px / 400
+      where: input.sr-only#_R_4lritpermlb_-build-zip @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only#_R_4lritpermlb_-build-zip @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    found:
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-title @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-platform @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-grouping-project @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-grouping-franchise @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-slug @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-play-url @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-embed-url @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-first-build-label @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-title @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-platform @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-grouping-project @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-grouping-franchise @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-slug @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-play-url @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-embed-url @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-first-build-label @ desktop-1440.png
+    consistent: true
+  - element: label.adp-body
+    found:
+    - value: 15px / 500
+      where: label.adp-body "Build — drop a zip to make this game pla" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Game title * (required)" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Platform / line optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Project optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Title optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Shareable link optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "About the game optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "How to play optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Access optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Play URL optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Hosted game link optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Studio * (required)" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "First build label" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Build — drop a zip to make this game pla" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Game title * (required)" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Platform / line optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Project optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Title optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Shareable link optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "About the game optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "How to play optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Access optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Play URL optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Hosted game link optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Studio * (required)" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "First build label" @ desktop-1440.png
+    consistent: true
+  - element: label.flex
+    found:
+    - value: 16px / 400
+      where: label.flex "Visible to all testers (org-wide)On → an" @ narrow-320.png
+    - value: 16px / 400
+      where: label.flex "Visible to all testers (org-wide)On → an" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-body
+    found:
+    - value: 15px / 500
+      where: p.adp-body "Register a brand-new game in the catalog" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Register a brand-new game in the catalog" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    found:
+    - value: 11px / 500
+      where: p.adp-kicker "Catalog · 26 games" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Catalog · 26 games" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-mono
+    found:
+    - value: 12px / 400
+      where: p.adp-mono "No zip? You'll create the game with a la" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_4lritpermlb_-grouping-franchise-help "Games with the same
+        title are shown toge" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_4lritpermlb_-slug-preview "Leave blank to derive the link
+        from the " @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_4lritpermlb_-play-url-hint "For out-of-band games opened
+        in a new ta" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_4lritpermlb_-embed-url-hint "For a game that's already
+        online. Tester" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "No zip? You'll create the game with a la" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_4lritpermlb_-grouping-franchise-help "Games with the same
+        title are shown toge" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_4lritpermlb_-slug-preview "Leave blank to derive the link
+        from the " @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_4lritpermlb_-play-url-hint "For out-of-band games opened
+        in a new ta" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_4lritpermlb_-embed-url-hint "For a game that's already
+        online. Tester" @ desktop-1440.png
+    consistent: true
+  - element: select.mt-2
+    found:
+    - value: 15px / 500
+      where: select.mt-2#_R_4lritpermlb_-studio "Select a studio…AtariCoatsinkUnassigned
+        " @ narrow-320.png
+    - value: 15px / 500
+      where: select.mt-2#_R_4lritpermlb_-studio "Select a studio…AtariCoatsinkUnassigned
+        " @ desktop-1440.png
+    consistent: true
+findings:
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input.sr-only#_R_4lritpermlb_-build-zip is 1×1px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input.mt-1#_R_4lritpermlb_-org-visible is 20×20px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only "(required)" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only#_R_alb_ "Notifications" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-x: 12px (1×); 20px (2×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-y: 8px (1×); 10px (2×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.inline-flex>: 12px / 600; 15px / 600.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h1.adp-h1>: 28px / 800; 34px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true

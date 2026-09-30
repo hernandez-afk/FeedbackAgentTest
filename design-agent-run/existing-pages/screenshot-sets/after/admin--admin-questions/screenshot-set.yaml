@@ -1,0 +1,1993 @@
+id: admin--admin-questions
+source: rendered
+target: http://localhost:3000/admin/questions
+capturedAt: '2026-09-30T08:44:26Z'
+manifestVersion: 1.0.0
+shots:
+- file: narrow-320.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: narrow-320-text200.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: phone-390.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: phone-390-text200.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: md-768.png
+  viewport:
+    name: md
+    w: 768
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 128
+- file: lg-1024.png
+  viewport:
+    name: lg
+    w: 1024
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: desktop-1440.png
+  viewport:
+    name: desktop
+    w: 1440
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+computedInventory:
+  spacing:
+  - element: button.inline-flex
+    property: gap
+    found:
+    - px: 8
+      where: button.inline-flex "Create question" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Activate" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Activate" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Create question" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Activate" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Activate" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-x
+    found:
+    - px: 20
+      where: button.inline-flex "Create question" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Activate" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Activate" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 20
+      where: button.inline-flex "Create question" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Activate" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Activate" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    property: padding-y
+    found:
+    - px: 10
+      where: button.inline-flex "Create question" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Activate" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Activate" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 10
+      where: button.inline-flex "Create question" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Activate" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Activate" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    property: gap
+    found:
+    - px: 6
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: h2.adp-kicker
+    property: padding-x
+    found:
+    - px: 0
+      where: h2.adp-kicker "Create a question" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Existing questions" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Create a question" @ desktop-1440.png
+    - px: 0
+      where: h2.adp-kicker "Existing questions" @ desktop-1440.png
+    consistent: true
+  - element: h2.adp-kicker
+    property: padding-y
+    found:
+    - px: 0
+      where: h2.adp-kicker "Create a question" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Existing questions" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Create a question" @ desktop-1440.png
+    - px: 0
+      where: h2.adp-kicker "Existing questions" @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    property: padding-x
+    found:
+    - px: 12
+      where: input.w-full#_R_7clritpermlb_-wording @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_7clritpermlb_-section @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_7clritpermlb_-wording @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_7clritpermlb_-section @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    property: padding-y
+    found:
+    - px: 8
+      where: input.w-full#_R_7clritpermlb_-wording @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_7clritpermlb_-section @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_7clritpermlb_-wording @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_7clritpermlb_-section @ desktop-1440.png
+    consistent: true
+  - element: label.adp-body
+    property: gap
+    found:
+    - px: 8
+      where: label.adp-body "Required" @ narrow-320.png
+    - px: 8
+      where: label.adp-body "Core — ask across everything" @ narrow-320.png
+    - px: 8
+      where: label.adp-body "Required" @ desktop-1440.png
+    - px: 8
+      where: label.adp-body "Core — ask across everything" @ desktop-1440.png
+    consistent: true
+  - element: label.adp-mono
+    property: gap
+    found:
+    - px: 8
+      where: label.adp-mono "Global" @ narrow-320.png
+    - px: 8
+      where: label.adp-mono "Studio" @ narrow-320.png
+    - px: 8
+      where: label.adp-mono "Game" @ narrow-320.png
+    - px: 8
+      where: label.adp-mono "Build" @ narrow-320.png
+    - px: 8
+      where: label.adp-mono "Global" @ desktop-1440.png
+    - px: 8
+      where: label.adp-mono "Studio" @ desktop-1440.png
+    - px: 8
+      where: label.adp-mono "Game" @ desktop-1440.png
+    - px: 8
+      where: label.adp-mono "Build" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    property: gap
+    found:
+    - px: 8
+      where: p.adp-kicker "Feedback questions" @ narrow-320.png
+    - px: 8
+      where: p.adp-kicker "Feedback questions" @ desktop-1440.png
+    consistent: true
+  - element: select.mt-2
+    property: padding-x
+    found:
+    - px: 12
+      where: select.mt-2#_R_7clritpermlb_-qtype "Free textScale (1-5)Yes / noSingle
+        choic" @ narrow-320.png
+    - px: 12
+      where: select.mt-2#_R_7clritpermlb_-qtype "Free textScale (1-5)Yes / noSingle
+        choic" @ desktop-1440.png
+    consistent: true
+  - element: select.mt-2
+    property: padding-y
+    found:
+    - px: 8
+      where: select.mt-2#_R_7clritpermlb_-qtype "Free textScale (1-5)Yes / noSingle
+        choic" @ narrow-320.png
+    - px: 8
+      where: select.mt-2#_R_7clritpermlb_-qtype "Free textScale (1-5)Yes / noSingle
+        choic" @ desktop-1440.png
+    consistent: true
+  - element: select.w-full
+    property: padding-x
+    found:
+    - px: 12
+      where: select.w-full#_R_7clritpermlb_-audience "EveryoneTesters onlyExpert testers
+        only" @ narrow-320.png
+    - px: 12
+      where: select.w-full#preview-game "Full catalog (all questions)Asteroids Cl"
+        @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-9865e4c2-7fb2-4bbc-bcac-48bad0cf1d45 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-d7152238-c077-4036-9bec-a6dba4031af8 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-48f1d042-f566-4ed5-bbf6-861d8b548bfa "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-401cc35c-94ec-437d-a543-4ce326e89124 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-4fe2fdd7-4638-41bd-8df7-9f749ec1d7a0 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-3b30a24a-d82d-4753-8503-3da2a3dd3387 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-62d3292a-6dfb-48be-b243-61c214db6527 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-f645c225-c659-4ca3-9c99-e21da47aa773 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-0d72173b-9fd3-4f74-a7ae-27d755c3ce76 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-aeaf5cb5-9cc2-4a80-813a-d77e22b36095 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-61735b5d-cc73-4e4a-955e-b0ba40320fbd "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-768c12b0-c1ea-47a4-93b8-29870fc36b03 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#suppress-07f576bc-3002-4b1a-ba91-384610a580b6 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 12
+      where: select.w-full#_R_7clritpermlb_-audience "EveryoneTesters onlyExpert testers
+        only" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#preview-game "Full catalog (all questions)Asteroids Cl"
+        @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-9865e4c2-7fb2-4bbc-bcac-48bad0cf1d45 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-d7152238-c077-4036-9bec-a6dba4031af8 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-48f1d042-f566-4ed5-bbf6-861d8b548bfa "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-401cc35c-94ec-437d-a543-4ce326e89124 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-4fe2fdd7-4638-41bd-8df7-9f749ec1d7a0 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-3b30a24a-d82d-4753-8503-3da2a3dd3387 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-62d3292a-6dfb-48be-b243-61c214db6527 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-f645c225-c659-4ca3-9c99-e21da47aa773 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-0d72173b-9fd3-4f74-a7ae-27d755c3ce76 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-aeaf5cb5-9cc2-4a80-813a-d77e22b36095 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-61735b5d-cc73-4e4a-955e-b0ba40320fbd "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-768c12b0-c1ea-47a4-93b8-29870fc36b03 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#suppress-07f576bc-3002-4b1a-ba91-384610a580b6 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    consistent: true
+  - element: select.w-full
+    property: padding-y
+    found:
+    - px: 8
+      where: select.w-full#_R_7clritpermlb_-audience "EveryoneTesters onlyExpert testers
+        only" @ narrow-320.png
+    - px: 8
+      where: select.w-full#preview-game "Full catalog (all questions)Asteroids Cl"
+        @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-9865e4c2-7fb2-4bbc-bcac-48bad0cf1d45 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-d7152238-c077-4036-9bec-a6dba4031af8 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-48f1d042-f566-4ed5-bbf6-861d8b548bfa "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-401cc35c-94ec-437d-a543-4ce326e89124 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-4fe2fdd7-4638-41bd-8df7-9f749ec1d7a0 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-3b30a24a-d82d-4753-8503-3da2a3dd3387 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-62d3292a-6dfb-48be-b243-61c214db6527 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-f645c225-c659-4ca3-9c99-e21da47aa773 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-0d72173b-9fd3-4f74-a7ae-27d755c3ce76 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-aeaf5cb5-9cc2-4a80-813a-d77e22b36095 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-61735b5d-cc73-4e4a-955e-b0ba40320fbd "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-768c12b0-c1ea-47a4-93b8-29870fc36b03 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#suppress-07f576bc-3002-4b1a-ba91-384610a580b6 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - px: 8
+      where: select.w-full#_R_7clritpermlb_-audience "EveryoneTesters onlyExpert testers
+        only" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#preview-game "Full catalog (all questions)Asteroids Cl"
+        @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-9865e4c2-7fb2-4bbc-bcac-48bad0cf1d45 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-d7152238-c077-4036-9bec-a6dba4031af8 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-48f1d042-f566-4ed5-bbf6-861d8b548bfa "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-401cc35c-94ec-437d-a543-4ce326e89124 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-4fe2fdd7-4638-41bd-8df7-9f749ec1d7a0 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-3b30a24a-d82d-4753-8503-3da2a3dd3387 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-62d3292a-6dfb-48be-b243-61c214db6527 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-f645c225-c659-4ca3-9c99-e21da47aa773 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-0d72173b-9fd3-4f74-a7ae-27d755c3ce76 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-aeaf5cb5-9cc2-4a80-813a-d77e22b36095 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-61735b5d-cc73-4e4a-955e-b0ba40320fbd "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-768c12b0-c1ea-47a4-93b8-29870fc36b03 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#suppress-07f576bc-3002-4b1a-ba91-384610a580b6 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    consistent: true
+  typography:
+  - element: button.flex
+    found:
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↓" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↑" @ desktop-1440.png
+    - value: 16px / 400
+      where: button.flex "↓" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    found:
+    - value: 15px / 600
+      where: button.inline-flex "Create question" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Force retire" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Activate" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Activate" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - value: 15px / 600
+      where: button.inline-flex "Create question" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Force retire" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Activate" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Edit" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Activate" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Suppress" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    found:
+    - value: 16px / 400
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: button.relative
+    found:
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    consistent: true
+  - element: h1.adp-h1
+    found:
+    - value: 28px / 800
+      where: h1.adp-h1 "Question authoring" @ narrow-320.png
+    - value: 34px / 800
+      where: h1.adp-h1 "Question authoring" @ desktop-1440.png
+    consistent: false
+  - element: h2.adp-kicker
+    found:
+    - value: 11px / 500
+      where: h2.adp-kicker "Create a question" @ narrow-320.png
+    - value: 11px / 500
+      where: h2.adp-kicker "Existing questions" @ narrow-320.png
+    - value: 11px / 500
+      where: h2.adp-kicker "Create a question" @ desktop-1440.png
+    - value: 11px / 500
+      where: h2.adp-kicker "Existing questions" @ desktop-1440.png
+    consistent: true
+  - element: h3.adp-kicker
+    found:
+    - value: 11px / 500
+      where: h3.adp-kicker "User background" @ narrow-320.png
+    - value: 11px / 500
+      where: h3.adp-kicker "About the game" @ narrow-320.png
+    - value: 11px / 500
+      where: h3.adp-kicker "About you" @ narrow-320.png
+    - value: 11px / 500
+      where: h3.adp-kicker "Your experience" @ narrow-320.png
+    - value: 11px / 500
+      where: h3.adp-kicker "No section" @ narrow-320.png
+    - value: 11px / 500
+      where: h3.adp-kicker "User background" @ desktop-1440.png
+    - value: 11px / 500
+      where: h3.adp-kicker "About the game" @ desktop-1440.png
+    - value: 11px / 500
+      where: h3.adp-kicker "About you" @ desktop-1440.png
+    - value: 11px / 500
+      where: h3.adp-kicker "Your experience" @ desktop-1440.png
+    - value: 11px / 500
+      where: h3.adp-kicker "No section" @ desktop-1440.png
+    consistent: true
+  - element: input
+    found:
+    - value: 12px / 400
+      where: input @ narrow-320.png
+    - value: 12px / 400
+      where: input @ narrow-320.png
+    - value: 12px / 400
+      where: input @ narrow-320.png
+    - value: 12px / 400
+      where: input @ narrow-320.png
+    - value: 12px / 400
+      where: input @ desktop-1440.png
+    - value: 12px / 400
+      where: input @ desktop-1440.png
+    - value: 12px / 400
+      where: input @ desktop-1440.png
+    - value: 12px / 400
+      where: input @ desktop-1440.png
+    consistent: true
+  - element: input.h-4
+    found:
+    - value: 15px / 500
+      where: input.h-4#_R_7clritpermlb_-required @ narrow-320.png
+    - value: 15px / 500
+      where: input.h-4#_R_7clritpermlb_-is-core @ narrow-320.png
+    - value: 15px / 500
+      where: input.h-4#_R_7clritpermlb_-required @ desktop-1440.png
+    - value: 15px / 500
+      where: input.h-4#_R_7clritpermlb_-is-core @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    found:
+    - value: 15px / 500
+      where: input.w-full#_R_7clritpermlb_-wording @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_7clritpermlb_-section @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_7clritpermlb_-wording @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_7clritpermlb_-section @ desktop-1440.png
+    consistent: true
+  - element: label.adp-body
+    found:
+    - value: 15px / 500
+      where: label.adp-body "Question wording * (required)" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Help text optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Question type * (required)" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Required" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Section optional" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Core — ask across everything" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Preview as game" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Question wording * (required)" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Help text optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Question type * (required)" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Required" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Section optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Core — ask across everything" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Preview as game" @ desktop-1440.png
+    consistent: true
+  - element: label.adp-mono
+    found:
+    - value: 12px / 400
+      where: label.adp-mono "Audience" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Global" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Studio" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Game" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Build" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Audience" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "Global" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "Studio" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "Game" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "Build" @ desktop-1440.png
+    consistent: true
+  - element: label.sr-only
+    found:
+    - value: 16px / 400
+      where: label.sr-only "Suppress How often do you play games lik" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Overall, how would you rate you" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress What did you enjoy most? at a g" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress What could be better? at a game" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Was anything confusing or frust" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress How did the controls feel? at a" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress How was the difficulty? at a ga" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Did you hit any bugs or glitche" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Anything else you'd like to sha" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Did this session go well? at a " @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress What went wrong? at a game or b" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress What needs improving? at a game" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Would you play again? at a game" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress How often do you play games lik" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Overall, how would you rate you" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress What did you enjoy most? at a g" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress What could be better? at a game" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Was anything confusing or frust" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress How did the controls feel? at a" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress How was the difficulty? at a ga" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Did you hit any bugs or glitche" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Anything else you'd like to sha" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Did this session go well? at a " @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress What went wrong? at a game or b" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress What needs improving? at a game" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Suppress Would you play again? at a game" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-body
+    found:
+    - value: 15px / 500
+      where: p.adp-body "Create extension questions targeted at a" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Create extension questions targeted at a" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    found:
+    - value: 11px / 500
+      where: p.adp-kicker "Feedback questions" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Feedback questions" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-mono
+    found:
+    - value: 12px / 400
+      where: p.adp-mono "Groups this question under a header on t" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Core questions are asked on every game a" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Groups this question under a header on t" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Core questions are asked on every game a" @ desktop-1440.png
+    consistent: true
+  - element: select.mt-2
+    found:
+    - value: 12px / 400
+      where: select.mt-2#_R_7clritpermlb_-qtype "Free textScale (1-5)Yes / noSingle
+        choic" @ narrow-320.png
+    - value: 12px / 400
+      where: select.mt-2#_R_7clritpermlb_-qtype "Free textScale (1-5)Yes / noSingle
+        choic" @ desktop-1440.png
+    consistent: true
+  - element: select.w-full
+    found:
+    - value: 12px / 400
+      where: select.w-full#_R_7clritpermlb_-audience "EveryoneTesters onlyExpert testers
+        only" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#preview-game "Full catalog (all questions)Asteroids Cl"
+        @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-9865e4c2-7fb2-4bbc-bcac-48bad0cf1d45 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-d7152238-c077-4036-9bec-a6dba4031af8 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-48f1d042-f566-4ed5-bbf6-861d8b548bfa "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-401cc35c-94ec-437d-a543-4ce326e89124 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-4fe2fdd7-4638-41bd-8df7-9f749ec1d7a0 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-3b30a24a-d82d-4753-8503-3da2a3dd3387 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-62d3292a-6dfb-48be-b243-61c214db6527 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-f645c225-c659-4ca3-9c99-e21da47aa773 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-0d72173b-9fd3-4f74-a7ae-27d755c3ce76 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-aeaf5cb5-9cc2-4a80-813a-d77e22b36095 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-61735b5d-cc73-4e4a-955e-b0ba40320fbd "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-768c12b0-c1ea-47a4-93b8-29870fc36b03 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#suppress-07f576bc-3002-4b1a-ba91-384610a580b6 "Suppress
+        at…Asteroids Classics PlusMissi" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#_R_7clritpermlb_-audience "EveryoneTesters onlyExpert testers
+        only" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#preview-game "Full catalog (all questions)Asteroids Cl"
+        @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-9865e4c2-7fb2-4bbc-bcac-48bad0cf1d45 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-d7152238-c077-4036-9bec-a6dba4031af8 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-48f1d042-f566-4ed5-bbf6-861d8b548bfa "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-401cc35c-94ec-437d-a543-4ce326e89124 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-4fe2fdd7-4638-41bd-8df7-9f749ec1d7a0 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-3b30a24a-d82d-4753-8503-3da2a3dd3387 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-62d3292a-6dfb-48be-b243-61c214db6527 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-f645c225-c659-4ca3-9c99-e21da47aa773 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-0d72173b-9fd3-4f74-a7ae-27d755c3ce76 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-aeaf5cb5-9cc2-4a80-813a-d77e22b36095 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-61735b5d-cc73-4e4a-955e-b0ba40320fbd "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-768c12b0-c1ea-47a4-93b8-29870fc36b03 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#suppress-07f576bc-3002-4b1a-ba91-384610a580b6 "Suppress
+        at…Asteroids Classics PlusMissi" @ desktop-1440.png
+    consistent: true
+findings:
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input.h-4#_R_7clritpermlb_-required is 16×16px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input.h-4#_R_7clritpermlb_-is-core is 14×16px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input is 13×13px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only "(required)" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: label.sr-only "Suppress How often do you play games lik" is clipped
+    at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: label.sr-only "Suppress Overall, how would you rate you" is clipped
+    at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: label.sr-only "Suppress What did you enjoy most? at a g" is clipped
+    at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input.h-4#_R_7clritpermlb_-is-core is 16×16px at 390px.
+  evidence:
+    kind: rendered-measurement
+    ref: phone-390.png
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-x: 12px (123×); 20px (2×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-y: 8px (123×); 10px (2×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.inline-flex>: 12px / 600; 15px / 600.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h1.adp-h1>: 28px / 800; 34px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true

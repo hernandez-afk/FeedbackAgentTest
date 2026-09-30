@@ -1,0 +1,765 @@
+id: admin--admin
+source: rendered
+target: http://localhost:3000/admin
+capturedAt: '2026-09-30T08:44:07Z'
+manifestVersion: 1.0.0
+shots:
+- file: narrow-320.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: narrow-320-text200.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: phone-390.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: phone-390-text200.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: md-768.png
+  viewport:
+    name: md
+    w: 768
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 128
+- file: lg-1024.png
+  viewport:
+    name: lg
+    w: 1024
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: desktop-1440.png
+  viewport:
+    name: desktop
+    w: 1440
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+computedInventory:
+  spacing:
+  - element: button.inline-flex
+    property: gap
+    found:
+    - px: 8
+      where: button.inline-flex "Save" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Remove" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Save" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Remove" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Add user" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Add studio" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Save" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Remove" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Save" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Remove" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Add user" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Add studio" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-x
+    found:
+    - px: 12
+      where: button.inline-flex "Save" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Remove" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Save" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Remove" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Add user" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Add studio" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Save" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Remove" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Save" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Remove" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Add user" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Add studio" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    property: padding-y
+    found:
+    - px: 8
+      where: button.inline-flex "Save" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Remove" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Save" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Remove" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Add user" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Add studio" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Save" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Remove" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Save" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Remove" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Add user" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Add studio" @ desktop-1440.png
+    consistent: true
+  - element: button.md:hidden
+    property: gap
+    found:
+    - px: 6
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: h2.adp-kicker
+    property: padding-x
+    found:
+    - px: 0
+      where: h2.adp-kicker "Users" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Add user" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Add studio" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Feature Flags" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Users" @ desktop-1440.png
+    - px: 0
+      where: h2.adp-kicker "Add user" @ desktop-1440.png
+    - px: 0
+      where: h2.adp-kicker "Add studio" @ desktop-1440.png
+    - px: 0
+      where: h2.adp-kicker "Feature Flags" @ desktop-1440.png
+    consistent: true
+  - element: h2.adp-kicker
+    property: padding-y
+    found:
+    - px: 0
+      where: h2.adp-kicker "Users" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Add user" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Add studio" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Feature Flags" @ narrow-320.png
+    - px: 0
+      where: h2.adp-kicker "Users" @ desktop-1440.png
+    - px: 0
+      where: h2.adp-kicker "Add user" @ desktop-1440.png
+    - px: 0
+      where: h2.adp-kicker "Add studio" @ desktop-1440.png
+    - px: 0
+      where: h2.adp-kicker "Feature Flags" @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    property: padding-x
+    found:
+    - px: 12
+      where: input.w-full @ narrow-320.png
+    - px: 12
+      where: input.w-full @ narrow-320.png
+    - px: 12
+      where: input.w-full @ desktop-1440.png
+    - px: 12
+      where: input.w-full @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    property: padding-y
+    found:
+    - px: 8
+      where: input.w-full @ narrow-320.png
+    - px: 8
+      where: input.w-full @ narrow-320.png
+    - px: 8
+      where: input.w-full @ desktop-1440.png
+    - px: 8
+      where: input.w-full @ desktop-1440.png
+    consistent: true
+  - element: label.adp-mono
+    property: gap
+    found:
+    - px: 8
+      where: label.adp-mono "Expert" @ narrow-320.png
+    - px: 8
+      where: label.adp-mono "Expert" @ narrow-320.png
+    - px: 8
+      where: label.adp-mono "Expert" @ narrow-320.png
+    - px: 8
+      where: label.adp-mono "Expert" @ desktop-1440.png
+    - px: 8
+      where: label.adp-mono "Expert" @ desktop-1440.png
+    - px: 8
+      where: label.adp-mono "Expert" @ desktop-1440.png
+    consistent: true
+  - element: label.inline-flex
+    property: gap
+    found:
+    - px: 12
+      where: label.inline-flex @ narrow-320.png
+    - px: 12
+      where: label.inline-flex @ narrow-320.png
+    - px: 12
+      where: label.inline-flex @ narrow-320.png
+    - px: 12
+      where: label.inline-flex @ narrow-320.png
+    - px: 12
+      where: label.inline-flex @ narrow-320.png
+    - px: 12
+      where: label.inline-flex @ narrow-320.png
+    - px: 12
+      where: label.inline-flex @ desktop-1440.png
+    - px: 12
+      where: label.inline-flex @ desktop-1440.png
+    - px: 12
+      where: label.inline-flex @ desktop-1440.png
+    - px: 12
+      where: label.inline-flex @ desktop-1440.png
+    - px: 12
+      where: label.inline-flex @ desktop-1440.png
+    - px: 12
+      where: label.inline-flex @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    property: gap
+    found:
+    - px: 8
+      where: p.adp-kicker "Users · Roles · Flags" @ narrow-320.png
+    - px: 8
+      where: p.adp-kicker "Users · Roles · Flags" @ desktop-1440.png
+    consistent: true
+  - element: select.w-full
+    property: padding-x
+    found:
+    - px: 12
+      where: select.w-full#studio-10585915-70e6-4a20-84b9-ddb7ef229d7c "Select a studio…AtariCoatsinkUnassigned
+        " @ narrow-320.png
+    - px: 12
+      where: select.w-full#role-10585915-70e6-4a20-84b9-ddb7ef229d7c "TesterReviewerAdmin"
+        @ narrow-320.png
+    - px: 12
+      where: select.w-full#studio-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "Select a studio…AtariCoatsinkUnassigned
+        " @ narrow-320.png
+    - px: 12
+      where: select.w-full#role-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "TesterReviewerAdmin"
+        @ narrow-320.png
+    - px: 12
+      where: select.w-full#add-role "TesterReviewerAdmin" @ narrow-320.png
+    - px: 12
+      where: select.w-full#add-studio "Select a studio…AtariCoatsinkUnassigned " @
+        narrow-320.png
+    - px: 12
+      where: select.w-full#studio-10585915-70e6-4a20-84b9-ddb7ef229d7c "Select a studio…AtariCoatsinkUnassigned
+        " @ desktop-1440.png
+    - px: 12
+      where: select.w-full#role-10585915-70e6-4a20-84b9-ddb7ef229d7c "TesterReviewerAdmin"
+        @ desktop-1440.png
+    - px: 12
+      where: select.w-full#studio-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "Select a studio…AtariCoatsinkUnassigned
+        " @ desktop-1440.png
+    - px: 12
+      where: select.w-full#role-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "TesterReviewerAdmin"
+        @ desktop-1440.png
+    - px: 12
+      where: select.w-full#add-role "TesterReviewerAdmin" @ desktop-1440.png
+    - px: 12
+      where: select.w-full#add-studio "Select a studio…AtariCoatsinkUnassigned " @
+        desktop-1440.png
+    consistent: true
+  - element: select.w-full
+    property: padding-y
+    found:
+    - px: 8
+      where: select.w-full#studio-10585915-70e6-4a20-84b9-ddb7ef229d7c "Select a studio…AtariCoatsinkUnassigned
+        " @ narrow-320.png
+    - px: 8
+      where: select.w-full#role-10585915-70e6-4a20-84b9-ddb7ef229d7c "TesterReviewerAdmin"
+        @ narrow-320.png
+    - px: 8
+      where: select.w-full#studio-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "Select a studio…AtariCoatsinkUnassigned
+        " @ narrow-320.png
+    - px: 8
+      where: select.w-full#role-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "TesterReviewerAdmin"
+        @ narrow-320.png
+    - px: 8
+      where: select.w-full#add-role "TesterReviewerAdmin" @ narrow-320.png
+    - px: 8
+      where: select.w-full#add-studio "Select a studio…AtariCoatsinkUnassigned " @
+        narrow-320.png
+    - px: 8
+      where: select.w-full#studio-10585915-70e6-4a20-84b9-ddb7ef229d7c "Select a studio…AtariCoatsinkUnassigned
+        " @ desktop-1440.png
+    - px: 8
+      where: select.w-full#role-10585915-70e6-4a20-84b9-ddb7ef229d7c "TesterReviewerAdmin"
+        @ desktop-1440.png
+    - px: 8
+      where: select.w-full#studio-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "Select a studio…AtariCoatsinkUnassigned
+        " @ desktop-1440.png
+    - px: 8
+      where: select.w-full#role-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "TesterReviewerAdmin"
+        @ desktop-1440.png
+    - px: 8
+      where: select.w-full#add-role "TesterReviewerAdmin" @ desktop-1440.png
+    - px: 8
+      where: select.w-full#add-studio "Select a studio…AtariCoatsinkUnassigned " @
+        desktop-1440.png
+    consistent: true
+  typography:
+  - element: button.inline-flex
+    found:
+    - value: 12px / 600
+      where: button.inline-flex "Save" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Remove" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Save" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Remove" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Add user" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Add studio" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Save" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Remove" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Save" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Remove" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Add user" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Add studio" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    found:
+    - value: 16px / 400
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: button.relative
+    found:
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    consistent: true
+  - element: h1.adp-h1
+    found:
+    - value: 28px / 800
+      where: h1.adp-h1 "Admin panel" @ narrow-320.png
+    - value: 34px / 800
+      where: h1.adp-h1 "Admin panel" @ desktop-1440.png
+    consistent: false
+  - element: h2.adp-kicker
+    found:
+    - value: 11px / 500
+      where: h2.adp-kicker "Users" @ narrow-320.png
+    - value: 11px / 500
+      where: h2.adp-kicker "Add user" @ narrow-320.png
+    - value: 11px / 500
+      where: h2.adp-kicker "Add studio" @ narrow-320.png
+    - value: 11px / 500
+      where: h2.adp-kicker "Feature Flags" @ narrow-320.png
+    - value: 11px / 500
+      where: h2.adp-kicker "Users" @ desktop-1440.png
+    - value: 11px / 500
+      where: h2.adp-kicker "Add user" @ desktop-1440.png
+    - value: 11px / 500
+      where: h2.adp-kicker "Add studio" @ desktop-1440.png
+    - value: 11px / 500
+      where: h2.adp-kicker "Feature Flags" @ desktop-1440.png
+    consistent: true
+  - element: input.h-4
+    found:
+    - value: 12px / 400
+      where: input.h-4#expert-10585915-70e6-4a20-84b9-ddb7ef229d7c @ narrow-320.png
+    - value: 12px / 400
+      where: input.h-4#expert-4f233e92-fed8-4d55-a16c-b20222a3f1c4 @ narrow-320.png
+    - value: 12px / 400
+      where: input.h-4#add-is-expert @ narrow-320.png
+    - value: 12px / 400
+      where: input.h-4#expert-10585915-70e6-4a20-84b9-ddb7ef229d7c @ desktop-1440.png
+    - value: 12px / 400
+      where: input.h-4#expert-4f233e92-fed8-4d55-a16c-b20222a3f1c4 @ desktop-1440.png
+    - value: 12px / 400
+      where: input.h-4#add-is-expert @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    found:
+    - value: 12px / 400
+      where: input.w-full @ narrow-320.png
+    - value: 12px / 400
+      where: input.w-full @ narrow-320.png
+    - value: 12px / 400
+      where: input.w-full @ desktop-1440.png
+    - value: 12px / 400
+      where: input.w-full @ desktop-1440.png
+    consistent: true
+  - element: label.adp-mono
+    found:
+    - value: 12px / 400
+      where: label.adp-mono "Expert" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Expert" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Expert" @ narrow-320.png
+    - value: 12px / 400
+      where: label.adp-mono "Expert" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "Expert" @ desktop-1440.png
+    - value: 12px / 400
+      where: label.adp-mono "Expert" @ desktop-1440.png
+    consistent: true
+  - element: label.inline-flex
+    found:
+    - value: 16px / 400
+      where: label.inline-flex @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex @ desktop-1440.png
+    consistent: true
+  - element: label.sr-only
+    found:
+    - value: 16px / 400
+      where: label.sr-only "Studio for tester@atari.com (required fo" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Change role for tester@atari.com" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Studio for designer@atari.com (required " @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Change role for designer@atari.com" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Role" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Studio (required for Tester and Reviewer" @ narrow-320.png
+    - value: 16px / 400
+      where: label.sr-only "Studio for tester@atari.com (required fo" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Change role for tester@atari.com" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Studio for designer@atari.com (required " @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Change role for designer@atari.com" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Role" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.sr-only "Studio (required for Tester and Reviewer" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-body
+    found:
+    - value: 15px / 500
+      where: p.adp-body "Manage who can sign in and what they can" @ narrow-320.png
+    - value: 15px / 700
+      where: p.adp-body "Video Vision processing (master switch)" @ narrow-320.png
+    - value: 15px / 700
+      where: p.adp-body "AI feedback enrichment" @ narrow-320.png
+    - value: 15px / 700
+      where: p.adp-body "Embedded game player + auto-capture (CH-" @ narrow-320.png
+    - value: 15px / 700
+      where: p.adp-body "Voice commentary capture (CH-471, master" @ narrow-320.png
+    - value: 15px / 700
+      where: p.adp-body "Voice capture consent dialogue (CH-471)" @ narrow-320.png
+    - value: 15px / 700
+      where: p.adp-body "Imported-document AI extraction (CH-540," @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Manage who can sign in and what they can" @ desktop-1440.png
+    - value: 15px / 700
+      where: p.adp-body "Video Vision processing (master switch)" @ desktop-1440.png
+    - value: 15px / 700
+      where: p.adp-body "AI feedback enrichment" @ desktop-1440.png
+    - value: 15px / 700
+      where: p.adp-body "Embedded game player + auto-capture (CH-" @ desktop-1440.png
+    - value: 15px / 700
+      where: p.adp-body "Voice commentary capture (CH-471, master" @ desktop-1440.png
+    - value: 15px / 700
+      where: p.adp-body "Voice capture consent dialogue (CH-471)" @ desktop-1440.png
+    - value: 15px / 700
+      where: p.adp-body "Imported-document AI extraction (CH-540," @ desktop-1440.png
+    consistent: false
+  - element: p.adp-kicker
+    found:
+    - value: 11px / 500
+      where: p.adp-kicker "Users · Roles · Flags" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Users · Roles · Flags" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-mono
+    found:
+    - value: 12px / 400
+      where: p.adp-mono "Tester and Reviewer roles require a stud" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Studio names must be unique (case-insens" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "MASTER SWITCH for Vision API spend (CH-2" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "When ON, the async worker (backend/enric" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "When ON, the frontend EmbeddedGamePlayer" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "MASTER SWITCH for tester microphone capt" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "When ON (default) and 'voice_capture' is" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "MASTER SWITCH for Claude spend on upload" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Flags control feature visibility across " @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "Tester and Reviewer roles require a stud" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Studio names must be unique (case-insens" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "MASTER SWITCH for Vision API spend (CH-2" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "When ON, the async worker (backend/enric" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "When ON, the frontend EmbeddedGamePlayer" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "MASTER SWITCH for tester microphone capt" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "When ON (default) and 'voice_capture' is" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "MASTER SWITCH for Claude spend on upload" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono "Flags control feature visibility across " @ desktop-1440.png
+    consistent: true
+  - element: select.w-full
+    found:
+    - value: 12px / 400
+      where: select.w-full#studio-10585915-70e6-4a20-84b9-ddb7ef229d7c "Select a studio…AtariCoatsinkUnassigned
+        " @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#role-10585915-70e6-4a20-84b9-ddb7ef229d7c "TesterReviewerAdmin"
+        @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#studio-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "Select a studio…AtariCoatsinkUnassigned
+        " @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#role-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "TesterReviewerAdmin"
+        @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#add-role "TesterReviewerAdmin" @ narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#add-studio "Select a studio…AtariCoatsinkUnassigned " @
+        narrow-320.png
+    - value: 12px / 400
+      where: select.w-full#studio-10585915-70e6-4a20-84b9-ddb7ef229d7c "Select a studio…AtariCoatsinkUnassigned
+        " @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#role-10585915-70e6-4a20-84b9-ddb7ef229d7c "TesterReviewerAdmin"
+        @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#studio-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "Select a studio…AtariCoatsinkUnassigned
+        " @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#role-4f233e92-fed8-4d55-a16c-b20222a3f1c4 "TesterReviewerAdmin"
+        @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#add-role "TesterReviewerAdmin" @ desktop-1440.png
+    - value: 12px / 400
+      where: select.w-full#add-studio "Select a studio…AtariCoatsinkUnassigned " @
+        desktop-1440.png
+    consistent: true
+findings:
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input.h-4#expert-10585915-70e6-4a20-84b9-ddb7ef229d7c is 16×16px at
+    320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input.h-4#expert-4f233e92-fed8-4d55-a16c-b20222a3f1c4 is 16×16px at
+    320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input.h-4#add-is-expert is 16×16px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: button.relative is 44×24px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: label.sr-only "Studio for tester@atari.com (required fo" is clipped
+    at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: label.sr-only "Change role for tester@atari.com" is clipped at 320px
+    at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: label.sr-only "Studio for designer@atari.com (required " is clipped
+    at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: label.sr-only "Change role for designer@atari.com" is clipped at 320px
+    at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: label.sr-only "Role" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-x: 12px (9×); 16px (4×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.inline-flex>: 12px / 600; 13px / 600.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h1.adp-h1>: 28px / 800; 34px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<p.adp-body>: 15px / 500; 15px / 700.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true

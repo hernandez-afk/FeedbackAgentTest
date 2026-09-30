@@ -176,11 +176,14 @@ projects:
       reviewStatus: current
   - id: "GFE-SORT"
     title: "Browse, filter and sort games and sessions"
-    status: "in-audit"  # round 3 in audit (audit-report-round3.md)
+    status: "in-progress"  # round 3 audited (audit-report-round3.md); waiting on human sign-off
     scopeSummary: "The catalogue sidebar (search, sort, Platform/Project/Studio filters, Project → Platform → Title tree) on /games and every game dashboard; card/list view; title groups; build stars pinned first on /games and /sessions; the negative-reviews warning; a platform filter on /sessions."
     scopeTerms: ["game catalogue", "platform filter", "studio filter", "sort order", "list view", "session sort", "project", "title", "favourite", "critical warning", "sidebar tree"]
     surfaces: ["games", "games/filters", "sessions", "sessions/filters", "catalog-sidebar"]
-    priorities: ["P1", "P2", "P3"]
+    priorities:
+      - { id: "P1", statement: "Anyone can narrow a long list of games or sessions to the platform, studio or game they're looking for." }
+      - { id: "P2", statement: "Filtering keeps working as the catalogue grows past one screenful (server-side, paginated, new facet values appear without code changes)." }
+      - { id: "P3", statement: "A first-time user can use it with no instructions (3-3-3)." }
     componentsUsed: ["GameCard", "SortPillGroup", "NativeSelect", "EmptyState", "InlineError", "Badge", "Card", "Button", "GameFilterPanel (proposed)", "GameListRow (proposed)", "CatalogShell (proposed)", "CatalogTree (proposed)", "SortButtons (proposed)", "StarButton (proposed)", "CriticalFlag (proposed)", "TitleGroup (proposed)", "GroupingFields (proposed)", "DashboardSidebar (proposed)", "BuildPills"]
     codePaths:
       - "frontend/app/games/page.tsx"
@@ -211,9 +214,12 @@ projects:
       - { id: "audit-report-GFE-SORT-round2", type: "audit-report", path: "game-sort/audit-report-round2.md", version: 2, reviewStatus: "current" }
       - { id: "audit-report-GFE-SORT-round3", type: "audit-report", path: "game-sort/audit-report-round3.md", version: 3, reviewStatus: "current" }
 navigation:
-  - { from: "nav", to: "games", via: "'Games' header link", status: "live" }
-  - { from: "nav", to: "sessions", via: "'Sessions' header link", status: "live" }
-  - { from: "games", to: "game", via: "card title / list row", status: "live" }
-  - { from: "sessions", to: "sessions/detail", via: "'View' button", status: "live" }
-  - { from: "catalog-sidebar", to: "games/dashboard", via: "sidebar tree (reviewers)", status: "live" }
-  - { from: "games/dashboard", to: "catalog-sidebar", via: "sidebar beside every dashboard", status: "live" }
+  links:
+    - { from: "nav", to: "games", label: "Games", kind: "nav", status: "live" }
+    - { from: "nav", to: "sessions", label: "Sessions", kind: "nav", status: "live" }
+    - { from: "games", to: "game", label: "card title / list row", kind: "nav", status: "live" }
+    - { from: "sessions", to: "sessions/detail", label: "View", kind: "nav", status: "live" }
+    - { from: "catalog-sidebar", to: "games/dashboard", label: "a game in the sidebar tree (reviewers)", kind: "nav", projectId: "GFE-SORT", status: "live" }
+    - { from: "games/dashboard", to: "games", label: "All games", kind: "back", status: "live" }
+    - { from: "email", to: "game", label: "shared /game/<slug> link", kind: "deep-link", status: "live" }
+    - { from: "login", to: "games", label: "sign in (returns to ?from)", kind: "redirect", status: "live" }

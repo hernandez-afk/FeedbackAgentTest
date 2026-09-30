@@ -1,0 +1,665 @@
+id: capture--feedback
+source: rendered
+target: http://localhost:3000/feedback?session=3caa966d-bb23-4442-85e7-b993dcecd98f
+capturedAt: '2026-09-30T08:42:45Z'
+manifestVersion: 1.0.0
+shots:
+- file: narrow-320.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: narrow-320-text200.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: phone-390.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: phone-390-text200.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: md-768.png
+  viewport:
+    name: md
+    w: 768
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 128
+- file: lg-1024.png
+  viewport:
+    name: lg
+    w: 1024
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: desktop-1440.png
+  viewport:
+    name: desktop
+    w: 1440
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+computedInventory:
+  spacing:
+  - element: button.inline-flex
+    property: gap
+    found:
+    - px: 8
+      where: button.inline-flex "Submit feedback" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Submit feedback" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-x
+    found:
+    - px: 20
+      where: button.inline-flex "Submit feedback" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 20
+      where: button.inline-flex "Submit feedback" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    property: padding-y
+    found:
+    - px: 10
+      where: button.inline-flex "Submit feedback" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 10
+      where: button.inline-flex "Submit feedback" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    property: gap
+    found:
+    - px: 6
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: h3.adp-kicker
+    property: padding-x
+    found:
+    - px: 0
+      where: h3.adp-kicker "User background" @ narrow-320.png
+    - px: 0
+      where: h3.adp-kicker "About the game" @ narrow-320.png
+    - px: 0
+      where: h3.adp-kicker "About you" @ narrow-320.png
+    - px: 0
+      where: h3.adp-kicker "Your experience" @ narrow-320.png
+    - px: 0
+      where: h3.adp-kicker "User background" @ desktop-1440.png
+    - px: 0
+      where: h3.adp-kicker "About the game" @ desktop-1440.png
+    - px: 0
+      where: h3.adp-kicker "About you" @ desktop-1440.png
+    - px: 0
+      where: h3.adp-kicker "Your experience" @ desktop-1440.png
+    consistent: true
+  - element: h3.adp-kicker
+    property: padding-y
+    found:
+    - px: 0
+      where: h3.adp-kicker "User background" @ narrow-320.png
+    - px: 0
+      where: h3.adp-kicker "About the game" @ narrow-320.png
+    - px: 0
+      where: h3.adp-kicker "About you" @ narrow-320.png
+    - px: 0
+      where: h3.adp-kicker "Your experience" @ narrow-320.png
+    - px: 0
+      where: h3.adp-kicker "User background" @ desktop-1440.png
+    - px: 0
+      where: h3.adp-kicker "About the game" @ desktop-1440.png
+    - px: 0
+      where: h3.adp-kicker "About you" @ desktop-1440.png
+    - px: 0
+      where: h3.adp-kicker "Your experience" @ desktop-1440.png
+    consistent: true
+  typography:
+  - element: button.inline-flex
+    found:
+    - value: 15px / 600
+      where: button.inline-flex "Submit feedback" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - value: 15px / 600
+      where: button.inline-flex "Submit feedback" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    found:
+    - value: 16px / 400
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: button.relative
+    found:
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    consistent: true
+  - element: h1.adp-h2
+    found:
+    - value: 18px / 800
+      where: h1.adp-h2 "A few questions" @ narrow-320.png
+    - value: 20px / 800
+      where: h1.adp-h2 "A few questions" @ desktop-1440.png
+    consistent: false
+  - element: h3.adp-kicker
+    found:
+    - value: 11px / 500
+      where: h3.adp-kicker "User background" @ narrow-320.png
+    - value: 11px / 500
+      where: h3.adp-kicker "About the game" @ narrow-320.png
+    - value: 11px / 500
+      where: h3.adp-kicker "About you" @ narrow-320.png
+    - value: 11px / 500
+      where: h3.adp-kicker "Your experience" @ narrow-320.png
+    - value: 11px / 500
+      where: h3.adp-kicker "User background" @ desktop-1440.png
+    - value: 11px / 500
+      where: h3.adp-kicker "About the game" @ desktop-1440.png
+    - value: 11px / 500
+      where: h3.adp-kicker "About you" @ desktop-1440.png
+    - value: 11px / 500
+      where: h3.adp-kicker "Your experience" @ desktop-1440.png
+    consistent: true
+  - element: input.sr-only
+    found:
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    - value: 16px / 400
+      where: input.sr-only @ desktop-1440.png
+    consistent: true
+  - element: label.inline-flex
+    found:
+    - value: 16px / 400
+      where: label.inline-flex "1" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "1" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "1" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "1" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "First time" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "Now and then" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "Regularly" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "1" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "1" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "Too easy" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "Just right" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "Too hard" @ narrow-320.png
+    - value: 16px / 400
+      where: label.inline-flex "1" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "1" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "1" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "1" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "First time" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "Now and then" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "Regularly" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "1" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "1" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "2" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "3" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "4" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "5" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "Too easy" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "Just right" @ desktop-1440.png
+    - value: 16px / 400
+      where: label.inline-flex "Too hard" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-body
+    found:
+    - value: 15px / 500
+      where: p.adp-body "Takes a couple of minutes. Starred quest" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-games_knowledge-label "How much do you feel
+        you know about vide" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-comfort_sharing-label "How comfortable are you
+        sharing your gam" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-ease_of_finding-label "How easy was it to find
+        what you were lo" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-play_again-label "How likely are you to play
+        this game aga" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-purpose-label "In your own words, what is this
+        game for" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-held_back-label "What held you back?optional"
+        @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-technical-label "Anything that broke, lagged,
+        or loaded s" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-missing-label "What's missing?optional" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-play_frequency-label "How often do you play games
+        like this?*" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-overall_experience-label "Overall, how would
+        you rate your experie" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-enjoyed_most-label "What did you enjoy most?*"
+        @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-could_be_better-label "What could be better?*"
+        @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-confusing_frustrating-label "Was anything confusing
+        or frustrating?op" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-controls_feel-label "How did the controls feel?*"
+        @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-difficulty-label "How was the difficulty?*" @
+        narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-bugs_glitches-label "Did you hit any bugs or
+        glitches?optiona" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-anything_else-label "Anything else you'd like
+        to share?option" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-confusing-label "What was confusing?optional"
+        @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-other_comments-label "Any other comments?optional"
+        @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-resonated-label "What resonated with you?optional"
+        @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Takes a couple of minutes. Starred quest" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-games_knowledge-label "How much do you feel
+        you know about vide" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-comfort_sharing-label "How comfortable are you
+        sharing your gam" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-ease_of_finding-label "How easy was it to find
+        what you were lo" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-play_again-label "How likely are you to play
+        this game aga" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-purpose-label "In your own words, what is this
+        game for" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-held_back-label "What held you back?optional"
+        @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-technical-label "Anything that broke, lagged,
+        or loaded s" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-missing-label "What's missing?optional" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-play_frequency-label "How often do you play games
+        like this?*" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-overall_experience-label "Overall, how would
+        you rate your experie" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-enjoyed_most-label "What did you enjoy most?*"
+        @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-could_be_better-label "What could be better?*"
+        @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-confusing_frustrating-label "Was anything confusing
+        or frustrating?op" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-controls_feel-label "How did the controls feel?*"
+        @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-difficulty-label "How was the difficulty?*" @
+        desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-bugs_glitches-label "Did you hit any bugs or
+        glitches?optiona" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-ext-anything_else-label "Anything else you'd like
+        to share?option" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-confusing-label "What was confusing?optional"
+        @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-other_comments-label "Any other comments?optional"
+        @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body#question-core-resonated-label "What resonated with you?optional"
+        @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    found:
+    - value: 11px / 500
+      where: p.adp-kicker "Step 2 of 2 · Your feedback" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Step 2 of 2 · Your feedback" @ desktop-1440.png
+    consistent: true
+findings:
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input.sr-only is 1×1px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only#_R_alb_ "Notifications" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-x: 12px (1×); 20px (2×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-y: 8px (1×); 10px (2×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.inline-flex>: 12px / 600; 15px / 600.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h1.adp-h2>: 18px / 800; 20px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true

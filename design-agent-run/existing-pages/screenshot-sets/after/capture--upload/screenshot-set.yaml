@@ -1,0 +1,278 @@
+id: capture--upload
+source: rendered
+target: http://localhost:3000/upload?session=3caa966d-bb23-4442-85e7-b993dcecd98f
+capturedAt: '2026-09-30T08:42:36Z'
+manifestVersion: 1.0.0
+shots:
+- file: narrow-320.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: narrow-320-text200.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: phone-390.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: phone-390-text200.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: md-768.png
+  viewport:
+    name: md
+    w: 768
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 128
+- file: lg-1024.png
+  viewport:
+    name: lg
+    w: 1024
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: desktop-1440.png
+  viewport:
+    name: desktop
+    w: 1440
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+computedInventory:
+  spacing:
+  - element: button.inline-flex
+    property: gap
+    found:
+    - px: 8
+      where: button.inline-flex "Attach screenshots" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue without video" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Attach screenshots" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue without video" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-x
+    found:
+    - px: 12
+      where: button.inline-flex "Attach screenshots" @ narrow-320.png
+    - px: 16
+      where: button.inline-flex "Continue without video" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 12
+      where: button.inline-flex "Attach screenshots" @ desktop-1440.png
+    - px: 16
+      where: button.inline-flex "Continue without video" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    property: padding-y
+    found:
+    - px: 8
+      where: button.inline-flex "Attach screenshots" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Continue without video" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Attach screenshots" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Continue without video" @ desktop-1440.png
+    consistent: true
+  - element: button.md:hidden
+    property: gap
+    found:
+    - px: 6
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: label.relative
+    property: gap
+    found:
+    - px: 16
+      where: label.relative "Drag and drop your recording hereor choo" @ narrow-320.png
+    - px: 16
+      where: label.relative "Drag and drop your recording hereor choo" @ desktop-1440.png
+    consistent: true
+  - element: label.relative
+    property: padding-x
+    found:
+    - px: 24
+      where: label.relative "Drag and drop your recording hereor choo" @ narrow-320.png
+    - px: 24
+      where: label.relative "Drag and drop your recording hereor choo" @ desktop-1440.png
+    consistent: true
+  - element: label.relative
+    property: padding-y
+    found:
+    - px: 48
+      where: label.relative "Drag and drop your recording hereor choo" @ narrow-320.png
+    - px: 48
+      where: label.relative "Drag and drop your recording hereor choo" @ desktop-1440.png
+    consistent: true
+  typography:
+  - element: button.inline-flex
+    found:
+    - value: 12px / 600
+      where: button.inline-flex "Attach screenshots" @ narrow-320.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue without video" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - value: 12px / 600
+      where: button.inline-flex "Attach screenshots" @ desktop-1440.png
+    - value: 13px / 600
+      where: button.inline-flex "Continue without video" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    found:
+    - value: 16px / 400
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: button.relative
+    found:
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    consistent: true
+  - element: h1.adp-h1
+    found:
+    - value: 28px / 800
+      where: h1.adp-h1 "Add a recording (optional)" @ narrow-320.png
+    - value: 34px / 800
+      where: h1.adp-h1 "Add a recording (optional)" @ desktop-1440.png
+    consistent: false
+  - element: input.absolute
+    found:
+    - value: 16px / 400
+      where: input.absolute#video-file-input @ narrow-320.png
+    - value: 16px / 400
+      where: input.absolute#video-file-input @ desktop-1440.png
+    consistent: true
+  - element: input.sr-only
+    found:
+    - value: 16px / 400
+      where: input.sr-only#screenshot-file-input @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only#screenshot-file-input @ desktop-1440.png
+    consistent: true
+  - element: label.relative
+    found:
+    - value: 16px / 400
+      where: label.relative "Drag and drop your recording hereor choo" @ narrow-320.png
+    - value: 16px / 400
+      where: label.relative "Drag and drop your recording hereor choo" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-body
+    found:
+    - value: 15px / 500
+      where: p.adp-body "Attach your gameplay video if you have o" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Drag and drop your recording here" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "No recording? You can still submit feedb" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Attach your gameplay video if you have o" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body "Drag and drop your recording here" @ desktop-1440.png
+    - value: 15px / 500
+      where: p.adp-body "No recording? You can still submit feedb" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    found:
+    - value: 11px / 500
+      where: p.adp-kicker "Step 1 of 2" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Step 1 of 2" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-mono
+    found:
+    - value: 12px / 400
+      where: p.adp-mono "or choose a file" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#video-file-input-constraints "MP4 or MOV · max 4 GB" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#screenshot-file-input-constraints "PNG or JPEG · max 10 MB
+        each · up to 10 " @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "or choose a file" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#video-file-input-constraints "MP4 or MOV · max 4 GB" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#screenshot-file-input-constraints "PNG or JPEG · max 10 MB
+        each · up to 10 " @ desktop-1440.png
+    consistent: true
+  - element: p.sr-only
+    found:
+    - value: 16px / 400
+      where: p.sr-only#screenshot-file-input-status @ narrow-320.png
+    - value: 16px / 400
+      where: p.sr-only#screenshot-file-input-status @ desktop-1440.png
+    consistent: true
+findings:
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input.sr-only#screenshot-file-input is 1×1px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only#_R_alb_ "Notifications" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-x: 12px (3×); 16px (2×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.inline-flex>: 12px / 600; 13px / 600.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h1.adp-h1>: 28px / 800; 34px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true

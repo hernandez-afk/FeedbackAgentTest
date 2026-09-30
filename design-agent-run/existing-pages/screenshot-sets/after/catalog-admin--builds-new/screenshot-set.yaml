@@ -1,0 +1,344 @@
+id: catalog-admin--builds-new
+source: rendered
+target: http://localhost:3000/builds/new
+capturedAt: '2026-09-30T08:43:38Z'
+manifestVersion: 1.0.0
+shots:
+- file: narrow-320.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: narrow-320-text200.png
+  viewport:
+    name: narrow
+    w: 320
+    h: 640
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: phone-390.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: phone-390-text200.png
+  viewport:
+    name: phone
+    w: 390
+    h: 844
+  textScalePercent: 200
+  method: root font-size
+  overflowPx: 0
+- file: md-768.png
+  viewport:
+    name: md
+    w: 768
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 128
+- file: lg-1024.png
+  viewport:
+    name: lg
+    w: 1024
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+- file: desktop-1440.png
+  viewport:
+    name: desktop
+    w: 1440
+    h: 900
+  textScalePercent: 100
+  method: none
+  overflowPx: 0
+computedInventory:
+  spacing:
+  - element: button.flex
+    property: gap
+    found:
+    - px: 4
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ narrow-320.png
+    - px: 4
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ desktop-1440.png
+    consistent: true
+  - element: button.flex
+    property: padding-x
+    found:
+    - px: 16
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ narrow-320.png
+    - px: 16
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ desktop-1440.png
+    consistent: true
+  - element: button.flex
+    property: padding-y
+    found:
+    - px: 24
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ narrow-320.png
+    - px: 24
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: gap
+    found:
+    - px: 8
+      where: button.inline-flex "Add build" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 8
+      where: button.inline-flex "Add build" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    property: padding-x
+    found:
+    - px: 20
+      where: button.inline-flex "Add build" @ narrow-320.png
+    - px: 12
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 20
+      where: button.inline-flex "Add build" @ desktop-1440.png
+    consistent: false
+  - element: button.inline-flex
+    property: padding-y
+    found:
+    - px: 10
+      where: button.inline-flex "Add build" @ narrow-320.png
+    - px: 8
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - px: 10
+      where: button.inline-flex "Add build" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    property: gap
+    found:
+    - px: 6
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: input.w-full
+    property: padding-x
+    found:
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-new-build @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-add-build-embed @ narrow-320.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-new-build @ desktop-1440.png
+    - px: 12
+      where: input.w-full#_R_4lritpermlb_-add-build-embed @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    property: padding-y
+    found:
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-new-build @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-add-build-embed @ narrow-320.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-new-build @ desktop-1440.png
+    - px: 8
+      where: input.w-full#_R_4lritpermlb_-add-build-embed @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    property: gap
+    found:
+    - px: 8
+      where: p.adp-kicker "Catalog · 26 games" @ narrow-320.png
+    - px: 8
+      where: p.adp-kicker "Catalog · 26 games" @ desktop-1440.png
+    consistent: true
+  - element: select.mt-2
+    property: padding-x
+    found:
+    - px: 12
+      where: select.mt-2#_R_4lritpermlb_-target-game "Select a game…Asteroids Classics
+        PlusMis" @ narrow-320.png
+    - px: 12
+      where: select.mt-2#_R_4lritpermlb_-target-game "Select a game…Asteroids Classics
+        PlusMis" @ desktop-1440.png
+    consistent: true
+  - element: select.mt-2
+    property: padding-y
+    found:
+    - px: 8
+      where: select.mt-2#_R_4lritpermlb_-target-game "Select a game…Asteroids Classics
+        PlusMis" @ narrow-320.png
+    - px: 8
+      where: select.mt-2#_R_4lritpermlb_-target-game "Select a game…Asteroids Classics
+        PlusMis" @ desktop-1440.png
+    consistent: true
+  typography:
+  - element: button.flex
+    found:
+    - value: 16px / 400
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ narrow-320.png
+    - value: 16px / 400
+      where: button.flex "Drag and drop a build .zipor tap to brow" @ desktop-1440.png
+    consistent: true
+  - element: button.inline-flex
+    found:
+    - value: 15px / 600
+      where: button.inline-flex "Add build" @ narrow-320.png
+    - value: 12px / 600
+      where: button.inline-flex "Sign out" @ desktop-1440.png
+    - value: 15px / 600
+      where: button.inline-flex "Add build" @ desktop-1440.png
+    consistent: false
+  - element: button.md:hidden
+    found:
+    - value: 16px / 400
+      where: button.md:hidden @ narrow-320.png
+    consistent: true
+  - element: button.relative
+    found:
+    - value: 16px / 400
+      where: button.relative @ narrow-320.png
+    - value: 16px / 400
+      where: button.relative @ desktop-1440.png
+    consistent: true
+  - element: h1.adp-h1
+    found:
+    - value: 28px / 800
+      where: h1.adp-h1 "Add a build" @ narrow-320.png
+    - value: 34px / 800
+      where: h1.adp-h1 "Add a build" @ desktop-1440.png
+    consistent: false
+  - element: input.sr-only
+    found:
+    - value: 16px / 400
+      where: input.sr-only#_R_4lritpermlb_-add-build-zip @ narrow-320.png
+    - value: 16px / 400
+      where: input.sr-only#_R_4lritpermlb_-add-build-zip @ desktop-1440.png
+    consistent: true
+  - element: input.w-full
+    found:
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-new-build @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-add-build-embed @ narrow-320.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-new-build @ desktop-1440.png
+    - value: 15px / 500
+      where: input.w-full#_R_4lritpermlb_-add-build-embed @ desktop-1440.png
+    consistent: true
+  - element: label.adp-body
+    found:
+    - value: 15px / 500
+      where: label.adp-body "Game * (required)" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "New build / version * (required)" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Build — drop a zip for a playable build " @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Or link a hosted game — paste the URL of" @ narrow-320.png
+    - value: 15px / 500
+      where: label.adp-body "Game * (required)" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "New build / version * (required)" @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Build — drop a zip for a playable build " @ desktop-1440.png
+    - value: 15px / 500
+      where: label.adp-body "Or link a hosted game — paste the URL of" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-body
+    found:
+    - value: 15px / 500
+      where: p.adp-body "Drop a fresh build onto a game that's al" @ narrow-320.png
+    - value: 15px / 500
+      where: p.adp-body "Drop a fresh build onto a game that's al" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-kicker
+    found:
+    - value: 11px / 500
+      where: p.adp-kicker "Catalog · 26 games" @ narrow-320.png
+    - value: 11px / 500
+      where: p.adp-kicker "Catalog · 26 games" @ desktop-1440.png
+    consistent: true
+  - element: p.adp-mono
+    found:
+    - value: 12px / 400
+      where: p.adp-mono "No zip? You'll add a label-only build wi" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_4lritpermlb_-add-build-embed-hint "Testers play it in place
+        and their sessi" @ narrow-320.png
+    - value: 12px / 400
+      where: p.adp-mono "No zip? You'll add a label-only build wi" @ desktop-1440.png
+    - value: 12px / 400
+      where: p.adp-mono#_R_4lritpermlb_-add-build-embed-hint "Testers play it in place
+        and their sessi" @ desktop-1440.png
+    consistent: true
+  - element: select.mt-2
+    found:
+    - value: 15px / 500
+      where: select.mt-2#_R_4lritpermlb_-target-game "Select a game…Asteroids Classics
+        PlusMis" @ narrow-320.png
+    - value: 15px / 500
+      where: select.mt-2#_R_4lritpermlb_-target-game "Select a game…Asteroids Classics
+        PlusMis" @ desktop-1440.png
+    consistent: true
+findings:
+- severity: blocker
+  category: accessibility
+  rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
+  description: input.sr-only#_R_4lritpermlb_-add-build-zip is 1×1px at 320px.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only "(required)" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: mobile-and-dynamic-components
+  rubricItem: Text is clipped at maxTextScalePercent
+  description: span.sr-only#_R_alb_ "Notifications" is clipped at 320px at 200% text.
+  evidence:
+    kind: rendered-measurement
+    ref: narrow-320-text200.png
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-x: 12px (1×); 20px (2×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: The same kind of element has different spacing, or isn't its role's
+    value
+  description: 'button.inline-flex padding-y: 8px (1×); 10px (2×).'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<button.inline-flex>: 12px / 600; 15px / 600.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
+- severity: major
+  category: token-and-scale-consistency
+  rubricItem: Text of the same kind uses different styles, or isn't its style
+  description: '<h1.adp-h1>: 28px / 800; 34px / 800.'
+  evidence:
+    kind: rendered-measurement
+    ref: computed styles
+    measured: true
