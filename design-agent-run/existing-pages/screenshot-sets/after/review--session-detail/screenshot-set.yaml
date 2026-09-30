@@ -1,7 +1,7 @@
 id: review--session-detail
 source: rendered
 target: http://localhost:3000/sessions/3caa966d-bb23-4442-85e7-b993dcecd98f
-capturedAt: '2026-09-30T08:43:01Z'
+capturedAt: '2026-09-30T12:49:17Z'
 manifestVersion: 1.0.0
 shots:
 - file: narrow-320.png

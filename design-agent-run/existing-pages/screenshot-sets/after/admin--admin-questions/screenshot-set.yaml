@@ -1,7 +1,7 @@
 id: admin--admin-questions
 source: rendered
 target: http://localhost:3000/admin/questions
-capturedAt: '2026-09-30T08:44:26Z'
+capturedAt: '2026-09-30T12:50:40Z'
 manifestVersion: 1.0.0
 shots:
 - file: narrow-320.png

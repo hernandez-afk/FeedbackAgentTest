@@ -1,7 +1,7 @@
 id: sort--sessions
 source: rendered
 target: http://localhost:3000/sessions
-capturedAt: '2026-09-30T12:40:36Z'
+capturedAt: '2026-09-30T12:51:20Z'
 manifestVersion: 1.0.0
 shots:
 - file: narrow-320.png

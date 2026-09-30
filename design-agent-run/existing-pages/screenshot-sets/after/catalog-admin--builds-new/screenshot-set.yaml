@@ -1,7 +1,7 @@
 id: catalog-admin--builds-new
 source: rendered
 target: http://localhost:3000/builds/new
-capturedAt: '2026-09-30T08:43:38Z'
+capturedAt: '2026-09-30T12:49:53Z'
 manifestVersion: 1.0.0
 shots:
 - file: narrow-320.png

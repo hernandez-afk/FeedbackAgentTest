@@ -1,7 +1,7 @@
 From e864d6c9838e0bfe52331439dddb110d5f6c3865 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Mon, 28 Sep 2026 12:44:23 +0000
-Subject: [PATCH 01/10] fix(fuji): 44px buttons and inputs, wrapping labels,
+Subject: [PATCH 01/12] fix(fuji): 44px buttons and inputs, wrapping labels,
  token hover, one select style
 
 From the Design System Agent's standalone audits of the pre-harness
@@ -176,7 +176,7 @@ index 0000000..b2ae370
 From c3a8455b28cac3165c978b41c9e4d1ff971cc418 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:21:37 +0000
-Subject: [PATCH 02/10] fix(imports): standalone audit fixes for /imports and
+Subject: [PATCH 02/12] fix(imports): standalone audit fixes for /imports and
  prior imports (GFE-IMPORTS)
 
 From the Design System Agent's standalone audit:
@@ -500,7 +500,7 @@ index a2aee92..82586b8 100644
 From 0c43e1b5915c493c046202629858cb71f7a3a671 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:25:24 +0000
-Subject: [PATCH 03/10] fix(catalog-admin): standalone audit fixes for add/edit
+Subject: [PATCH 03/12] fix(catalog-admin): standalone audit fixes for add/edit
  game and add build (GFE-CATALOG-ADMIN)
 
 From the Design System Agent's standalone audit:
@@ -991,7 +991,7 @@ index 9ee83ae..f721a31 100644
 From 353244c3b3334042d80d15071bc3968d8e604c37 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:28:19 +0000
-Subject: [PATCH 04/10] fix(shell): standalone audit fixes for the header and
+Subject: [PATCH 04/12] fix(shell): standalone audit fixes for the header and
  sign-in (GFE-SHELL)
 
 From the Design System Agent's standalone audit, confirmed by its
@@ -1501,7 +1501,7 @@ index 0b9a3a4..47426bf 100644
 From f4224007bc83a3f23e9c159b9ad9d1c9e3d09789 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:29:25 +0000
-Subject: [PATCH 05/10] fix(dashboard): standalone audit fixes for the game
+Subject: [PATCH 05/12] fix(dashboard): standalone audit fixes for the game
  dashboard (GFE-DASHBOARD)
 
 From the Design System Agent's standalone audit:
@@ -1995,7 +1995,7 @@ index 2f83698..8f28cda 100644
 From ae8e7a081556b9847f762817f931060718d62037 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:31:48 +0000
-Subject: [PATCH 06/10] fix(capture): standalone audit fixes for the tester
+Subject: [PATCH 06/12] fix(capture): standalone audit fixes for the tester
  capture flow (GFE-CAPTURE)
 
 From the Design System Agent's standalone audit:
@@ -2352,7 +2352,7 @@ index a940681..9539660 100644
 From 287d7a8458821273fb4c26b3f15d75ccf71e3aaa Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:33:10 +0000
-Subject: [PATCH 07/10] fix(admin): standalone audit fixes for /admin and
+Subject: [PATCH 07/12] fix(admin): standalone audit fixes for /admin and
  /admin/questions (GFE-ADMIN)
 
 From the Design System Agent's standalone audit:
@@ -3000,7 +3000,7 @@ index 49bdcc6..2062cea 100644
 From 78092614e95753cf179c2cbb69c9a72344209ab4 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:36:46 +0000
-Subject: [PATCH 08/10] fix(review): standalone audit fixes for the session
+Subject: [PATCH 08/12] fix(review): standalone audit fixes for the session
  detail page (GFE-REVIEW)
 
 From the Design System Agent's standalone audit:
@@ -3385,7 +3385,7 @@ index 7858528..cca49d5 100644
 From 4b976436973f59e1f7702d1c731e6c486c522d4f Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 08:42:03 +0000
-Subject: [PATCH 09/10] fix(dashboard, admin): last screenshot-tool findings
+Subject: [PATCH 09/12] fix(dashboard, admin): last screenshot-tool findings
 
 - Dashboard header: the title column's fixed min-w-[220px] made the
   page scroll 21px sideways at 320px with 200% text; it now wraps under
@@ -3433,7 +3433,7 @@ index 409726b..49f7bb7 100644
 From 95917d96faf74b775bf9d472acf8bed1641ef042 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 12:41:30 +0000
-Subject: [PATCH 10/10] fix(games, sessions): screenshot-tool findings on the
+Subject: [PATCH 10/12] fix(games, sessions): screenshot-tool findings on the
  GFE-SORT pages
 
 The updated Design System Agent's screenshot tool, run on /games and
@@ -3517,6 +3517,192 @@ index 59d26cf..8f5578e 100644
  
  /**
   * BundleStateChip (CH-453) — per-row "Playable" / "No bundle" indicator,
+-- 
+2.43.0
+
+From 3c59542611a468e6167176aad31e9be607c4eb84 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 30 Sep 2026 12:46:16 +0000
+Subject: [PATCH 11/12] fix: critic pass findings (confirm Remove user, one
+ primary action, scale fits at 320)
+
+From the Design System Agent's critic pass (skills/design-agent/critic.md):
+- /admin: Remove user confirms first, with a message naming the email,
+  using the same ConfirmSubmitButton as Retire (check 13).
+- /login: Continue with Google is the page's primary action, the Google
+  mark on a white chip; the h1 wraps at 200% text (checks 1, 2).
+- Dashboard: Analyze feedback is primary when there's no current report
+  (first run, retry, stale); a routine re-run stays secondary (check 1).
+- /feedback: the form card is p-4 on phones, so a 1-5 scale fits on one
+  line at 320px (check 8).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ frontend/app/admin/page.tsx                        | 12 +++++++++---
+ frontend/app/feedback/page.tsx                     |  4 +++-
+ frontend/app/login/page.tsx                        |  8 ++++++--
+ frontend/components/dashboard/EnrichmentAction.tsx | 12 ++++++++++--
+ 4 files changed, 28 insertions(+), 8 deletions(-)
+
+diff --git a/frontend/app/admin/page.tsx b/frontend/app/admin/page.tsx
+index 2230eed..207b91a 100644
+--- a/frontend/app/admin/page.tsx
++++ b/frontend/app/admin/page.tsx
+@@ -10,6 +10,7 @@ import { buttonClasses } from "@/components/primitives/buttonClasses";
+ import { selectClasses } from "@/components/primitives/selectClasses";
+ import Toggle from "@/components/primitives/Toggle";
+ import EmptyState from "@/components/primitives/EmptyState";
++import ConfirmSubmitButton from "@/components/ConfirmSubmitButton";
+ import type {
+   AdminUser,
+   AdminUserListResponse,
+@@ -511,7 +512,6 @@ export default async function AdminPage({
+   const cardSurface =
+     "rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-hair)] overflow-hidden";
+   const rowHover = "hover:bg-[var(--color-surface-2)] transition-colors";
+-  const removeBtn = `${buttonClasses({ variant: "destructive", size: "sm" })} shrink-0`;
+   const submitBtn =
+     buttonClasses({ variant: "primary", size: "md" }) + " w-full sm:w-auto";
+   const inputBase =
+@@ -735,11 +735,17 @@ export default async function AdminPage({
+                     </form>
+ 
+                     {/* Remove form */}
++                    {/* Confirms first (critic check 13: destructive actions
++                        confirm or can be undone), the same pattern as Retire
++                        on /admin/questions. */}
+                     <form action={removeUser}>
+                       <input type="hidden" name="email" value={u.email} />
+-                      <button type="submit" className={removeBtn}>
++                      <ConfirmSubmitButton
++                        className="shrink-0"
++                        confirmMessage={`Remove ${u.email}? They lose access to the Game Feedback Engine until they're added again.`}
++                      >
+                         Remove
+-                      </button>
++                      </ConfirmSubmitButton>
+                     </form>
+                       </>
+                     )}
+diff --git a/frontend/app/feedback/page.tsx b/frontend/app/feedback/page.tsx
+index 72015a0..7c350e5 100644
+--- a/frontend/app/feedback/page.tsx
++++ b/frontend/app/feedback/page.tsx
+@@ -95,7 +95,9 @@ function FeedbackPageInner(): React.JSX.Element {
+   return (
+     <div className="max-w-xl mx-auto space-y-6">
+       {cappedNotice}
+-      <Card shadow={false} border padding="md">
++      {/* p-4 on phones, like the other forms, so a 1-5 scale fits on one
++          line at 320px (critic check 8). */}
++      <Card shadow={false} border padding="none" className="p-4 sm:p-6">
+         <DynamicFeedbackForm sessionId={sid} onSuccess={handleSuccess} />
+       </Card>
+     </div>
+diff --git a/frontend/app/login/page.tsx b/frontend/app/login/page.tsx
+index ce7a6f5..09aa1df 100644
+--- a/frontend/app/login/page.tsx
++++ b/frontend/app/login/page.tsx
+@@ -37,7 +37,7 @@ export default async function LoginPage({
+         >
+           <div className="text-center mb-8">
+             <h1
+-              className="adp-h1 mb-2 bg-clip-text text-transparent"
++              className="adp-h1 mb-2 bg-clip-text text-transparent [overflow-wrap:anywhere]"
+               style={{
+                 backgroundImage:
+                   // Ends on --color-accent-text: mint text is 1.91:1 on white
+@@ -78,8 +78,11 @@ export default async function LoginPage({
+               type="submit"
+               // The Button primitive, not an inline restyle (standalone audit).
+               // The Google mark keeps its brand-mandated colours.
+-              className={`${buttonClasses({ variant: "secondary", size: "lg", fullWidth: true })} gap-3 bg-[var(--color-field)]`}
++              // Primary: the page's one sign-in action (critic check 1). The Google mark
++              // sits on a white chip so its brand colours stay legible on mint.
++              className={`${buttonClasses({ variant: "primary", size: "lg", fullWidth: true })} gap-3`}
+             >
++              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full" style={{ background: "var(--color-surface-white)" }}>
+               <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                 <path
+                   d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615Z"
+@@ -98,6 +101,7 @@ export default async function LoginPage({
+                   fill="#EA4335"
+                 />
+               </svg>
++              </span>
+               Continue with Google
+             </button>
+           </form>
+diff --git a/frontend/components/dashboard/EnrichmentAction.tsx b/frontend/components/dashboard/EnrichmentAction.tsx
+index 84b689d..0645c23 100644
+--- a/frontend/components/dashboard/EnrichmentAction.tsx
++++ b/frontend/components/dashboard/EnrichmentAction.tsx
+@@ -110,8 +110,16 @@ export default function EnrichmentAction({
+     // didn't line up with each other on phones.
+     <div className="flex flex-col items-stretch sm:items-end gap-1">
+       <p className="adp-kicker">Feedback analysis</p>
+-      {/* `sm` — header utility action, per buttonClasses.ts's size policy. */}
+-      <Button variant="secondary" size="sm" onClick={handleClick} disabled={submitting}>
++      {/* `sm` — header utility action, per buttonClasses.ts's size policy.
++          Primary when there's no current report (first run, retry, or a stale
++          one): the page's one primary action (critic check 1). A routine
++          re-run of a fresh report stays secondary. */}
++      <Button
++        variant={variant !== 'refresh' || stale ? 'primary' : 'secondary'}
++        size="sm"
++        onClick={handleClick}
++        disabled={submitting}
++      >
+         {submitting && <Spinner />}
+         {submitting ? 'Starting…' : LABEL[variant]}
+       </Button>
+-- 
+2.43.0
+
+From c95ec83fe13534f6bcb24b8d49d0874032a2b6d7 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 30 Sep 2026 12:48:28 +0000
+Subject: [PATCH 12/12] fix(fuji): word-spacing on .adp-h1/.adp-h2 so heavy
+ headings don't run together
+
+Archivo 800 has a narrow space glyph; with the -0.02em tracking, "A few
+questions" rendered with a 2.6px word gap at 18px and read as one word
+(caught by the design agent's critic pass on /feedback and /thankyou).
+word-spacing: 0.1em brings it to ~4.4px.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ frontend/app/globals.css | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/frontend/app/globals.css b/frontend/app/globals.css
+index 34bf763..0cf962e 100644
+--- a/frontend/app/globals.css
++++ b/frontend/app/globals.css
+@@ -226,6 +226,10 @@ body {
+   font-weight: 800;
+   font-size: clamp(1.75rem, 2.2vw + 0.75rem, 2.125rem);
+   letter-spacing: -0.02em;
++  /* Archivo 800's space glyph is narrow, and with the -0.02em tracking words
++     ran together at small sizes ("A few questions" measured a 2.6px gap at
++     18px). Found by the design agent's critic pass. */
++  word-spacing: 0.1em;
+   color: var(--color-ink);
+ }
+ 
+@@ -234,6 +238,10 @@ body {
+   font-weight: 800;
+   font-size: clamp(1.125rem, 0.7vw + 0.875rem, 1.25rem);
+   letter-spacing: -0.02em;
++  /* Archivo 800's space glyph is narrow, and with the -0.02em tracking words
++     ran together at small sizes ("A few questions" measured a 2.6px gap at
++     18px). Found by the design agent's critic pass. */
++  word-spacing: 0.1em;
+   color: var(--color-ink);
+ }
+ 
 -- 
 2.43.0
 

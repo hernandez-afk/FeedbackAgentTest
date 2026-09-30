@@ -79,6 +79,14 @@ Apply the implementation from an `atari-game-feedback-engine` checkout:
 - At 320px with text at 200%, nothing inside the page body overflows (screenshots `phone320-text200-*`).
 - Backend: 2203 pytest tests passed; ruff SAST, mypy, a single migration head, and the downgrade guards.
 
+## Existing pages
+
+The agent also ran over every page that shipped before it:
+- **Records:** `design-agent-run/existing-pages/` holds the audits, the screenshots and `existing-pages.patch` (12 commits, applied after `game-sort.patch`).
+- **Result:** tool blockers across 14 pages went from 63 to 18, and all 18 are tool limitations.
+- **Critic pass:** its blocker is fixed. The layout decisions it raised are in `critique-after.md`.
+- **Gallery:** before and after screenshots of every page: https://claude.ai/artifact/HhMFv9E7gTMzNducpZdjUz
+
 ## Still with the author
 
 - **Critical sort vs stars:** under the Critical sort, games with a starred build still come first, even when they aren't critical ("shown first … whatever the sort"). Say if Critical should override stars.

@@ -1,7 +1,7 @@
 id: imports--imports
 source: rendered
 target: http://localhost:3000/imports
-capturedAt: '2026-09-30T08:43:46Z'
+capturedAt: '2026-09-30T12:50:01Z'
 manifestVersion: 1.0.0
 shots:
 - file: narrow-320.png

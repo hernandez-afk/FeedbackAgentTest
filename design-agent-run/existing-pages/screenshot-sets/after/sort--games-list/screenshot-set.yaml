@@ -1,7 +1,7 @@
 id: sort--games-list
 source: rendered
 target: http://localhost:3000/games?view=list
-capturedAt: '2026-09-30T12:40:23Z'
+capturedAt: '2026-09-30T12:51:06Z'
 manifestVersion: 1.0.0
 shots:
 - file: narrow-320.png
@@ -695,7 +695,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Atari Missile Command" is 204×20px at 320px.
+  description: a.underline-offset-2 "Atari Missile Command" is 208×20px at 320px.
   evidence:
     kind: rendered-measurement
     ref: narrow-320.png
@@ -703,7 +703,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Atari Centipede" is 142×20px at 320px.
+  description: a.underline-offset-2 "Atari Centipede" is 143×20px at 320px.
   evidence:
     kind: rendered-measurement
     ref: narrow-320.png
@@ -711,7 +711,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Guess the Game (Reddit)" is 224×20px at 320px.
+  description: a.underline-offset-2 "Guess the Game (Reddit)" is 229×20px at 320px.
   evidence:
     kind: rendered-measurement
     ref: narrow-320.png
@@ -719,7 +719,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Haunted House" is 136×20px at 320px.
+  description: a.underline-offset-2 "Haunted House" is 138×20px at 320px.
   evidence:
     kind: rendered-measurement
     ref: narrow-320.png
@@ -727,7 +727,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Lunar Taxi" is 92×20px at 320px.
+  description: a.underline-offset-2 "Lunar Taxi" is 94×20px at 320px.
   evidence:
     kind: rendered-measurement
     ref: narrow-320.png
@@ -743,7 +743,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Centipede Recharged" is 198×20px at 320px.
+  description: a.underline-offset-2 "Centipede Recharged" is 200×20px at 320px.
   evidence:
     kind: rendered-measurement
     ref: narrow-320.png
@@ -751,7 +751,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Ninja Soccer" is 114×20px at 320px.
+  description: a.underline-offset-2 "Ninja Soccer" is 115×20px at 320px.
   evidence:
     kind: rendered-measurement
     ref: narrow-320.png
@@ -775,7 +775,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Missile Command Recharged" is 261×20px at 390px.
+  description: a.underline-offset-2 "Missile Command Recharged" is 265×20px at 390px.
   evidence:
     kind: rendered-measurement
     ref: phone-390.png
@@ -783,7 +783,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Missile Command Recharged" is 272×21px at 768px.
+  description: a.underline-offset-2 "Missile Command Recharged" is 276×21px at 768px.
   evidence:
     kind: rendered-measurement
     ref: md-768.png
@@ -791,7 +791,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Atari Missile Command" is 213×21px at 768px.
+  description: a.underline-offset-2 "Atari Missile Command" is 217×21px at 768px.
   evidence:
     kind: rendered-measurement
     ref: md-768.png
@@ -799,7 +799,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Atari Centipede" is 146×21px at 768px.
+  description: a.underline-offset-2 "Atari Centipede" is 148×21px at 768px.
   evidence:
     kind: rendered-measurement
     ref: md-768.png
@@ -807,7 +807,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Guess the Game (Reddit)" is 233×21px at 768px.
+  description: a.underline-offset-2 "Guess the Game (Reddit)" is 239×21px at 768px.
   evidence:
     kind: rendered-measurement
     ref: md-768.png
@@ -815,7 +815,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Haunted House" is 146×21px at 768px.
+  description: a.underline-offset-2 "Haunted House" is 148×21px at 768px.
   evidence:
     kind: rendered-measurement
     ref: md-768.png
@@ -823,7 +823,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Lunar Taxi" is 99×21px at 768px.
+  description: a.underline-offset-2 "Lunar Taxi" is 101×21px at 768px.
   evidence:
     kind: rendered-measurement
     ref: md-768.png
@@ -839,7 +839,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Centipede Recharged" is 206×21px at 768px.
+  description: a.underline-offset-2 "Centipede Recharged" is 208×21px at 768px.
   evidence:
     kind: rendered-measurement
     ref: md-768.png
@@ -847,7 +847,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Missile Command Recharged" is 289×22px at 1024px.
+  description: a.underline-offset-2 "Missile Command Recharged" is 293×22px at 1024px.
   evidence:
     kind: rendered-measurement
     ref: lg-1024.png
@@ -855,7 +855,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Atari Missile Command" is 229×22px at 1024px.
+  description: a.underline-offset-2 "Atari Missile Command" is 233×22px at 1024px.
   evidence:
     kind: rendered-measurement
     ref: lg-1024.png
@@ -863,7 +863,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Atari Centipede" is 156×22px at 1024px.
+  description: a.underline-offset-2 "Atari Centipede" is 158×22px at 1024px.
   evidence:
     kind: rendered-measurement
     ref: lg-1024.png
@@ -871,7 +871,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Guess the Game (Reddit)" is 247×22px at 1024px.
+  description: a.underline-offset-2 "Guess the Game (Reddit)" is 253×22px at 1024px.
   evidence:
     kind: rendered-measurement
     ref: lg-1024.png
@@ -879,7 +879,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Haunted House" is 151×22px at 1024px.
+  description: a.underline-offset-2 "Haunted House" is 153×22px at 1024px.
   evidence:
     kind: rendered-measurement
     ref: lg-1024.png
@@ -887,7 +887,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Lunar Taxi" is 102×22px at 1024px.
+  description: a.underline-offset-2 "Lunar Taxi" is 104×22px at 1024px.
   evidence:
     kind: rendered-measurement
     ref: lg-1024.png
@@ -903,7 +903,7 @@ findings:
 - severity: blocker
   category: accessibility
   rubricItem: Interactive targets smaller than accessibility.minTouchTargetPx
-  description: a.underline-offset-2 "Centipede Recharged" is 216×22px at 1024px.
+  description: a.underline-offset-2 "Centipede Recharged" is 218×22px at 1024px.
   evidence:
     kind: rendered-measurement
     ref: lg-1024.png

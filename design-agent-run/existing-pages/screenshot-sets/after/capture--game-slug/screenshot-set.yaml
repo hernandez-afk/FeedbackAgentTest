@@ -1,7 +1,7 @@
 id: capture--game-slug
 source: rendered
 target: http://localhost:3000/game/atari-asteroids
-capturedAt: '2026-09-30T08:42:29Z'
+capturedAt: '2026-09-30T12:48:45Z'
 manifestVersion: 1.0.0
 shots:
 - file: narrow-320.png

@@ -1,7 +1,7 @@
 id: catalog-admin--game-edit
 source: rendered
 target: http://localhost:3000/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/edit
-capturedAt: '2026-09-30T08:43:30Z'
+capturedAt: '2026-09-30T12:49:46Z'
 manifestVersion: 1.0.0
 shots:
 - file: narrow-320.png

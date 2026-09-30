@@ -13,12 +13,13 @@ registered in `../design-system/design-index.yaml` as a backfill project.
    - Every page was rendered with the agent's `tools/screenshots.py`. The app needs a
      sign-in, so a preload gave the tool's browser a saved session. The agent's code was
      not changed.
-3. Fixes: `existing-pages.patch`, 10 commits for atari-game-feedback-engine, applied on top
+3. Fixes: `existing-pages.patch`, 12 commits for atari-game-feedback-engine, applied on top
    of `../game-sort/game-sort.patch`:
    - 1 commit of shared Fuji primitives: 44px buttons and inputs, wrapping labels, token
      hover, and `selectClasses`;
    - 1 commit per area;
-   - 1 commit of follow-ups, and 1 for the tool findings on Games and Sessions.
+   - 1 commit of follow-ups, and 1 for the tool findings on Games and Sessions;
+   - 2 commits from the critic pass (`critique-after.md`).
 4. After: `screenshot-sets/after/<page>/`, with the tool output and the screenshots.
 
 ## Result (tool blockers, 14 pages)
@@ -35,8 +36,11 @@ The remaining tool "majors" are either false positives or design-system decision
   lg for form submits; the agent's consistency check doesn't. The design-system owner
   decides.
 
-## Not finished (paused at the user's request)
-- The critic pass with the new `critic.md` was stopped before it returned.
+## Critic pass
+Done: `critique-after.md`. The ADMIN blocker (Remove user without a confirm) is fixed. So
+are the missing primary actions on sign-in and the dashboard, and the 1-5 scale at 320px.
+The heading word-spacing bug was also fixed: Archivo 800 headings ran words together.
+The layout and structure changes it suggests are listed there for a person to decide.
 - GFE-SORT's own pages were re-rendered with the tool and fixed. Build pills, the page's
   Add game link and the Manage builds toggle are now 44px, and the sessions email wraps.
   What's left is tool limitations: stretched-link titles, sr-only labels and fluid headings.

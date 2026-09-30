@@ -1,7 +1,7 @@
 id: shell--login
 source: rendered
 target: http://localhost:3000/login
-capturedAt: '2026-09-30T08:42:19Z'
+capturedAt: '2026-09-30T12:48:35Z'
 manifestVersion: 1.0.0
 shots:
 - file: narrow-320.png

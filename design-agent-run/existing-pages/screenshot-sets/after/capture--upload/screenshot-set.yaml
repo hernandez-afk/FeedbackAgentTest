@@ -1,7 +1,7 @@
 id: capture--upload
 source: rendered
 target: http://localhost:3000/upload?session=3caa966d-bb23-4442-85e7-b993dcecd98f
-capturedAt: '2026-09-30T08:42:36Z'
+capturedAt: '2026-09-30T12:48:52Z'
 manifestVersion: 1.0.0
 shots:
 - file: narrow-320.png

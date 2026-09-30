@@ -1,7 +1,7 @@
 id: dashboard--dashboard
 source: rendered
 target: http://localhost:3000/games/9e7b1a20-3c4d-4f5a-8b6c-000000000007/dashboard
-capturedAt: '2026-09-30T08:43:12Z'
+capturedAt: '2026-09-30T12:49:27Z'
 manifestVersion: 1.0.0
 shots:
 - file: narrow-320.png
