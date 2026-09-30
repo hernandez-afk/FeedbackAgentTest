@@ -87,6 +87,10 @@ The agent also ran over every page that shipped before it:
 - **Critic pass:** its blocker is fixed. The layout decisions it raised are in `critique-after.md`.
 - **Gallery:** before and after screenshots of every page: https://claude.ai/artifact/HhMFv9E7gTMzNducpZdjUz
 
+## Installed in the repo
+
+The updated agent is now part of the Game Feedback Engine repo itself. It adds the skill, its tools, and hooks that check every UI edit, and gives every UI file an owning design. Details are in `design-agent-run/install/README.md`, and the change is `design-agent-install.patch`, 3 commits applied after the other two patches.
+
 ## Still with the author
 
 - **Critical sort vs stars:** under the Critical sort, games with a starred build still come first, even when they aren't critical ("shown first … whatever the sort"). Say if Critical should override stars.

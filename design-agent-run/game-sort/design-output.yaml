@@ -22,16 +22,16 @@ layout:
   results: "Count line + View (Cards | List), removable chips, then the grid or list. Versions of one title collapse into one tile/row."
 
 decisionLog:
-  - { id: "D1", mode: "inherited", decision: "URL state + router.replace + dimmed grid (CH-606)." }
-  - { id: "D2", mode: "human-approved", decision: "Phone: slide-in drawer (modal dialog) instead of the round-1 inline panel.", tradeoff: "Author: 'whatever is most functional'. With a full tree in the sidebar, inline would push the list a screen down.", revises: "design-1 D2" }
-  - { id: "D5", mode: "human-approved", decision: "'Most active' = sessions in 30 days, on /games.", source: "author answer" }
-  - { id: "D8", mode: "human-approved", decision: "Option A: Title (franchise) above games.", source: "author answer" }
-  - { id: "D9", mode: "human-approved", decision: "Platforms compare case-insensitively.", source: "author answer" }
-  - { id: "D10", mode: "human-approved", decision: "Sidebar layout, sort row and tree follow Andreas Beijer's design.", source: "author-supplied reference" }
-  - { id: "D11", mode: "human-approved", decision: "Critical = latest sentiment report >= 40% negative over >= 5 reviews; reviewers only.", source: "author answer: 'yes 40 is ok'", tradeoff: "Reuses the dashboard's existing sentiment (no new AI call). Needs an enrichment run to have data." }
-  - { id: "D12", mode: "human-approved", decision: "Stars are per BUILD, per user. Starred builds pin their game first on /games and their sessions first on /sessions, whatever the sort. The 'Starred' sort is removed because pinning makes it redundant.", source: "author answer: 'star whatever builds you want, that will be shown first in games and game sessions'", revises: "design-2 D12 (stars per game)" }
-  - { id: "D13", mode: "auto-applied", decision: "Sort buttons show icon + word, not icons alone.", tradeoff: "Deviates from the sketch's bare icons for Wickens 5/11." }
-  - { id: "D14", mode: "auto-applied", decision: "Collapsed title group = one card slot; expanded = full row.", tradeoff: "A permanently full-row group left empty cells." }
+  - { id: "D1", decision: "Search and sort state, and the pending state", chosen: "URL state + router.replace + dimmed grid (CH-606).", alternativesConsidered: [], mode: "inherited" }
+  - { id: "D2", decision: "How filters open on phones", chosen: "Phone: slide-in drawer (modal dialog) instead of the round-1 inline panel.", alternativesConsidered: [], mode: "human-approved", rationale: "Author: 'whatever is most functional'. With a full tree in the sidebar, inline would push the list a screen down.", revises: "design-1 D2" }
+  - { id: "D5", decision: "What 'Most active' means", chosen: "'Most active' = sessions in 30 days, on /games.", alternativesConsidered: [], mode: "human-approved", rationale: "author answer" }
+  - { id: "D8", decision: "How versions of one game are grouped", chosen: "Option A: Title (franchise) above games.", alternativesConsidered: [], mode: "human-approved", rationale: "author answer" }
+  - { id: "D9", decision: "How platform names are matched", chosen: "Platforms compare case-insensitively.", alternativesConsidered: [], mode: "human-approved", rationale: "author answer" }
+  - { id: "D10", decision: "Sidebar layout", chosen: "Sidebar layout, sort row and tree follow Andreas Beijer's design.", alternativesConsidered: [], mode: "human-approved", rationale: "author-supplied reference" }
+  - { id: "D11", decision: "When a game is flagged 'Critical'", chosen: "Critical = latest sentiment report >= 40% negative over >= 5 reviews; reviewers only.", alternativesConsidered: [], mode: "human-approved", rationale: "author answer: 'yes 40 is ok'; Reuses the dashboard's existing sentiment (no new AI call). Needs an enrichment run to have data." }
+  - { id: "D12", decision: "What a star is attached to", chosen: "Stars are per BUILD, per user. Starred builds pin their game first on /games and their sessions first on /sessions, whatever the sort. The 'Starred' sort is removed because pinning makes it redundant.", alternativesConsidered: [], mode: "human-approved", rationale: "author answer: 'star whatever builds you want, that will be shown first in games and game sessions'", revises: "design-2 D12 (stars per game)" }
+  - { id: "D13", decision: "Sort button labels", chosen: "Sort buttons show icon + word, not icons alone.", alternativesConsidered: [], mode: "auto-applied", rationale: "Deviates from the sketch's bare icons for Wickens 5/11." }
+  - { id: "D14", decision: "How a title group sits in the card grid", chosen: "Collapsed title group = one card slot; expanded = full row.", alternativesConsidered: [], mode: "auto-applied", rationale: "A permanently full-row group left empty cells." }
 
 glanceTest:
   - { surface: "/games", breakpoint: "sm", firstThings: ["'Games' heading", "Browse & filter", "first game card (starred first)"], pass: true, evidence: "screenshots/phone-01-games.png" }

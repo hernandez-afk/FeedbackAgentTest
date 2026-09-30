@@ -21,6 +21,15 @@ projects:
     - frontend/app/layout.tsx
     - frontend/app/login/**
     - frontend/app/page.tsx
+    - frontend/components/HeaderSelectionChip.tsx
+    - frontend/components/NotificationBell.tsx
+    - frontend/components/RoleBadge.tsx
+    - frontend/components/Wordmark.tsx
+    - frontend/components/ThemeProvider.tsx
+    - frontend/components/ThemeToggle.tsx
+    - frontend/components/SystemBanner.tsx
+    - frontend/components/Backdrop.tsx
+    - frontend/components/DevLoginPanel.tsx
     artifacts:
     - id: audit-report-GFE-SHELL-standalone-1
       type: audit-report
@@ -52,6 +61,21 @@ projects:
     - frontend/app/upload/**
     - frontend/app/feedback/**
     - frontend/app/thankyou/**
+    - frontend/components/PerGameEntry.tsx
+    - frontend/components/PlayHeader.tsx
+    - frontend/components/EmbeddedCaptureSession.tsx
+    - frontend/components/EmbeddedGamePlayer.tsx
+    - frontend/components/EmbeddedGamePlayerGate.tsx
+    - frontend/components/OutOfBandPlay.tsx
+    - frontend/components/GameBrief.tsx
+    - frontend/components/DropZone.tsx
+    - frontend/components/VideoUploader.tsx
+    - frontend/components/ScreenshotAttach.tsx
+    - frontend/components/VoiceCaptureConsent.tsx
+    - frontend/components/VoiceCaptureIndicator.tsx
+    - frontend/components/CaptureUploadStatusBar.tsx
+    - frontend/components/DevFeedbackThumbs.tsx
+    - frontend/components/feedback-form/**
     artifacts:
     - id: audit-report-GFE-CAPTURE-standalone-1
       type: audit-report
@@ -62,7 +86,7 @@ projects:
     title: Reviewer session detail
     status: shipped
     backfill: true
-    scopeSummary: '/sessions/[id]: the video reviewer with an annotated timeline, and the session''s feedback entries.'
+    scopeSummary: '/sessions/[[]id[]]: the video reviewer with an annotated timeline, and the session''s feedback entries.'
     scopeTerms:
     - session detail
     - video review
@@ -72,7 +96,12 @@ projects:
     priorities: []
     componentsUsed: []
     codePaths:
-    - frontend/app/sessions/[id]/**
+    - frontend/app/sessions/[[]id[]]/**
+    - frontend/components/FeedbackCard.tsx
+    - frontend/components/VideoReviewer.tsx
+    - frontend/components/SessionArtifacts.tsx
+    - frontend/components/PlayerLoadNotice.tsx
+    - frontend/components/DeleteSessionControl.tsx
     artifacts:
     - id: audit-report-GFE-REVIEW-standalone-1
       type: audit-report
@@ -83,7 +112,7 @@ projects:
     title: Game feedback dashboard
     status: shipped
     backfill: true
-    scopeSummary: '/games/[gameId]/dashboard: five tabs of sentiment, KPIs and themes per game.'
+    scopeSummary: '/games/[[]gameId[]]/dashboard: five tabs of sentiment, KPIs and themes per game.'
     scopeTerms:
     - dashboard
     - sentiment
@@ -93,8 +122,9 @@ projects:
     priorities: []
     componentsUsed: []
     codePaths:
-    - frontend/app/games/[gameId]/dashboard/**
+    - frontend/app/games/[[]gameId[]]/dashboard/**
     - frontend/components/dashboard/**
+    - frontend/components/vision/**
     artifacts:
     - id: audit-report-GFE-DASHBOARD-standalone-1
       type: audit-report
@@ -108,7 +138,7 @@ projects:
     title: Add and edit games and builds
     status: shipped
     backfill: true
-    scopeSummary: '/games/new, /games/[gameId]/edit and /builds/new: the admin forms.'
+    scopeSummary: '/games/new, /games/[[]gameId[]]/edit and /builds/new: the admin forms.'
     scopeTerms:
     - add game
     - edit game
@@ -121,8 +151,13 @@ projects:
     componentsUsed: []
     codePaths:
     - frontend/app/games/new/**
-    - frontend/app/games/[gameId]/edit/**
+    - frontend/app/games/[[]gameId[]]/edit/**
     - frontend/app/builds/**
+    - frontend/components/AddBuildForm.tsx
+    - frontend/components/AddCatalogForm.tsx
+    - frontend/components/EditGameForm.tsx
+    - frontend/components/BuildDropZone.tsx
+    - frontend/components/CopyShareLinkButton.tsx
     artifacts:
     - id: audit-report-GFE-CATALOG-ADMIN-standalone-1
       type: audit-report
@@ -133,7 +168,7 @@ projects:
     title: Import write-ups
     status: shipped
     backfill: true
-    scopeSummary: '/imports and /games/[gameId]/imports: producers upload written feedback documents and see earlier imports.'
+    scopeSummary: '/imports and /games/[[]gameId[]]/imports: producers upload written feedback documents and see earlier imports.'
     scopeTerms:
     - import
     - write-up
@@ -145,7 +180,8 @@ projects:
     componentsUsed: []
     codePaths:
     - frontend/app/imports/**
-    - frontend/app/games/[gameId]/imports/**
+    - frontend/app/games/[[]gameId[]]/imports/**
+    - frontend/components/imports/**
     artifacts:
     - id: audit-report-GFE-IMPORTS-standalone-1
       type: audit-report
@@ -168,12 +204,36 @@ projects:
     componentsUsed: []
     codePaths:
     - frontend/app/admin/**
+    - frontend/components/QuestionAuthoringForm.tsx
+    - frontend/components/EditQuestionControl.tsx
+    - frontend/components/ReorderControl.tsx
+    - frontend/components/PreviewGameSelect.tsx
+    - frontend/components/ConfirmSubmitButton.tsx
     artifacts:
     - id: audit-report-GFE-ADMIN-standalone-1
       type: audit-report
       path: existing-pages/gfe-admin/audit-report-standalone-1.md
       version: 1
       reviewStatus: current
+  - id: GFE-FUJI
+    title: 'Fuji design system: primitives and global styles'
+    status: shipped
+    backfill: true
+    scopeSummary: The shared primitives (Button, Input, Select, Card, Badge, Toggle, …), tokens and global type styles every page uses. A change here reaches every design, so it goes to the design-system
+      owner.
+    scopeTerms:
+    - design system
+    - primitive
+    - token
+    surfaces: []
+    priorities: []
+    componentsUsed: []
+    codePaths:
+    - frontend/components/primitives/**
+    - frontend/app/globals.css
+    - frontend/app/tokens.generated.css
+    - tokens/**
+    artifacts: []
   - id: "GFE-SORT"
     title: "Browse, filter and sort games and sessions"
     status: "in-progress"  # round 3 audited (audit-report-round3.md); waiting on human sign-off
@@ -201,6 +261,13 @@ projects:
       - "backend/games.py"
       - "backend/sessions.py"
       - "backend/models.py"
+      - "frontend/components/GameCard.tsx"
+      - "frontend/components/ArchiveGameControl.tsx"
+      - "frontend/components/ArchivedGamesPanel.tsx"
+      - "frontend/components/DeleteGameControl.tsx"
+      - "frontend/components/ManageBuildsPanel.tsx"
+      - "frontend/components/HighlightedText.tsx"
+      - "frontend/app/sessions/loading.tsx"
     artifacts:
       - { id: "GFE-SORT-page-brief", type: "page-brief", path: "game-sort/page-brief.md", version: 3, reviewStatus: "current" }
       - { id: "GFE-SORT-brief", type: "ticket-brief", path: "game-sort/ticket-brief.yaml", version: 3, reviewStatus: "current" }
