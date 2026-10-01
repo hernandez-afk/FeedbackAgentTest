@@ -1,6 +1,6 @@
 # The Design System Agent, installed in the Game Feedback Engine
 
-`design-agent-install.patch` is 5 commits for atari-game-feedback-engine. Apply it after
+`design-agent-install.patch` is 6 commits for atari-game-feedback-engine. Apply it after
 `../game-sort/game-sort.patch` and `../existing-pages/existing-pages.patch`:
 
 ```

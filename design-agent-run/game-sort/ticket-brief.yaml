@@ -16,6 +16,14 @@ connections:
   goesNext: ["a game's how-to-play page (/game/<slug>)", "a game's dashboard", "a session's detail page"]
   mustLinkHere: []
 
+purpose: "The tester or reviewer has found the game, build or session they came for, by name, platform, project or studio, with their starred builds first."
+pagePattern: "list"
+patternDecisions:          # pattern_check.py (agent, Oct 1): every capability a list implies is already designed
+  find: "in-scope"         # search + Platform/Project/Studio filters (AC1, AC4)
+  sort: "in-scope"         # A to Z, Newest, Active, Critical; starred builds pinned first (AC6, AC11)
+  scale: "in-scope"        # server-side filters and pages of 50 (AC3)
+  empty: "in-scope"        # no games yet; filters that match nothing, with one clear action (AC9)
+  to-detail: "in-scope"    # a game opens its play flow; reviewers open its dashboard from the card or the tree (AC14)
 priorities:
   - { id: "P1", statement: "Anyone can narrow a long list of games or sessions to the platform, studio or game they're looking for.", source: "explicit" }
   - { id: "P2", statement: "Filtering keeps working as the catalogue grows past one screenful (server-side, paginated, new facet values appear without code changes).", source: "explicit" }

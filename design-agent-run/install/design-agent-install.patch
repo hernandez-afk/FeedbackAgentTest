@@ -1,7 +1,7 @@
 From 073dade145dd2b37c8f2aa89080deec25e411b15 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 16:45:25 +0000
-Subject: [PATCH 1/5] chore(design): install the Design System Agent for the
+Subject: [PATCH 1/6] chore(design): install the Design System Agent for the
  whole frontend
 
 Installed with the agent's install.sh (Sep 30 version: lite mode, tools
@@ -18966,7 +18966,7 @@ index 0000000..7fda139
 From 614a5edae58a2e7bf0202a05edf7d3eab208787e Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 16:45:26 +0000
-Subject: [PATCH 2/5] fix(fuji): off-scale spacing and 600 weights across the
+Subject: [PATCH 2/6] fix(fuji): off-scale spacing and 600 weights across the
  frontend
 
 The design agent's consistency check over every UI file: 6px, 10px and
@@ -19664,7 +19664,7 @@ index 00a2bd7..294716f 100644
 From 3ea39824f89b83281d9ad4d049f9b7a357f15a85 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 30 Sep 2026 16:52:21 +0000
-Subject: [PATCH 3/5] fix(shell): full nav from lg, not md; keep the menu
+Subject: [PATCH 3/6] fix(shell): full nav from lg, not md; keep the menu
  icon's bar gap
 
 - At 768px the admin header (links, Add pills, email, Admin, Sign out)
@@ -19719,7 +19719,7 @@ index 00f0513..6fd181e 100644
 From d450b7df19ba54103ade8f1d40b6a0ae76faf7bd Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Thu, 1 Oct 2026 07:28:49 +0000
-Subject: [PATCH 4/5] chore(design): update the design agent to the Oct 1
+Subject: [PATCH 4/6] chore(design): update the design agent to the Oct 1
  version
 
 - Re-ran the agent's install.sh: anti-AI design checks, content and
@@ -24822,7 +24822,7 @@ index f1c7f86..1f970db 100644
 From 095ddb8920c205b7128a53d15951b1e0fe76764c Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Thu, 1 Oct 2026 07:28:50 +0000
-Subject: [PATCH 5/5] fix: align the UI with the updated agent's rules
+Subject: [PATCH 5/6] fix: align the UI with the updated agent's rules
 
 - Header: the signed-in email, the role badge and the Admin/Questions
   link move into an Account menu (desktop) and the menu's Account
@@ -25178,6 +25178,517 @@ index 7bd788b..1f9731d 100644
 +    ? { background: 'var(--color-accent-15)', color: 'var(--color-ink)' }
      : { background: 'transparent' };
  }
+-- 
+2.43.0
+
+From 19dc44f996f84361123044bd87a22e9d942584c6 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 1 Oct 2026 08:42:53 +0000
+Subject: [PATCH 6/6] chore(design): update the design agent to the
+ page-patterns version
+
+- Re-ran install.sh: page patterns (builder, voting, wizard, list,
+  settings, dashboard), tools/pattern_check.py, critic item 23, and the
+  renderer's tools-per-item and drag-only checks.
+- Manifest: compositionHeuristics.maxCardInformationAreas / maxToolsPerItem
+  and the navigationHeuristics limits set explicitly (agent defaults).
+- GFE-SORT brief: purpose (purpose_check passes) and pagePattern: list
+  with every implied capability decided in-scope (pattern_check passes).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0158uxufnvDxf4SMdnVi7Gjt
+---
+ .../design-system-manifest.schema.json        |   5 +
+ .../schemas/ticket-brief.schema.json          |  43 ++++++
+ .claude/design-agent/tools/harness.py         |  14 ++
+ .claude/design-agent/tools/pattern_check.py   | 130 ++++++++++++++++++
+ .claude/design-agent/tools/purpose_check.py   |   2 +-
+ .claude/design-agent/tools/render/capture.js  |  23 +++-
+ .claude/design-agent/tools/screenshots.py     |  11 +-
+ .claude/skills/design-agent/SKILL.md          |   2 +
+ .claude/skills/design-agent/critic.md         |   4 +-
+ .../reference/design-audit-rubric.md          |   2 +
+ .../design-agent/reference/page-patterns.md   |  32 +++++
+ design-system-manifest.yaml                   |   8 +-
+ docs/design/agent/game-sort/ticket-brief.yaml |   8 ++
+ 13 files changed, 276 insertions(+), 8 deletions(-)
+ create mode 100644 .claude/design-agent/tools/pattern_check.py
+ create mode 100644 .claude/skills/design-agent/reference/page-patterns.md
+
+diff --git a/.claude/design-agent/schemas/design-system-manifest.schema.json b/.claude/design-agent/schemas/design-system-manifest.schema.json
+index 76da44c..4959de3 100644
+--- a/.claude/design-agent/schemas/design-system-manifest.schema.json
++++ b/.claude/design-agent/schemas/design-system-manifest.schema.json
+@@ -1089,6 +1089,11 @@
+           "type": "integer",
+           "default": 5,
+           "description": "Most separate pieces of information a front-facing card shows (text, images; a table or list inside counts once; actions don't count). The rest belongs in the card's detail view. Measured by the renderer."
++        },
++        "maxToolsPerItem": {
++          "type": "integer",
++          "default": 1,
++          "description": "Controls an unselected item in a list or builder may show (usually its drag handle). The rest appear on the selected item only. Measured by the renderer."
+         }
+       }
+     },
+diff --git a/.claude/design-agent/schemas/ticket-brief.schema.json b/.claude/design-agent/schemas/ticket-brief.schema.json
+index 55d966e..149dfc8 100644
+--- a/.claude/design-agent/schemas/ticket-brief.schema.json
++++ b/.claude/design-agent/schemas/ticket-brief.schema.json
+@@ -475,6 +475,49 @@
+     "pageJustification": {
+       "type": "string",
+       "description": "Why this is a page and not a section, panel, tooltip or notification: people come back to it on its own, other pages link to it, or it's too big to fit where it's reached from. Needed when the page has no core task, or is small and reached from one place."
++    },
++    "pagePattern": {
++      "anyOf": [
++        {
++          "type": "string",
++          "enum": [
++            "builder",
++            "voting",
++            "wizard",
++            "list",
++            "settings",
++            "dashboard"
++          ]
++        },
++        {
++          "type": "array",
++          "items": {
++            "type": "string",
++            "enum": [
++              "builder",
++              "voting",
++              "wizard",
++              "list",
++              "settings",
++              "dashboard"
++            ]
++          }
++        }
++      ],
++      "description": "The kind of page this is. tools/pattern_check.py suggests it from the brief's words, and lists what that kind of page implies (skills/design-agent/reference/page-patterns.md)."
++    },
++    "patternDecisions": {
++      "type": "object",
++      "additionalProperties": {
++        "type": "string",
++        "enum": [
++          "in-scope",
++          "out-of-scope",
++          "new-brief",
++          "question"
++        ]
++      },
++      "description": "A decision for each capability the page pattern implies, e.g. {ownership: in-scope, reorder: in-scope, after-responses: question}. Questions go to the author at the brief's one stop."
+     }
+   }
+ }
+diff --git a/.claude/design-agent/tools/harness.py b/.claude/design-agent/tools/harness.py
+index 3950371..ce9a02d 100644
+--- a/.claude/design-agent/tools/harness.py
++++ b/.claude/design-agent/tools/harness.py
+@@ -51,6 +51,8 @@ approvedBy: ""           # set once the author approves (after their questions a
+ title: ""
+ purpose: ""              # one sentence: what's true once the user leaves this page
+ pageJustification: ""    # only if it has no task, or is small and reached from one place: why it's a page
++pagePattern: ""          # builder | voting | wizard | list | settings | dashboard (pattern_check.py suggests one)
++patternDecisions: {}     # pattern_check.py prints the capabilities to decide: in-scope | out-of-scope | new-brief | question
+ sourceType: "page-brief"
+ scopeTerms: []           # specific nouns: ["hackathon", "vote"]
+ surfaces: []             # ["hackathon/vote"]
+@@ -206,6 +208,18 @@ class Harness:
+                 first = next((l.strip()[2:] for l in res.stdout.splitlines() if l.strip().startswith("✗")), "")
+                 n = sum(1 for l in res.stdout.splitlines() if l.strip().startswith("✗"))
+                 g["brief"] = ("fail", f"purpose check: {first}" + (f" (+{n - 1} more: purpose_check.py)" if n > 1 else ""))
++        if g["brief"][0] in OK and brief and brief.get("path") and brief["path"].endswith((".yaml", ".yml")) \
++                and self.resolve(brief["path"]):
++            res = subprocess.run([sys.executable, os.path.join(HERE, "pattern_check.py"), self.resolve(brief["path"])],
++                                 capture_output=True, text=True)
++            out_lines = [l.strip() for l in res.stdout.splitlines()]
++            undecided = [l[2:].split(":")[0] for l in out_lines if l.startswith("✗")]
++            asks = [l[2:].split(":")[0] for l in out_lines if l.startswith("?")]
++            if res.returncode == 2:
++                g["brief"] = ("fail", f"page pattern: {out_lines[0].split('pattern: ', 1)[-1]}"
++                              + (f"; decide {', '.join(undecided)} (pattern_check.py)" if undecided else ""))
++            elif asks:
++                g["brief"] = ("fail", f"page pattern question(s) for the author: {', '.join(asks)}")
+         # scope
+         a = self.artifact(p, "scope-overlap-report")
+         if not a and lite and brief and brief.get("path") and self.resolve(brief["path"]):
+diff --git a/.claude/design-agent/tools/pattern_check.py b/.claude/design-agent/tools/pattern_check.py
+new file mode 100644
+index 0000000..3ea0725
+--- /dev/null
++++ b/.claude/design-agent/tools/pattern_check.py
+@@ -0,0 +1,130 @@
++#!/usr/bin/env python3
++"""Recognize what kind of page a brief describes, and what that kind of page implies.
++
++Usage: python3 tools/pattern_check.py <ticket-brief.yaml>
++
++A "build a questionnaire" page is a builder. A builder implies more than its brief
++usually says: whose it is (one per what?), adding, editing in place, reordering,
++duplicating, deleting with undo, previewing, saving and publishing, and what happens
++to answers already collected when it changes. Each pattern below lists what it
++implies. The brief names its pattern (pagePattern) and decides each implied
++capability in patternDecisions: in-scope, out-of-scope, new-brief (another page's job),
++or question.
++
++With no pagePattern, the brief's words suggest one. Capabilities the brief already
++mentions are pre-marked as likely in scope. Prints a patternDecisions block to paste.
++Exit 0 = pass, 1 = suggestions, 2 = undecided capabilities. Patterns and their
++layouts: skills/design-agent/reference/page-patterns.md.
++"""
++import argparse
++import re
++import sys
++
++import yaml
++
++# pattern → (words that suggest it, {capability: (what to decide, words that show the brief covers it)})
++PATTERNS = {
++    "builder": (r"\b(build|builder|create (?:a|your|their)|editor|compose|composer|questionnaire|survey|quiz|form builder|template|designer)\b", {
++        "ownership": ("Whose is it: one per what (each edition, event, team, user)? Who can edit it?", r"\b(each|per|own|their own|belongs)\b"),
++        "add-items": ("Add an item (question, field, block), at the end or between two", r"\badd\b"),
++        "edit-in-place": ("Edit an item where it is, not on another screen", r"\bedit|inline|in place\b"),
++        "reorder": ("Reorder items: drag, plus move up / move down for keyboard and touch (WCAG 2.5.7)", r"\b(reorder|re-order|drag|move|rearrange|order)\b"),
++        "duplicate": ("Duplicate an item", r"\b(duplicate|copy|clone)\b"),
++        "delete-undo": ("Delete an item, with undo", r"\b(delete|remove|undo)\b"),
++        "item-types": ("Which item types (short answer, choice, scale…), and changing an item's type", r"\b(type|types|multiple choice|short answer|scale|checkbox)\b"),
++        "required": ("Mark an item required or optional", r"\b(required|optional|mandatory)\b"),
++        "preview": ("Preview it as the person answering will see it, on a phone", r"\b(preview|as (?:a )?respondent)\b"),
++        "save-publish": ("Autosave, draft vs published, and when respondents see changes", r"\b(save|autosave|draft|publish)\b"),
++        "after-responses": ("Editing after answers are collected: what happens to existing answers", r"\b(responses|answers) (?:already|exist|collected)|after (?:responses|answers)\b"),
++        "start-from": ("Start from blank, a template, or a copy of a previous one", r"\b(template|copy of|previous|from scratch|blank)\b"),
++        "empty-state": ("The empty builder: the first item one tap away", r"\b(empty|first question|no questions)\b"),
++        "limits": ("Limits: how many items, how long a text", r"\b(limit|maximum|max|up to)\b"),
++    }),
++    "voting": (r"\b(vote|voting|poll|ballot|rank)\b", {
++        "eligibility": ("Who can vote, and how it's checked", r"\b(who can|eligib|attendee|sign in)\b"),
++        "vote-limits": ("How many votes per person", r"\b(\d+ votes|one person|per person|limit)\b"),
++        "change-vote": ("Changing or withdrawing a vote", r"\b(change|withdraw|undo)\b"),
++        "closing": ("When voting opens and closes, and what voters see after", r"\b(close|closes|closing|deadline|opens)\b"),
++        "results": ("Who sees results, and when", r"\b(results|winner|leaderboard)\b"),
++    }),
++    "wizard": (r"\b(onboarding|sign ?up|checkout|setup|step[- ]by[- ]step|application|wizard)\b", {
++        "progress": ("Where you are: step n of m", r"\b(progress|step \d|of \d)\b"),
++        "back-keeps-data": ("Going back keeps what was entered", r"\bback\b"),
++        "resume": ("Leaving and coming back later", r"\b(resume|save and|later)\b"),
++        "validation": ("Errors shown at each step, not at the end", r"\b(error|valid)\b"),
++        "review": ("Review everything before submitting", r"\b(review|summary|confirm)\b"),
++    }),
++    "list": (r"\b(browse|list|directory|catalog|catalogue|library|search results)\b", {
++        "find": ("Search or filter, once there are more than a screenful", r"\b(search|filter)\b"),
++        "sort": ("Sort order, and the default", r"\bsort\b"),
++        "scale": ("Many items: pagination or loading more", r"\b(paginat|load more|\d+ (?:items|games|rows))\b"),
++        "empty": ("No items yet, and no results", r"\b(empty|no results|none)\b"),
++        "to-detail": ("What opening an item shows", r"\b(open|detail|view)\b"),
++    }),
++    "settings": (r"\b(settings|preferences|notifications|account|configure)\b", {
++        "current-value": ("Every setting shows its current value", r"\b(current|on|off)\b"),
++        "save-model": ("Applies instantly, or on save: one model for the page", r"\b(instant|save|apply)\b"),
++        "defaults": ("Resetting to defaults", r"\b(default|reset)\b"),
++        "permission": ("Who can change each setting", r"\b(admin|permission|who can|locked)\b"),
++    }),
++    "dashboard": (r"\b(dashboard|overview|analytics|metrics|kpi)\b", {
++        "range": ("Which period it covers, and changing it", r"\b(date|range|period|days)\b"),
++        "freshness": ("How current the numbers are", r"\b(updated|as of|live|real[- ]time)\b"),
++        "no-data": ("No data yet, and loading", r"\b(empty|no data|loading)\b"),
++        "drill-down": ("What a number opens", r"\b(drill|detail|open)\b"),
++    }),
++}
++
++
++def text_of(b):
++    parts = [b.get("title", ""), b.get("purpose", ""), b.get("rawDescription", ""), " ".join(b.get("scopeTerms", []) or [])]
++    for k in ("priorities", "coreTasks", "requiredElements", "acceptanceCriteria", "edgeCases"):
++        for x in b.get(k, []) or []:
++            parts += [str(v) for v in x.values() if isinstance(v, str)]
++    parts += [str(x) for x in b.get("outOfScope", []) or []]
++    return " ".join(parts)
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("brief")
++    args = ap.parse_args()
++    b = yaml.safe_load(open(args.brief)) or {}
++    key, text = b.get("ticketKey", "brief"), text_of(b)
++    named = b.get("pagePattern")
++    head = f"{b.get('title', '')} {b.get('purpose', '')} {' '.join(b.get('scopeTerms', []) or [])}"
++    guessed = [p for p, (rx, _) in PATTERNS.items() if re.search(rx, head, re.I)]
++    patterns = [p for p in (named if isinstance(named, list) else [named]) if p] if named else guessed
++    if not patterns:
++        print(f"{key} pattern: none recognized (set pagePattern if it's one of {', '.join(PATTERNS)})")
++        return 0
++    decisions = b.get("patternDecisions", {}) or {}
++    undecided, lines = [], []
++    for p in patterns:
++        if p not in PATTERNS:
++            print(f"  ✗ unknown pagePattern '{p}' (one of {', '.join(PATTERNS)})")
++            return 2
++        for cap, (what, rx) in PATTERNS[p][1].items():
++            d = decisions.get(cap)
++            if d not in ("in-scope", "out-of-scope", "new-brief", "question"):
++                hint = "in-scope" if re.search(rx, text, re.I) else "?"
++                undecided.append((cap, what, hint))
++            elif d == "question":
++                lines.append(f"  ? {cap}: {what}")
++    print(f"{key} pattern: {', '.join(patterns)}" + ("" if named else " (suggested from the brief's words: set pagePattern)")
++          + (f"; {len(undecided)} implied capability(ies) undecided" if undecided else ""))
++    for cap, what, hint in undecided:
++        print(f"  ✗ {cap}: {what}" + ("  (the brief mentions it: likely in-scope)" if hint == "in-scope" else ""))
++    for l in lines:
++        print(l)
++    if undecided:
++        print("Paste into the brief and decide each (in-scope | out-of-scope | new-brief | question):")
++        print(f"pagePattern: {patterns[0] if len(patterns) == 1 else patterns}")
++        print("patternDecisions:")
++        for cap, _, hint in undecided:
++            print(f"  {cap}: {'in-scope' if hint == 'in-scope' else '?'}")
++    return 2 if undecided or not named else 1 if lines else 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/.claude/design-agent/tools/purpose_check.py b/.claude/design-agent/tools/purpose_check.py
+index 3696ee5..1fb4d87 100644
+--- a/.claude/design-agent/tools/purpose_check.py
++++ b/.claude/design-agent/tools/purpose_check.py
+@@ -35,7 +35,7 @@ FORMS = {
+     "explanation": (["helper-text", "tooltip", "disclosure", "link"], ["paragraph", "card-grid"],
+                     "the interface should explain itself; the rest waits until asked for"),
+     "reference": (["disclosure", "link", "secondary-page"], ["paragraph", "card-grid"], "rarely needed, so out of the way"),
+-    "choice-few": (["radio-group", "segmented-control"], ["select", "paragraph"], "up to 5 options are compared visibly"),
++    "choice-few": (["radio-group", "segmented-control"], ["paragraph"], "up to 5 options are compared visibly; a select only where space is tight"),
+     "choice-many": (["select", "combobox"], ["radio-group", "segmented-control"], "many options would crowd the screen"),
+     "toggle": (["switch", "checkbox"], ["select", "radio-group"], "on or off is one control"),
+     "action": (["button", "link"], ["paragraph"], "an action is a control, not a sentence about one"),
+diff --git a/.claude/design-agent/tools/render/capture.js b/.claude/design-agent/tools/render/capture.js
+index 9357077..5dde5b8 100644
+--- a/.claude/design-agent/tools/render/capture.js
++++ b/.claude/design-agent/tools/render/capture.js
+@@ -26,7 +26,7 @@ async function measure(page, cfg, withInventory) {
+     const label = (el) => kind(el) +
+       (el.id ? `#${el.id}` : "") + (el.textContent.trim() ? ` "${el.textContent.replace(/\s+/g, " ").trim().slice(0, 40)}"` : "");
+     const visible = (el) => { const r = el.getBoundingClientRect(); const s = getComputedStyle(el);
+-      return r.width > 0 && r.height > 0 && s.visibility !== "hidden" && s.display !== "none"; };
++      return r.width > 0 && r.height > 0 && s.visibility !== "hidden" && s.display !== "none" && !el.closest("details:not([open]) > :not(summary)"); };
+     const scrollsX = (el) => { for (let p = el.parentElement; p; p = p.parentElement) {
+       const o = getComputedStyle(p).overflowX; if (o === "auto" || o === "scroll") return true; } return false; };
+     const all = [...document.querySelectorAll("body *")].filter(visible);
+@@ -51,7 +51,8 @@ async function measure(page, cfg, withInventory) {
+     const texty = all.filter((el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()));
+     const smallText = texty.map((el) => ({ el, fs: parseFloat(getComputedStyle(el).fontSize) }))
+       .filter(({ fs }) => fs < minText).map(({ el, fs }) => ({ element: label(el), fontSizePx: fs }));
+-    const clipped = texty.filter((el) => { const s = getComputedStyle(el);
++    const srOnly = (el) => { const r = el.getBoundingClientRect(); return r.width <= 2 || r.height <= 2; };  // visually hidden on purpose
++    const clipped = texty.filter((el) => !srOnly(el)).filter((el) => { const s = getComputedStyle(el);
+       const hides = [s.overflow, s.overflowX, s.overflowY].some((o) => o === "hidden" || o === "clip");
+       return hides && (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1); })
+       .map((el) => ({ element: label(el) }));
+@@ -78,7 +79,7 @@ async function antiAi(page, cfg) {
+       (el.tagName.toLowerCase() + (el.classList.length ? "." + el.classList[0] : ""));
+     const label = (el) => kind(el) + ` "${el.textContent.replace(/\s+/g, " ").trim().slice(0, 40)}"`;
+     const visible = (el) => { const r = el.getBoundingClientRect(); const s = getComputedStyle(el);
+-      return r.width > 1 && r.height > 1 && s.visibility !== "hidden" && s.display !== "none" && s.clipPath === "none" && s.clip === "auto"; };
++      return r.width > 1 && r.height > 1 && s.visibility !== "hidden" && s.display !== "none" && !el.closest("details:not([open]) > :not(summary)") && s.clipPath === "none" && s.clip === "auto"; };
+     const texty = [...document.querySelectorAll("body *")].filter((el) => visible(el) &&
+       [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()));
+     // Each screen is compared with itself: a design file showing several screens or states side by
+@@ -264,7 +265,21 @@ async function antiAi(page, cfg) {
+     const identity = texty.filter((el) => !el.closest("[data-essential]") && !chromeRoots.some((r) => r.contains(el))).map((el) => el.textContent.replace(/\s+/g, " ").trim())
+       .filter((t) => /\b(logged|signed) in as\b|\byou are (an? )?(admin|administrator|owner|moderator|editor)\b|\b(admin|editor|viewer) (mode|view)\b|\bviewing as\b/i.test(t))
+       .map((t) => t.slice(0, 70));
+-    const structure = { cards, nav, search, controlsOnFirstScreen: onScreen, chrome, identity: [...new Set(identity)] };
++    // Builders and sortable lists: dragging needs a single-pointer alternative (WCAG 2.5.7), and each item's
++    // tools show on the selected item only, so a long list stays calm (like Google Forms).
++    const draggables = [...document.querySelectorAll("[draggable=true], [data-drag-handle], .drag-handle, [aria-roledescription*='sortable' i]")];
++    const moveControls = [...document.querySelectorAll("button, [role=menuitem], [role=button], a, option")]
++      .filter((el) => /\bmove (up|down|to|earlier|later|before|after)\b|\breorder\b/i.test((el.getAttribute("aria-label") || "") + " " + el.textContent));
++    const lists = [...new Set([...document.querySelectorAll("[data-sortable]"), ...draggables.map((d) => (d.closest("li, [role=listitem], [data-builder-item]") || d).parentElement)])]
++      .filter((l) => l && visible(l));
++    const selected = (el) => el.matches("[aria-selected=true], [aria-current], [data-selected], .is-selected, .selected") || el.contains(document.activeElement) && document.activeElement !== document.body;
++    const sortable = lists.map((l) => {
++      const items = [...l.children].filter(visible);
++      const tools = items.filter((it) => !selected(it)).map((it) => [...it.querySelectorAll("button, select, input, [role=button], [role=switch], summary, a[href]")].filter(visible).length);
++      return { where: label(l).split(' "')[0], items: items.length, unselectedTools: tools };
++    });
++    const structure = { cards, nav, search, controlsOnFirstScreen: onScreen, chrome, identity: [...new Set(identity)],
++      dragging: { count: draggables.filter(visible).length, moveControls: moveControls.length }, sortable };
+     const content = { viewportH: vh, blocks: contentBlocks, firstScreenWords, totalWords,
+       glance: { h1: h1 ? { where: label(h1), top: Math.round(h1.getBoundingClientRect().top) } : null, primaries },
+       effort: { words: totalWords, fields, choices, actions: actions.length }, tables };
+diff --git a/.claude/design-agent/tools/screenshots.py b/.claude/design-agent/tools/screenshots.py
+index cd9fd88..bea5003 100644
+--- a/.claude/design-agent/tools/screenshots.py
++++ b/.claude/design-agent/tools/screenshots.py
+@@ -169,7 +169,7 @@ AMBIENT_TERMS = ["admin", "administrator", "superuser", "owner", "moderator", "e
+ 
+ def structure_findings(m, shots):
+     """Cards with too many pieces of information, and navigation that's crowded, deep or hard to search."""
+-    comp = {"maxCardInformationAreas": 5, **((m.get("compositionHeuristics") or {}))}
++    comp = {"maxCardInformationAreas": 5, "maxToolsPerItem": 1, **((m.get("compositionHeuristics") or {}))}
+     nh = {"maxItemsPerLevel": 7, "maxClicksToAnyOption": 2, "searchWhenOptionsOver": 15, "maxVisibleControls": 12,
+           **((m.get("navigationHeuristics") or {}))}
+     out, seen = [], {}
+@@ -227,6 +227,15 @@ def structure_findings(m, shots):
+                 if ambient.search(t):
+                     add("minor", C2, "A control in the always-visible bar repeats the account's role or plan in its label: keep the label to the name or an icon",
+                         ("chrome-control", t), f"'{t}' in the {ch['where']}.", s)
++        dr = st.get("dragging") or {}
++        if dr.get("count") and not dr.get("moveControls"):
++            add("major", "accessibility", "Reordering only by dragging: add Move up / Move down (in the item's menu) for keyboard and touch (WCAG 2.5.7)",
++                ("drag",), f"{dr['count']} draggable item(s), and no move controls.", s)
++        for so in st.get("sortable") or []:
++            busy = [n for n in so["unselectedTools"] if n > comp.get("maxToolsPerItem", 1)]
++            if len(busy) >= 3:
++                add("major", "composition-and-density", f"Every item shows its tools: show them on the selected item only, so the list stays calm (more than {comp.get('maxToolsPerItem', 1)} per unselected item)",
++                    ("tools", so["where"]), f"{so['where']}: {len(busy)} of {so['items']} items show {max(busy)} tools each.", s)
+         for t in st.get("identity") or []:
+             add("major", C2, "A notice restating who you are or which mode you're in: the account menu already says it; show it only where it changes what you can do",
+                 ("identity", t), f"'{t}'.", s)
+diff --git a/.claude/skills/design-agent/SKILL.md b/.claude/skills/design-agent/SKILL.md
+index f52cb55..f0abd4c 100644
+--- a/.claude/skills/design-agent/SKILL.md
++++ b/.claude/skills/design-agent/SKILL.md
+@@ -28,6 +28,7 @@ Goal: the product stays consistent as it's built. **Tools check, you decide and
+   - solutions become needs: "a dropdown" → "choose one of N"
+   - each criterion becomes testable
+ - **Purpose:** one sentence in `purpose`: what's true once the user leaves. If the page has no core task, or is small and reached from one place, it's probably not a page: propose the section, panel, dialog or tooltip it should be, unless a `pageJustification` holds. Give each required element an `infoType` and `form`. `T/purpose_check.py <brief>` checks all of this, and the brief gate runs it.
++- **Pattern:** name the kind of page (`pagePattern`: builder, voting, wizard, list, settings, dashboard) and decide what it implies. "Build a questionnaire" is a builder: whose is it (one per what?), add, edit in place, reorder (drag plus Move up / Move down), duplicate, delete with undo, preview, autosave and publish, and what happens to answers already collected. `T/pattern_check.py <brief>` lists them and prints a `patternDecisions` block to fill in.
+ - **Design system:** the project's, unless the author asks for a brand's guidelines ("follow the Atari brand guidelines"). Then set `brandGuidelines: ["Atari"]` in the brief and use `brand/atari/CLAUDE.md` instead of `CLAUDE.md`'s tokens and type. A page that only mentions the brand isn't a request.
+ - Run `T/harness.py check --project <ID>`, and `T/scope_check.py <brief> --index design-index.yaml` if the index has designs.
+ - **Stop once.** Send one message: your rewrites, conflicts with the design system, new briefs, work that belongs to another design, and every question. Wait for the answers.
+@@ -86,6 +87,7 @@ Goal: the product stays consistent as it's built. **Tools check, you decide and
+ | `platform-adapters.md` | working in Claude Design |
+ | `type-pairing.md` | choosing fonts for a new design system |
+ | `content-forms.md` | is it a page, which form fits the information, cards and navigation |
++| `page-patterns.md` | the layout a pattern implies (e.g. a minimal builder) |
+ | `design-generation-skill.md` (and `HARNESS.md` at the repo root) | full mode only |
+ 
+ **Full mode** (`harness.mode: full` in the manifest) runs the complete process in `reference/design-generation-skill.md`: every record, the full rubric and the presentation template. Use it for flagship work, not everyday pages.
+diff --git a/.claude/skills/design-agent/critic.md b/.claude/skills/design-agent/critic.md
+index 6842e9c..4b8defe 100644
+--- a/.claude/skills/design-agent/critic.md
++++ b/.claude/skills/design-agent/critic.md
+@@ -9,6 +9,7 @@ You review a design you didn't make. **The tools have already checked everything
+ - text length, numbers, steps, lists and instructions written as prose, and the 3-second and 3-minute measurements
+ - cards over 5 pieces of information; navigation that's crowded, too deep, unsearchable or has unlabelled hidden options
+ - information that stays on every screen (roles, plans, environments, "signed in as") and notices restating who you are
++- reordering only by dragging, and tools shown on every item of a list or builder instead of the selected one
+ - brand guidelines: near-miss colors, fonts, how the name is written, logo size, proportions and clear space
+ 
+ Judge only what needs eyes. Look at the page, the 320px screenshot and the 320px at 200% text screenshot. Check each item; skip the ones that don't apply.
+@@ -37,10 +38,11 @@ Judge only what needs eyes. Look at the page, the 320px screenshot and the 320px
+ | 20 | Nothing explains what the interface should make obvious; every text block earns its place (fewer, shorter words) | minor |
+ | 21 | The most-used options are at the top level, in order of use; settings and filters sit where they're used, show the current choice, and reset in one tap | major |
+ | 22 | Each screen shows only what this moment needs; anything else waits one tap away, where it's used. Name what to move and where | major |
++| 23 | The page does what its pattern implies (the brief's `patternDecisions`): a builder adds, edits in place, reorders, duplicates, deletes with undo, previews and autosaves, minimally | major |
+ 
+ **Rules:**
+ - A value you read off a screenshot is an estimate, never a blocker on its own.
+ - No finding without a rule behind it: a check number, a token, or a tool finding.
+ - Don't list passes.
+ 
+-**Return** `harness.py new critique`: the verdict (blocker if any blocker; major-issues if any major; else pass), then each finding as `where: what → fix (rule)`. At most 22 findings, most severe first.
++**Return** `harness.py new critique`: the verdict (blocker if any blocker; major-issues if any major; else pass), then each finding as `where: what → fix (rule)`. At most 23 findings, most severe first.
+diff --git a/.claude/skills/design-agent/reference/design-audit-rubric.md b/.claude/skills/design-agent/reference/design-audit-rubric.md
+index 39a11ec..26255c8 100644
+--- a/.claude/skills/design-agent/reference/design-audit-rubric.md
++++ b/.claude/skills/design-agent/reference/design-audit-rubric.md
+@@ -290,6 +290,8 @@ Each category below produces a `pass` / `minor-issues` / `major-issues` / `block
+ - [ ] **Major:** Information in a form that doesn't fit it (`content-forms.md`): figures in a sentence, steps as prose, a trend as a table, a status as a sentence. The finding names the form that fits.
+ - [ ] **Major:** A text block over `maxWordsPerBlock` or `maxSentencesPerBlock`, an intro over `maxIntroWords`, or a screen over `maxWordsPerScreen` (measured), outside `[data-longform]`.
+ - [ ] **Minor:** Instructions for the interface, a list written as a sentence, or a one-row table (measured).
++- [ ] **Major:** The brief has no `pagePattern`, or leaves a capability its pattern implies undecided (`tools/pattern_check.py`); or the design misses one decided in scope.
++- [ ] **Major:** Items can be reordered only by dragging (measured; WCAG 2.5.7), or every item in a list or builder shows its tools instead of the selected one (measured: over `compositionHeuristics.maxToolsPerItem`).
+ - [ ] **Minor:** A small page reached from one place, with no `pageJustification`: it may fit where it's reached from.
+ - [ ] **Major:** A front-facing card shows more than `compositionHeuristics.maxCardInformationAreas` pieces of information (measured). The rest goes to its detail view.
+ - [ ] **Major:** Navigation with more than `navigationHeuristics.maxItemsPerLevel` items at a level, an option more than `maxClicksToAnyOption` clicks deep, more than `searchWhenOptionsOver` options with no search, hidden options with no labelled control, or navigation that vanishes at a width with nothing to open it (measured).
+diff --git a/.claude/skills/design-agent/reference/page-patterns.md b/.claude/skills/design-agent/reference/page-patterns.md
+new file mode 100644
+index 0000000..494b1f7
+--- /dev/null
++++ b/.claude/skills/design-agent/reference/page-patterns.md
+@@ -0,0 +1,32 @@
++# Page patterns: what a kind of page implies
++
++A brief rarely says everything its page needs. "Build a questionnaire" is a **builder**, and every builder needs the same things: whose it is, adding, editing in place, reordering, duplicating, deleting with undo, previewing, saving and publishing. `tools/pattern_check.py` recognizes the pattern from the brief's words and lists what it implies. The brief names it (`pagePattern`) and decides each capability (`patternDecisions`: in-scope, out-of-scope, new-brief or question). The brief gate runs the check, so nothing implied is forgotten.
++
++## Builder (questionnaire, form, survey, quiz, template, page builder)
++
++**Ask first: whose is it?** One per what: each edition, event, team or user builds their own. That decides where the builder is reached from, who can edit it, and what "start from a copy" copies.
++
++**The layout, like Google Forms: minimal, and calm when long.**
++- One column of item cards, in order. Each card shows the item itself (its question and type), nothing more.
++- **Only the selected item shows its tools:** type, required, duplicate, delete and move, with the rarely used ones in its "⋯" menu. Every other item shows its content and a drag handle. The renderer flags tools on every item.
++- **Reorder by dragging, and always by Move up / Move down** in the item's menu, for keyboard and touch (WCAG 2.5.7). The renderer flags drag-only lists.
++- **Add** at the end, and after the selected item.
++- **Edit in place:** typing into the card changes it. No separate edit screen, and no Save button: it autosaves, and says so next to Preview and Publish ("Draft · saved", or that saving failed).
++- **Delete with undo**, not a confirmation dialog.
++- **Preview** shows it as the person answering will see it, on a phone.
++- **Empty:** the first item is one tap away, with "start from a copy of the last one" when there is a last one.
++- **Decide what happens after answers exist:** editing a question that has answers either keeps old answers under the old wording, or is blocked. It's a question for the author, never a silent choice.
++
++Reference: `examples/rendered/questionnaire-builder.html` (passes the checks). Brief: `examples/ticket-brief-questionnaire.example.yaml`.
++
++## The other patterns
++
++| Pattern | Recognized by | It implies |
++|---|---|---|
++| Voting | vote, poll, ballot, rank | who can vote, vote limits, changing a vote, opening and closing, who sees results |
++| Wizard | onboarding, sign up, checkout, setup, step by step | progress, going back keeps data, resuming later, errors per step, review before submit |
++| List | browse, list, directory, catalog, library | search or filter, sort, many items, empty and no results, what opening an item shows |
++| Settings | settings, preferences, notifications | each setting's current value, applies instantly or on save, defaults, who can change it |
++| Dashboard | dashboard, overview, analytics, metrics | the period and changing it, how current it is, no data and loading, what a number opens |
++
++A page can be more than one pattern (`pagePattern: [list, builder]`). The full list of capabilities and the words that suggest them are in `tools/pattern_check.py`.
+diff --git a/design-system-manifest.yaml b/design-system-manifest.yaml
+index 1f970db..30871db 100644
+--- a/design-system-manifest.yaml
++++ b/design-system-manifest.yaml
+@@ -329,12 +329,18 @@ automation:
+   notifyOnAutoRevise: true
+ 
+ compositionHeuristics:
+-  listPaginationThreshold: 50        # GAMES_PAGE_SIZE / sessions PAGE_SIZE
++  maxCardInformationAreas: 5   # a front-facing card shows at most 5 pieces of information; the rest goes to its detail view
++  maxToolsPerItem: 1           # an unselected item in a list or builder shows only its drag handle; its tools appear when selected
++  listPaginationThreshold: 50        # GAMES_PAGE_SIZE / sessions PAGE_SIZE (the agent's default is 10)
+   maxInlineInputs: 7
+   requireProgressiveDisclosure: true
+   requireTicketPriorityTraceability: true
+ 
+ navigationHeuristics:
++  maxItemsPerLevel: 7          # the most-used options at the top, the rest grouped one level down
++  maxClicksToAnyOption: 2      # every option within 2 clicks of the navigation
++  searchWhenOptionsOver: 15    # more options than this need a search
++  maxVisibleControls: 12       # controls on the first screen at the narrowest width; nest the rest behind one labelled control
+   requireNavigationalTies: true
+   breadcrumbThresholdDepth: 2
+ 
+diff --git a/docs/design/agent/game-sort/ticket-brief.yaml b/docs/design/agent/game-sort/ticket-brief.yaml
+index 9033b4f..0df41a6 100644
+--- a/docs/design/agent/game-sort/ticket-brief.yaml
++++ b/docs/design/agent/game-sort/ticket-brief.yaml
+@@ -16,6 +16,14 @@ connections:
+   goesNext: ["a game's how-to-play page (/game/<slug>)", "a game's dashboard", "a session's detail page"]
+   mustLinkHere: []
+ 
++purpose: "The tester or reviewer has found the game, build or session they came for, by name, platform, project or studio, with their starred builds first."
++pagePattern: "list"
++patternDecisions:          # pattern_check.py (agent, Oct 1): every capability a list implies is already designed
++  find: "in-scope"         # search + Platform/Project/Studio filters (AC1, AC4)
++  sort: "in-scope"         # A to Z, Newest, Active, Critical; starred builds pinned first (AC6, AC11)
++  scale: "in-scope"        # server-side filters and pages of 50 (AC3)
++  empty: "in-scope"        # no games yet; filters that match nothing, with one clear action (AC9)
++  to-detail: "in-scope"    # a game opens its play flow; reviewers open its dashboard from the card or the tree (AC14)
+ priorities:
+   - { id: "P1", statement: "Anyone can narrow a long list of games or sessions to the platform, studio or game they're looking for.", source: "explicit" }
+   - { id: "P2", statement: "Filtering keeps working as the catalogue grows past one screenful (server-side, paginated, new facet values appear without code changes).", source: "explicit" }
 -- 
 2.43.0
 
