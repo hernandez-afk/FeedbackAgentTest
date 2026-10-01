@@ -11,6 +11,27 @@ platform:
 harness:
   mode: "lite"             # the agent's default: core skill + tool checks + one critic pass
 
+brandGuidelines:          # agent schema (Oct 2026). References, used only when declared.
+  - profile: "brand/atari.yaml"                            # ATARI Brand Guidelines V1.1 (June 2023)
+    applies: "when-declared"                               # Fuji is not the Atari brand palette (mint vs Atari Red); "always" would be a rebrand: owner's decision
+    designSystem: "brand/atari/design-system-manifest.yaml"
+
+contentPolicy:            # say less: every block short, a first screen that's scanned, not read (agent defaults)
+  maxWordsPerBlock: 30
+  maxSentencesPerBlock: 2
+  maxIntroWords: 20
+  maxWordsFirstScreen: 60
+  maxWordsPerScreen: 250
+  maxNumbersInProse: 2
+  taskTime: { readingWordsPerMinute: 200, secondsPerField: 8, secondsPerChoice: 3 }
+  persistentChrome:
+    maxInfoItems: 0        # the header holds only the logo, navigation and controls
+
+antiAiDesign:
+  repetition: { enabled: true, minWords: 3, figures: true }
+  typefaces:
+    maxFamilies: 2         # Archivo + JetBrains Mono (mono)
+
 meta:
   name: "Fuji"
   version: "1.0.0"
